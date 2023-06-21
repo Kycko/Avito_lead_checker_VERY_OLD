@@ -1,0 +1,77 @@
+// if ignore_title, it'll remove the column even if it has some data in the first title cell
+function rm_empty_RC_ARR(data, ignore_title=false) {
+    var rm_lists = find_empty_RC_ARR(data, ignore_title);
+    data = rm_RC_list_ARR(data, rm_lists.rows, 'rows');
+    data = rm_RC_list_ARR(data, rm_lists.columns, 'columns');
+    return data;
+}
+function find_empty_RC_ARR(data, ignore_title) {
+    var rows    = [];   // будем добавлять, если найдём пустую строку
+    var columns = [];   // сначала в списке все столбцы, потом будем убирать из списка, если найдём НЕ пустой
+    for (var i=0; i < data[0].length; i+=1) {
+        columns.push(i);
+    }
+
+    var temp = Number(ignore_title);
+    if (data.length > temp) {
+        for (var row=temp; row < data.length; row+=1) {
+            var empty_row      = true;
+            var non_empty_cols = [];
+            for (var col=0; col < data[row].length; col+=1) {
+                if (data[row][col] !== '') {
+                    empty_row = false;
+                    non_empty_cols.push(col);
+                }
+            }
+            if (empty_row) {
+                rows.push(row);
+            }
+            if (columns) {
+                for (var i=0; i < non_empty_cols.length; i+=1) {
+                    var index = columns.indexOf(non_empty_cols[i]);
+                    if (index >= 0) {
+                        columns.splice(index, 1);
+                    }
+                }
+            }
+        }
+    }
+    var final = {
+        rows    : rows,
+        columns : columns
+    }
+    return final;
+}
+
+// type = 'rows' or 'columns'
+function rm_RC_list_ARR(data, rm_list, type) {
+    if (rm_list) {
+        if (type == 'rows') {
+            for (var i = rm_list.length-1; i >= 0; i-=1) {
+                data.splice(rm_list[i], 1);
+            }
+        }
+        else if (type == 'columns') {
+            for (var row=0; row < data.length; row+=1) {
+                for (var i = rm_list.length-1; i >= 0; i-=1) {
+                    data[row].splice(rm_list[i], 1);
+                }
+            }
+        }
+    }
+    return data;
+}
+
+// type = return 'index' or 'item'
+function last_item_ARR(array, type) {
+    if (array) {
+        var index = array.length-1;
+
+        if (type === 'index') {
+            return index;
+        }
+        else {
+            return array[index];
+        }
+    }
+}
