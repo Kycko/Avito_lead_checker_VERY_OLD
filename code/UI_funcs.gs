@@ -10,3 +10,8 @@ function onOpen() {
     }
     menu.addToUi();
 }
+
+function UI_show_msg(title, msg) {
+    const ui = SpreadsheetApp.getUi();
+    ui.alert(title, msg, ui.ButtonSet.OK);
+}

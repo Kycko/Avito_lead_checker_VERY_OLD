@@ -9,7 +9,7 @@ function Gcolors() {
 }
 function Greq_sheets() {
     var G = {};
-    G.rows     = '[script] столбцы';
+    G.columns  = '[script] столбцы';
     G.autocorr = '[script] автоисправления';
     return G;
 }

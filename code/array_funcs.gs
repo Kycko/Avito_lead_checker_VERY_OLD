@@ -75,3 +75,29 @@ function ARR_last_item(array, type) {
         }
     }
 }
+
+// type = return 'index' or 'bool' (just to know if the name is in the array)
+function ARR_search_title(data, name, type='index') {
+    for (var i=0; i < data[0].length; i+=1) {
+        if (data[0][i].toLowerCase() === name.toLowerCase()) {
+            if (type === 'index') {
+                return i;
+            }
+            else {
+                return true;
+            }
+        }
+    }
+}
+function ARR_search_in_list(list, txt, type='index') {
+    for (var i=0; i < list.length; i+=1) {
+        if (list[i].toLowerCase() === txt.toLowerCase()) {
+            if (type === 'index') {
+                return i;
+            }
+            else {
+                return true;
+            }
+        }
+    }
+}
