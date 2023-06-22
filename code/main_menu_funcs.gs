@@ -4,9 +4,13 @@ function MM_wrapper(task) {
     const cur_sheet = SpreadsheetApp.getActiveSheet();
     var data = get_sheet_values(cur_sheet);
     if (task === 'all' || task === 'rm_empty_RC') {
-        data = rm_empty_RC_ARR(data, true); // RC = rows & columns; ARR = array
+        data = ARR_rm_empty_RC(data, true); // RC = rows & columns; ARR = array
     }
     set_sheet_values(data, cur_sheet);
+    SpreadsheetApp.flush();
+    if (task === 'all' || task === 'sheet_text_formatting') {
+        data = SH_text_formatting(sheet, data);
+    }
 }
 
 function MM_launch_all() {
@@ -14,4 +18,7 @@ function MM_launch_all() {
 }
 function MM_rm_empty_RC() {
     MM_wrapper('rm_empty_RC');
+}
+function MM_sheet_text_formatting() {
+    MM_wrapper('sheet_text_formatting');
 }

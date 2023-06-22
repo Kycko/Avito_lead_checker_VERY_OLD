@@ -1,11 +1,11 @@
 // if ignore_title, it'll remove the column even if it has some data in the first title cell
-function rm_empty_RC_ARR(data, ignore_title=false) {
-    var rm_lists = find_empty_RC_ARR(data, ignore_title);
-    data = rm_RC_list_ARR(data, rm_lists.rows, 'rows');
-    data = rm_RC_list_ARR(data, rm_lists.columns, 'columns');
+function ARR_rm_empty_RC(data, ignore_title=false) {
+    var rm_lists = ARR_find_empty_RC(data, ignore_title);
+    data = ARR_rm_RC_list(data, rm_lists.rows, 'rows');
+    data = ARR_rm_RC_list(data, rm_lists.columns, 'columns');
     return data;
 }
-function find_empty_RC_ARR(data, ignore_title) {
+function ARR_find_empty_RC(data, ignore_title) {
     var rows    = [];   // будем добавлять, если найдём пустую строку
     var columns = [];   // сначала в списке все столбцы, потом будем убирать из списка, если найдём НЕ пустой
     for (var i=0; i < data[0].length; i+=1) {
@@ -44,7 +44,7 @@ function find_empty_RC_ARR(data, ignore_title) {
 }
 
 // type = 'rows' or 'columns'
-function rm_RC_list_ARR(data, rm_list, type) {
+function ARR_rm_RC_list(data, rm_list, type) {
     if (rm_list) {
         if (type == 'rows') {
             for (var i = rm_list.length-1; i >= 0; i-=1) {
@@ -63,7 +63,7 @@ function rm_RC_list_ARR(data, rm_list, type) {
 }
 
 // type = return 'index' or 'item'
-function last_item_ARR(array, type) {
+function ARR_last_item(array, type) {
     if (array) {
         var index = array.length-1;
 
