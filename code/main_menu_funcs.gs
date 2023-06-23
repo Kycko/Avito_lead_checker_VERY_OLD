@@ -1,40 +1,27 @@
-// wrapper means different functions have the same starting & ending processes
-// task = what function have been launched
-function MM_wrapper(task) {
+function MM_launch_all() {
     const cur_sheet = SpreadsheetApp.getActiveSheet();
-    var data = SH_get_values(cur_sheet);
+    var   data      = SH_get_values(cur_sheet);
+    var   col_reqs  = SH_get_req_values();      // col_reqs = column requirements
 
-    var check = ARR_search_in_list(['all', 'sheet_text_formatting'], task, 'bool');
-    if (check) {
-        var req_sheet = SH_check_availability(Greq_sheets().columns, 'Некоторые проверки не будут выполнены');
-        if (req_sheet) {
-            var col_reqs = SH_get_values(req_sheet);    // col_reqs = column requirements
-        }
-    }
+    data = ARR_rm_empty_RC(data, true);         // RC = rows & columns; ARR = array
+    SH_set_values(data, cur_sheet);
 
-    check = ARR_search_in_list(['all', 'rm_empty_RC'], task, 'bool');
-    if (check) {
-        data = ARR_rm_empty_RC(data, true);             // RC = rows & columns; ARR = array
-    }
-
-    check = ARR_search_in_list(['all', 'rm_empty_RC'], task, 'bool');
-    if (check) {
-        SH_set_values(data, cur_sheet);
-    }
-
-    const cond1 = Boolean(req_sheet);
-    const cond2 = ARR_search_in_list(['all', 'sheet_text_formatting'], task, 'bool');
-    if (cond1 && cond2) {
+    if (col_reqs) {
         SH_text_formatting(cur_sheet, col_reqs, data);
     }
 }
-
-function MM_launch_all() {
-    MM_wrapper('all');
-}
 function MM_rm_empty_RC() {
-    MM_wrapper('rm_empty_RC');
+    const cur_sheet = SpreadsheetApp.getActiveSheet();
+    var data = SH_get_values(cur_sheet);
+    data     = ARR_rm_empty_RC(data, true);     // RC = rows & columns; ARR = array
+    SH_set_values(data, cur_sheet);
 }
 function MM_sheet_text_formatting() {
-    MM_wrapper('sheet_text_formatting');
+    const cur_sheet = SpreadsheetApp.getActiveSheet();
+    var   data      = SH_get_values(cur_sheet);
+    var   col_reqs  = SH_get_req_values();      // col_reqs = column requirements
+
+    if (col_reqs) {
+        SH_text_formatting(cur_sheet, col_reqs, data);
+    }
 }

@@ -13,6 +13,14 @@ function SH_set_values(data, sheet) {
         .setValues(data);
 }
 
+// getting all the data from req_sheet
+function SH_get_req_values() {
+    var req_sheet = SH_check_availability(Greq_sheets().columns, 'Некоторые проверки не будут выполнены');
+    if (req_sheet) {
+        return SH_get_values(req_sheet);
+    }
+}
+
 function SH_check_availability(name, err_title) {
     var sheet = SpreadsheetApp.getActive().getSheetByName(name);
     if (!sheet) {
@@ -54,7 +62,7 @@ function SH_text_formatting(sheet, col_reqs, data) {
     SH_set_req_wrapping(sheet, col_reqs, data);
     SH_set_req_column_width(sheet, col_reqs, data);
 }
-function SH_set_range_formatting(range, txt_color=Gcolors().black, txt_font='Calibri', txt_size=12, wrap=false, Valign='middle', Halign='left', borders='default') {
+function SH_set_range_formatting(range, txt_color=Gcolors().black, txt_font='Calibri', txt_size=11, wrap=false, Valign='middle', Halign='left', borders='default') {
     range
         .setFontColor(txt_color)
         .setFontFamily(txt_font)
