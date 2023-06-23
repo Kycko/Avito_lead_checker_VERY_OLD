@@ -1,7 +1,22 @@
-function SH_get_values(sheet) {
-    var range = sheet.getRange(1, 1, sheet.getMaxRows(), sheet.getMaxColumns());
-    range     = range.breakApart();
-    return range.getValues();
+function SH_get_all_sheets_data() {
+    var   data = {};
+    const GRS  = Greq_sheets();
+    const all_sheets_list = SH_get_all_sheets_list();
+
+    data.cur_sheet = SpreadsheetApp.getActiveSheet();
+    data.cur       = SH_get_values(data.cur_sheet.getName(), all_sheets_list);
+    data.col_reqs  = SH_get_values(GRS.columns, all_sheets_list);   // col_reqs = column requirements
+
+    return data;
+}
+function SH_get_values(name, all_sheets_list) {
+    var check = SH_check_availability(name, all_sheets_list, 'Некоторые проверки не будут выполнены');
+    if (check) {
+        const sheet = SpreadsheetApp.getActive().getSheetByName(name);
+        const range = sheet.getRange(1, 1, sheet.getMaxRows(), sheet.getMaxColumns())
+        range.breakApart();
+        return range.getValues();
+    }
 }
 function SH_set_values(data, sheet) {
     var size = {
@@ -13,20 +28,21 @@ function SH_set_values(data, sheet) {
         .setValues(data);
 }
 
-// getting all the data from req_sheet
-function SH_get_req_values() {
-    var req_sheet = SH_check_availability(Greq_sheets().columns, 'Некоторые проверки не будут выполнены');
-    if (req_sheet) {
-        return SH_get_values(req_sheet);
+function SH_get_all_sheets_list() {
+    var   list   = [];
+    const sheets = SpreadsheetApp.getActiveSpreadsheet().getSheets();
+    Logger.log(sheets);
+    for (var i=0; i < sheets.length; i+=1) {
+        list.push(sheets[i].getName());
     }
+    return list;
 }
-
-function SH_check_availability(name, err_title) {
-    var sheet = SpreadsheetApp.getActive().getSheetByName(name);
-    if (!sheet) {
+function SH_check_availability(name, all_sheets_list, err_title) {
+    var check = ARR_search_in_list(all_sheets_list, name, 'bool');
+    if (!check) {
         UI_show_msg(err_title, 'Отсутствует лист:\n' + name);
     }
-    return sheet
+    return check
 }
 
 function SH_fit_size(sheet, new_size) {
@@ -53,14 +69,15 @@ function SH_fit_size(sheet, new_size) {
         sheet.deleteColumns(new_size.columns+1, -num);
     }
 }
-function SH_text_formatting(sheet, col_reqs, data) {
-    var cur_range = sheet.getRange(1, 1, data.length, data[0].length);
+function SH_text_formatting(data) {
+    var cur_range = data.cur_sheet.getRange(1, 1, data.cur.length, data.cur[0].length);
     SH_set_range_formatting(cur_range);
     SpreadsheetApp.flush();
-    sheet.getRange(2, 1, data.length-1, data[0].length).setBackground(null);    // don't change the title backgrounds, they show errors
-    sheet.autoResizeColumns(1, data[0].length);
-    SH_set_req_wrapping(sheet, col_reqs, data);
-    SH_set_req_column_width(sheet, col_reqs, data);
+    data.cur_sheet.getRange(2, 1, data.cur.length-1, data.cur[0].length)
+        .setBackground(null);   // don't change the title backgrounds, they show errors
+    data.cur_sheet.autoResizeColumns(1, data.cur[0].length);
+    SH_set_req_wrapping(data);
+    SH_set_req_column_width(data);
 }
 function SH_set_range_formatting(range, txt_color=Gcolors().black, txt_font='Calibri', txt_size=11, wrap=false, Valign='middle', Halign='left', borders='default') {
     range
@@ -76,28 +93,28 @@ function SH_set_range_formatting(range, txt_color=Gcolors().black, txt_font='Cal
 }
 
 // req – only change the columns listed in Greq_sheets().columns
-function SH_set_req_wrapping(sheet, col_reqs, data, columns='all') {
+function SH_set_req_wrapping(data, columns='all') {
     if (columns === 'all') {
-        for (var i=0; i < col_reqs.length; i+=1) {
-            if (col_reqs[i][4] == 'да') {
-                var index = ARR_search_title(data, col_reqs[i][0]);
+        for (var i=0; i < data.col_reqs.length; i+=1) {
+            if (data.col_reqs[i][4] == 'да') {
+                var index = ARR_search_title(data.cur, data.col_reqs[i][0]);
                 if (index != null) {
-                    sheet.getRange(2, index+1, data.length-1)
+                    data.cur_sheet.getRange(2, index+1, data.length-1)
                         .setWrap(true);
                 }
             }
         }
     }
 }
-function SH_set_req_column_width(sheet, col_reqs, data, columns='all') {
+function SH_set_req_column_width(data, columns='all') {
     if (columns === 'all') {
-        for (var i=0; i < col_reqs.length; i+=1) {
-            if (typeof Number(col_reqs[i][3]) == 'number') {
-                var index = ARR_search_title(data, col_reqs[i][0]);
+        for (var i=0; i < data.col_reqs.length; i+=1) {
+            if (typeof Number(data.col_reqs[i][3]) == 'number') {
+                var index = ARR_search_title(data.cur, data.col_reqs[i][0]);
                 if (index != null) {
-                    const cur_width = sheet.getColumnWidth(index+1);
-                    if (cur_width > col_reqs[i][3]) {
-                        sheet.setColumnWidth(index+1, col_reqs[i][3]);
+                    const cur_width = data.cur_sheet.getColumnWidth(index+1);
+                    if (cur_width > data.col_reqs[i][3]) {
+                        data.cur_sheet.setColumnWidth(index+1, data.col_reqs[i][3]);
                     }
                 }
             }
