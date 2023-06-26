@@ -1,21 +1,25 @@
 function SH_get_all_sheets_data() {
     var   data = {};
     const GRS  = Greq_sheets();
-    const all_sheets_list = SH_get_all_sheets_list();
+    all_sheets_list = SH_get_all_sheets_list()
 
     data.cur_sheet = SpreadsheetApp.getActiveSheet();
     data.cur       = SH_get_values(data.cur_sheet.getName(), all_sheets_list);
-    data.col_reqs  = SH_get_values(GRS.columns, all_sheets_list);   // col_reqs = column requirements
 
+    for (var key in GRS) {
+        data[key] = SH_get_values(GRS[String(key)], all_sheets_list);
+    }
     return data;
 }
 function SH_get_values(name, all_sheets_list) {
-    var check = SH_check_availability(name, all_sheets_list, 'Некоторые проверки не будут выполнены');
-    if (check) {
+    if (ARR_search_in_list(all_sheets_list, name, 'bool')) {
         const sheet = SpreadsheetApp.getActive().getSheetByName(name);
         const range = sheet.getRange(1, 1, sheet.getMaxRows(), sheet.getMaxColumns())
         range.breakApart();
         return range.getValues();
+    }
+    else {
+        return null;
     }
 }
 function SH_set_values(data, sheet) {
@@ -31,18 +35,10 @@ function SH_set_values(data, sheet) {
 function SH_get_all_sheets_list() {
     var   list   = [];
     const sheets = SpreadsheetApp.getActiveSpreadsheet().getSheets();
-    Logger.log(sheets);
     for (var i=0; i < sheets.length; i+=1) {
         list.push(sheets[i].getName());
     }
     return list;
-}
-function SH_check_availability(name, all_sheets_list, err_title) {
-    var check = ARR_search_in_list(all_sheets_list, name, 'bool');
-    if (!check) {
-        UI_show_msg(err_title, 'Отсутствует лист:\n' + name);
-    }
-    return check
 }
 
 function SH_fit_size(sheet, new_size) {

@@ -17,4 +17,7 @@ function MM_sheet_text_formatting() {
     if (data.col_reqs) {
         SH_text_formatting(data);
     }
+    else {
+        UI_show_msg('Невозможно выполнить форматирование ячеек', 'Отсутствует лист:\n' + Greq_sheets().col_reqs);
+    }
 }
