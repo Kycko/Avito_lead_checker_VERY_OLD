@@ -7,6 +7,22 @@ function Gcolors() {
     G.brd_grey = '#cccccc'; // brd = cell borders
     return G;
 }
+function Gno_sheet_msgs() {
+    var G = {};
+    G.launch_all = {
+        title  : 'Невозможно выполнить некоторые проверки',
+        sheets : ['col_reqs', 'autocorr']
+    }
+    G.check_column_names = {
+        title  : 'Невозможно проверить названия столбцов',
+        sheets : ['col_reqs', 'autocorr']
+    }
+    G.sheet_text_formatting = {
+        title  : 'Невозможно выполнить форматирование ячеек',
+        sheets : ['col_reqs']
+    }
+    return G;
+}
 function Greq_sheets() {
     var G = {};
     G.col_reqs = '[script] столбцы';

@@ -75,12 +75,12 @@ function SH_text_formatting(data) {
     SH_set_req_wrapping(data);
     SH_set_req_column_width(data);
 }
-function SH_set_range_formatting(range, txt_color=Gcolors().black, txt_font='Calibri', txt_size=11, wrap=false, Valign='middle', Halign='left', clear_notes=true, borders='default') {
+function SH_set_range_formatting(range, txt_color=Gcolors().black, txt_font='Calibri', txt_size=11, wrap=SpreadsheetApp.WrapStrategy.CLIP, Valign='middle', Halign='left', clear_notes=true, borders='default') {
     range
         .setFontColor(txt_color)
         .setFontFamily(txt_font)
         .setFontSize(txt_size)
-        .setWrap(wrap)
+        .setWrapStrategy(wrap)
         .setVerticalAlignment(Valign)
         .setHorizontalAlignment(Halign);
     if (clear_notes) {range.clearNote();}

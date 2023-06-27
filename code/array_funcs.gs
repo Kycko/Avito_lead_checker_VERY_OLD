@@ -88,12 +88,8 @@ function ARR_search_title(data, name, type='index') {
 function ARR_search_in_list(list, txt, type='index') {
     for (var i=0; i < list.length; i+=1) {
         if (list[i].toLowerCase() === txt.toLowerCase()) {
-            if (type === 'index') {
-                return i;
-            }
-            else {
-                return true;
-            }
+            if (type === 'index') {return i}
+            else                  {return true}
         }
     }
 }
