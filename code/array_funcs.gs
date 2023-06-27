@@ -80,12 +80,8 @@ function ARR_last_item(array, type) {
 function ARR_search_title(data, name, type='index') {
     for (var i=0; i < data[0].length; i+=1) {
         if (data[0][i].toLowerCase() === name.toLowerCase()) {
-            if (type === 'index') {
-                return i;
-            }
-            else {
-                return true;
-            }
+            if (type === 'index') {return i}
+            else {return true}
         }
     }
 }

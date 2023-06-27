@@ -96,7 +96,7 @@ function SH_set_req_wrapping(data, columns='all') {
             if (data.col_reqs[i][4] == 'да') {
                 var index = ARR_search_title(data.cur, data.col_reqs[i][0]);
                 if (index != null) {
-                    data.cur_sheet.getRange(2, index+1, data.length-1)
+                    data.cur_sheet.getRange(2, index+1, data.cur.length-1)
                         .setWrap(true);
                 }
             }

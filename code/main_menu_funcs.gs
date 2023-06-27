@@ -9,7 +9,7 @@ function MM_launch_all() {
 }
 function MM_check_column_names() {
     var data = SH_get_all_sheets_data();
-    if (data.col_reqs && data.autocorr) {data = ARR_check_column_names(data);}
+    if (data.col_reqs && data.autocorr) {data = ARR_check_column_names(data)}
     else {
         UI_show_msg('Невозможно проверить названия столбцов',
                     'Отсутствуе(ю)т лист(ы):\n' +
