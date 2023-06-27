@@ -42,6 +42,11 @@ function ARR_find_empty_RC(data, ignore_title) {
     }
     return final;
 }
+function ARR_check_column_names(data) {
+    for (var i=0; i < data.cur[0].length; i+=1) {
+
+    }
+}
 
 // type = 'rows' or 'columns'
 function ARR_rm_RC_list(data, rm_list, type) {
@@ -92,4 +97,15 @@ function ARR_search_in_list(list, txt, type='index') {
             else                  {return true}
         }
     }
+}
+function ARR_rotate(old) {
+    var rotated = [];
+    for (var i=0; i < old[0].length; i+=1) {rotated.push([])}
+
+    for (var r=0; r < old.length; r+=1) {
+        for (var c=0; c < old[r].length; c+=1) {
+            rotated[c].push(old[r][c]);
+        }
+    }
+    return rotated;
 }

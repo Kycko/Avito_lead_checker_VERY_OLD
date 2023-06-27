@@ -3,7 +3,7 @@ function MM_launch_all() {
     CRS('launch_all', data);
     data.cur = ARR_rm_empty_RC(data.cur, true); // RC = rows & columns; ARR = array
     SH_set_values(data.cur, data.cur_sheet);
-    if (CRS('sheet_text_formatting', data, show_msg=false)) {SH_text_formatting(data)}
+    if (CRS('sheet_text_formatting', data, show_msg=false)) {SH_text_formatting(data, true)}
 }
 function MM_check_column_names() {
     var data = SH_get_all_sheets_data();

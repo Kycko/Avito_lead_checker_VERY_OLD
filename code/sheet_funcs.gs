@@ -7,16 +7,21 @@ function SH_get_all_sheets_data() {
     data.cur       = SH_get_values(data.cur_sheet.getName(), all_sheets_list);
 
     for (var key in GRS) {
-        data[key] = SH_get_values(GRS[String(key)], all_sheets_list);
+        // all the data from '[script]' sheets will be ROTATED!
+        data[key] = SH_get_values(GRS[String(key)], all_sheets_list, true);
     }
     return data;
 }
-function SH_get_values(name, all_sheets_list) {
+
+// rotate = the first column will be the first row and vice versa
+function SH_get_values(name, all_sheets_list, rotate=false) {
     if (ARR_search_in_list(all_sheets_list, name, 'bool')) {
         const sheet = SpreadsheetApp.getActive().getSheetByName(name);
         const range = sheet.getRange(1, 1, sheet.getMaxRows(), sheet.getMaxColumns())
         range.breakApart();
-        return range.getValues();
+        var   data  = range.getValues();
+        if (rotate) {data = ARR_rotate(data)}
+        return data;
     }
     else {
         return null;
@@ -65,11 +70,11 @@ function SH_fit_size(sheet, new_size) {
         sheet.deleteColumns(new_size.columns+1, -num);
     }
 }
-function SH_text_formatting(data) {
+function SH_text_formatting(data, reset_title=false) {
     var cur_range = data.cur_sheet.getRange(1, 1, data.cur.length, data.cur[0].length);
     SH_set_range_formatting(cur_range);
     SpreadsheetApp.flush();
-    data.cur_sheet.getRange(2, 1, data.cur.length-1, data.cur[0].length)
+    data.cur_sheet.getRange(2-Number(reset_title), 1, data.cur.length-1, data.cur[0].length)
         .setBackground(null);   // don't change the title backgrounds, they show errors
     data.cur_sheet.autoResizeColumns(1, data.cur[0].length);
     SH_set_req_wrapping(data);
@@ -83,7 +88,7 @@ function SH_set_range_formatting(range, txt_color=Gcolors().black, txt_font='Cal
         .setWrapStrategy(wrap)
         .setVerticalAlignment(Valign)
         .setHorizontalAlignment(Halign);
-    if (clear_notes) {range.clearNote();}
+    if (clear_notes) {range.clearNote()}
     if (borders === 'default') {
         range.setBorder(true, true, true, true, true, true, Gcolors().brd_grey, null);
     }
@@ -92,9 +97,9 @@ function SH_set_range_formatting(range, txt_color=Gcolors().black, txt_font='Cal
 // req – only change the columns listed in Greq_sheets().columns
 function SH_set_req_wrapping(data, columns='all') {
     if (columns === 'all') {
-        for (var i=0; i < data.col_reqs.length; i+=1) {
-            if (data.col_reqs[i][4] == 'да') {
-                var index = ARR_search_title(data.cur, data.col_reqs[i][0]);
+        for (var i=0; i < data.col_reqs[4].length; i+=1) {
+            if (data.col_reqs[4][i] == 'да') {
+                var index = ARR_search_title(data.cur, data.col_reqs[0][i]);
                 if (index != null) {
                     data.cur_sheet.getRange(2, index+1, data.cur.length-1)
                         .setWrap(true);
@@ -105,13 +110,13 @@ function SH_set_req_wrapping(data, columns='all') {
 }
 function SH_set_req_column_width(data, columns='all') {
     if (columns === 'all') {
-        for (var i=0; i < data.col_reqs.length; i+=1) {
-            if (typeof Number(data.col_reqs[i][3]) == 'number') {
-                var index = ARR_search_title(data.cur, data.col_reqs[i][0]);
+        for (var i=0; i < data.col_reqs[3].length; i+=1) {
+            if (typeof Number(data.col_reqs[3][i]) == 'number') {
+                var index = ARR_search_title(data.cur, data.col_reqs[0][i]);
                 if (index != null) {
                     const cur_width = data.cur_sheet.getColumnWidth(index+1);
-                    if (cur_width > data.col_reqs[i][3]) {
-                        data.cur_sheet.setColumnWidth(index+1, data.col_reqs[i][3]);
+                    if (cur_width > data.col_reqs[3][i]) {
+                        data.cur_sheet.setColumnWidth(index+1, data.col_reqs[3][i]);
                     }
                 }
             }
