@@ -96,11 +96,15 @@ function SH_set_range_formatting(range, txt_color=Gcolors().black, txt_font='Cal
 function SH_hl_bad_titles(data) {
     const GC   = Gcolors();
     var colors = [[]];
+    var unused_titles = data.col_reqs[0];   // this is to highlight repeating titles
 
     for (var i=0; i < data.cur[0].length; i+=1) {
-        const check = ARR_search_in_list(data.col_reqs[0], data.cur[0][i], 'bool');
-        if (check) {colors[0].push(GC.hl_green)}
-        else       {colors[0].push(GC.hl_red)}
+        const index = ARR_search_in_list(unused_titles, data.cur[0][i]);
+        if (index >= 0) {
+            colors[0].push(GC.hl_green);
+            unused_titles.splice(index, 1);
+        }
+        else {colors[0].push(GC.hl_red)}
     }
 
     data.cur_sheet.getRange(1, 1, 1, data.cur[0].length)

@@ -45,8 +45,10 @@ function ARR_find_empty_RC(data, ignore_title) {
 function ARR_check_column_names(data) {
     data = ARR_check_loaded_columns(data);
     data = ARR_add_mandatory_columns(data);
+    ARR_check_double_titles(data.cur[0]);
     return data;
 }
+
 function ARR_check_loaded_columns(data) {
     const ui = SpreadsheetApp.getUi();
     for (var i=0; i < data.cur[0].length; i+=1) {
@@ -90,6 +92,14 @@ function ARR_add_mandatory_columns(data) {
 
     data.cur = ARR_rotate(new_data);
     return data;
+}
+function ARR_check_double_titles(titles) {
+    const doubles = ARR_check_doubles_in_list(titles);
+    if (doubles.length) {
+        var txt = '';
+        for (var i=0; i < doubles.length; i+=1) {txt += '\n• '+doubles[i]}
+        UI_show_msg('В таблице есть столбцы с одинаковыми названиями', txt);
+    }
 }
 
 // type = 'rows' or 'columns'
@@ -149,6 +159,15 @@ function ARR_search_in_list(list, txt, type='index') {
             else                  {return true}
         }
     }
+}
+function ARR_check_doubles_in_list(list) {
+    var doubles = [];
+    for (var i=0; i < list.length; i+=1) {
+        if (i != ARR_search_in_list(list, list[i])) {
+            if (!ARR_search_in_list(doubles, list[i], 'bool')) {doubles.push(list[i])}
+        }
+    }
+    return doubles;
 }
 function ARR_rotate(old) {
     var rotated = [];
