@@ -43,6 +43,11 @@ function ARR_find_empty_RC(data, ignore_title) {
     return final;
 }
 function ARR_check_column_names(data) {
+    data = ARR_check_loaded_columns(data);
+    data = ARR_add_mandatory_columns(data);
+    return data;
+}
+function ARR_check_loaded_columns(data) {
     const ui = SpreadsheetApp.getUi();
     for (var i=0; i < data.cur[0].length; i+=1) {
         var index = ARR_search_in_list(data.autocorr[1], data.cur[0][i]);
@@ -59,6 +64,31 @@ function ARR_check_column_names(data) {
             if (resp.getSelectedButton() == ui.Button.OK) {data.cur[0][i] = resp.getResponseText()}
         }
     }
+    return data;
+}
+function ARR_add_mandatory_columns(data) {
+    var old_data  = ARR_rotate(data.cur);
+    const old_len = old_data[0].length;
+    var new_data  = [];
+
+    for (var i=1; i < data.col_reqs[0].length; i+=1) {
+        const index = ARR_search_first_column(old_data, data.col_reqs[0][i]);
+        if (index >= 0) {
+            new_data.push(old_data[index]);
+            old_data.splice(index, 1);
+        }
+        else if (data.col_reqs[1][i] === 'да') {
+            new_data.push([data.col_reqs[0][i]]);
+            for (var count=1; count < old_len; count+=1) {
+                new_data[ARR_last_index(new_data)].push('');
+            }
+        }
+    }
+    if (old_data !== []) {
+        for (var i=0; i < old_data.length; i+=1) {new_data.push(old_data[i])}
+    }
+
+    data.cur = ARR_rotate(new_data);
     return data;
 }
 
@@ -104,6 +134,14 @@ function ARR_search_title(data, name, type='index') {
         }
     }
 }
+function ARR_search_first_column(data, name, type='index') {
+    for (var i=0; i < data.length; i+=1) {
+        if (data[i][0].toLowerCase() === name.toLowerCase()) {
+            if (type === 'index') {return i}
+            else {return true}
+        }
+    }
+}
 function ARR_search_in_list(list, txt, type='index') {
     for (var i=0; i < list.length; i+=1) {
         if (list[i].toLowerCase() === txt.toLowerCase()) {
@@ -122,4 +160,12 @@ function ARR_rotate(old) {
         }
     }
     return rotated;
+}
+function ARR_last_index(array) {
+    if (array) {
+        return array.length-1;
+    }
+    else {
+        return null;
+    }
 }
