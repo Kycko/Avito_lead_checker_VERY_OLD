@@ -43,10 +43,20 @@ function ARR_find_empty_RC(data, ignore_title) {
     return final;
 }
 function ARR_check_column_names(data) {
+    const ui = SpreadsheetApp.getUi();
     for (var i=0; i < data.cur[0].length; i+=1) {
-        const index = ARR_search_in_list(data.autocorr[1], data.cur[0][i]);
+        var index = ARR_search_in_list(data.autocorr[1], data.cur[0][i]);
         if (index >= 0 && data.autocorr[0][index] === 'Название столбца') {
             data.cur[0][i] = data.autocorr[2][index];
+        }
+
+        index = ARR_search_in_list(data.col_reqs[0], data.cur[0][i]);
+        if (index == null) {
+            const resp = ui.prompt('Неправильное название в столбце ' + get_col_letter_from_num(i+1),
+                                   'Введите правильное название или нажмите "Отмена", чтобы исправить его потом:\n\n' +
+                                   data.cur[0][i] + '\n\n',
+                                   ui.ButtonSet.OK_CANCEL);
+            if (resp.getSelectedButton() == ui.Button.OK) {data.cur[0][i] = resp.getResponseText()}
         }
     }
     return data;

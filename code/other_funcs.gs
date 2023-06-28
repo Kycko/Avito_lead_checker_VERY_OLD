@@ -17,3 +17,12 @@ function CRS(type, data, show_msg=true) {
     }
     return !NA_sheets.length;  // true if all is OK
 }
+function get_col_letter_from_num(column) {
+    var temp, letter = '';
+    while (column > 0) {
+        temp = (column - 1) % 26;
+        letter = String.fromCharCode(temp + 65) + letter;
+        column = (column - temp - 1) / 26;
+    }
+    return letter;
+}
