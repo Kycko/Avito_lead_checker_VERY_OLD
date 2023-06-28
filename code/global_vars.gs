@@ -17,6 +17,10 @@ function Gno_sheet_msgs() {
         title  : 'Невозможно проверить названия столбцов',
         sheets : ['col_reqs', 'autocorr']
     }
+    G.hl_bad_titles = {
+        title  : 'Невозможно подсветить неправильные названия столбцов',
+        sheets : ['col_reqs']
+    }
     G.sheet_text_formatting = {
         title  : 'Невозможно выполнить форматирование ячеек',
         sheets : ['col_reqs']
