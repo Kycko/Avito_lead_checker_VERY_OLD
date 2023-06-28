@@ -110,16 +110,16 @@ function SH_set_req_wrapping(data, columns='all') {
 }
 function SH_set_req_column_width(data, columns='all') {
     if (columns === 'all') {
-        for (var i=0; i < data.col_reqs[3].length; i+=1) {
-            if (typeof Number(data.col_reqs[3][i]) == 'number') {
-                var index = ARR_search_title(data.cur, data.col_reqs[0][i]);
-                if (index != null) {
-                    const cur_width = data.cur_sheet.getColumnWidth(index+1);
-                    if (cur_width > data.col_reqs[3][i]) {
-                        data.cur_sheet.setColumnWidth(index+1, data.col_reqs[3][i]);
-                    }
+        for (var i=0; i < data.cur[0].length; i+=1) {
+            const cur_width = data.cur_sheet.getColumnWidth(i+1);
+            var index = ARR_search_title(data.col_reqs, data.cur[0][i]);
+            var num   = Number(data.col_reqs[3][index]);
+            if (index != null && num) {
+                if (cur_width > data.col_reqs[3][index]) {
+                    data.cur_sheet.setColumnWidth(i+1, data.col_reqs[3][index]);
                 }
             }
+            else if (cur_width > 200) {data.cur_sheet.setColumnWidth(i+1, 200)}
         }
     }
 }
