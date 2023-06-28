@@ -44,8 +44,10 @@ function ARR_find_empty_RC(data, ignore_title) {
 }
 function ARR_check_column_names(data) {
     for (var i=0; i < data.cur[0].length; i+=1) {
-        const index = ARR_search_in_list(data.autocorr[0], data.cur[0][i]);
-        if (index >= 0) {data.cur[0][i] = data.autocorr[1][index]}
+        const index = ARR_search_in_list(data.autocorr[1], data.cur[0][i]);
+        if (index >= 0 && data.autocorr[0][index] === 'Название столбца') {
+            data.cur[0][i] = data.autocorr[2][index];
+        }
     }
     return data;
 }
