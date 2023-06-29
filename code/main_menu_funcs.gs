@@ -7,8 +7,12 @@ function MM_launch_all() {
     data.cur = ARR_rm_empty_RC(data.cur, true); // RC = rows & columns; ARR = array
     if (CRS('check_column_names', data, show_msg=false)) {data = ARR_check_column_names(data)}
 
-    // write all the changed data in the sheets + set formatting
+    // write all the changed data in the sheets
     SH_set_values(data.cur, data.cur_sheet);
+
+    // sheet formatting
+    SH_pin_first_row();
+    SH_add_main_filter(data.cur_sheet);
     if (CRS('sheet_text_formatting', data, show_msg=false)) {SH_text_formatting(data, true)}
     if (CRS('hl_bad_titles', data, show_msg=false)) {SH_hl_bad_titles(data)}
 }

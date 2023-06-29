@@ -1,3 +1,4 @@
+// get & set the sheets data
 function SH_get_all_sheets_data() {
     var   data = {};
     const GRS  = Greq_sheets();
@@ -46,6 +47,7 @@ function SH_get_all_sheets_list() {
     return list;
 }
 
+// sheets formatting
 function SH_fit_size(sheet, new_size) {
     var old_size = {
         rows    : sheet.getMaxRows(),
@@ -109,6 +111,14 @@ function SH_hl_bad_titles(data) {
 
     data.cur_sheet.getRange(1, 1, 1, data.cur[0].length)
         .setBackgrounds(colors);
+}
+function SH_pin_first_row() {
+    SpreadsheetApp.getActiveSheet().setFrozenRows(1);
+}
+function SH_add_main_filter(sheet) {
+    var cur_filter = sheet.getFilter();
+    if (cur_filter) {cur_filter.remove()}
+    sheet.getDataRange().createFilter();
 }
 
 // req – only change the columns listed in Greq_sheets().columns
