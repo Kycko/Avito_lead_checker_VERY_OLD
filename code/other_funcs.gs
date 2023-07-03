@@ -26,3 +26,10 @@ function get_col_letter_from_num(column) {
     }
     return letter;
 }
+function find_substring(string, sub, type='index') {
+    const index = string.toLowerCase().indexOf(sub.toLowerCase());
+    if (index >= 0) {
+        if (type === 'index') {return index}
+        else                  {return true}
+    }
+}

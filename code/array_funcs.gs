@@ -58,10 +58,9 @@ function ARR_check_loaded_columns(data) {
         }
 
         index = ARR_search_in_list(data.col_reqs[0], data.cur[0][i]);
-        if (index == null) {
+        if (data.cur[0][i] && index == null) {
             const resp = ui.prompt('Неправильное название в столбце ' + get_col_letter_from_num(i+1),
-                                   'Введите правильное название или нажмите "Отмена", чтобы исправить его потом:\n\n' +
-                                   data.cur[0][i] + '\n\n',
+                                   ARR_recommend_column_names(data.col_vars, data.cur[0][i]),
                                    ui.ButtonSet.OK_CANCEL);
             if (resp.getSelectedButton() == ui.Button.OK) {data.cur[0][i] = resp.getResponseText()}
         }
@@ -100,6 +99,17 @@ function ARR_check_double_titles(titles) {
         for (var i=0; i < doubles.length; i+=1) {txt += '\n• '+doubles[i]}
         UI_show_msg('В таблице есть столбцы с одинаковыми названиями', txt);
     }
+}
+function ARR_recommend_column_names(col_vars, cur_title) {
+    var final_msg = 'Введите правильное название или нажмите "Отмена", чтобы исправить его потом.\n\nТекущее название:\n• ' +
+                    cur_title + '\n\n';
+
+    var vars = '';
+    for (var i=0; i < col_vars[0].length; i+=1) {
+        if (find_substring(cur_title, col_vars[0][i], 'bool')) {vars += '• ' + col_vars[1][i] + '\n'}
+    }
+    if (vars) {final_msg += 'Возможные варианты:\n' + vars + '\n'}
+    return final_msg;
 }
 
 // type = 'rows' or 'columns'

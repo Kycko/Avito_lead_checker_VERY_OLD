@@ -30,6 +30,7 @@ function Gno_sheet_msgs() {
 function Greq_sheets() {
     var G = {};
     G.col_reqs = '[script] столбцы';
+    G.col_vars = '[script] варианты столбцов';
     G.autocorr = '[script] автоисправления';
     return G;
 }
