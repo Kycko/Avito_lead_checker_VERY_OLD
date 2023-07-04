@@ -33,3 +33,6 @@ function find_substring(string, sub, type='index') {
         else                  {return true}
     }
 }
+function check_email(string) {
+    return string;
+}

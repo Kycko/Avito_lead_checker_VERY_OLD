@@ -6,6 +6,7 @@ function MM_launch_all() {
     // change the data (only in memory, not in the sheets)
     data.cur = ARR_rm_empty_RC(data.cur, true); // RC = rows & columns; ARR = array
     if (CRS('check_column_names', data, show_msg=false)) {data = ARR_check_column_names(data)}
+    data.cur = ARR_check_user_data(data);
 
     // write all the changed data in the sheets
     SH_set_values(data.cur, data.cur_sheet);
@@ -23,6 +24,12 @@ function MM_check_column_names() {
         SH_set_values(data.cur, data.cur_sheet);
         SH_hl_bad_titles(data);
     }
+}
+function MM_check_emails() {
+    var data  = SH_get_all_sheets_data();
+    var range = data.cur_sheet.getActiveRange();
+    data.cur  = ARR_check_emails(data.cur, range.getRow()-1, range.getColumn()-1, range.getHeight(), range.getWidth());
+    SH_set_values(data.cur, data.cur_sheet);
 }
 function MM_rm_empty_RC() {
     var data = SH_get_all_sheets_data();

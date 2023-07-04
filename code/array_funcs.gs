@@ -48,6 +48,26 @@ function ARR_check_column_names(data) {
     ARR_check_double_titles(data.cur[0]);
     return data;
 }
+function ARR_check_user_data(data) {
+    data.cur = ARR_rotate(data.cur);
+    for (var i=0; i < data.cur.length; i+=1) {
+        var check = ARR_search_in_list(['Рабочий e-mail', 'Частный e-mail'], data.cur[i][0], 'bool');
+        if (check) {
+            data.cur = ARR_check_emails(data.cur, i, 1, 1, data.cur[i].length-1);
+        }
+    }
+    return ARR_rotate(data.cur);
+}
+
+// FC = first cell, must be array indexes (not sheet indexes)
+function ARR_check_emails(data, FC_row, FC_col, rows_count, cols_count) {
+    for (r=FC_row; r < FC_row+rows_count; r+=1) {
+        for (c=FC_col; c < FC_col+cols_count; c+=1) {
+            data[r][c] = check_email(data[r][c]);
+        }
+    }
+    return data;
+}
 
 function ARR_check_loaded_columns(data) {
     const ui = SpreadsheetApp.getUi();
