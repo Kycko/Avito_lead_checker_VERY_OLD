@@ -1,6 +1,6 @@
 // if ignore_title, it'll remove the column even if it has some data in the first title cell
 function ARR_rm_empty_RC(data, ignore_title=false) {
-    var rm_lists = ARR_find_empty_RC(data, ignore_title);
+    var rm_lists = ARR_find_empty_RC(data.cur, ignore_title);
     data = ARR_rm_RC_list(data, rm_lists.rows, 'rows');
     data = ARR_rm_RC_list(data, rm_lists.columns, 'columns');
     return data;
@@ -49,14 +49,19 @@ function ARR_check_column_names(data) {
     return data;
 }
 function ARR_check_user_data(data) {
-    data.cur = ARR_rotate(data.cur);
+    data.cur       = ARR_rotate(data.cur);
+    data.bg_colors = ARR_rotate(data.bg_colors);
+
     for (var i=0; i < data.cur.length; i+=1) {
         var check = ARR_search_in_list(['Рабочий e-mail', 'Частный e-mail'], data.cur[i][0], 'bool');
         if (check) {
             data = ARR_check_emails(data, i, 1, 1, data.cur[i].length-1);
         }
     }
-    return ARR_rotate(data.cur);
+
+    data.cur       = ARR_rotate(data.cur);
+    data.bg_colors = ARR_rotate(data.bg_colors);
+    return data;
 }
 
 // FC = first cell, must be array indexes (not sheet indexes)
@@ -88,9 +93,10 @@ function ARR_check_loaded_columns(data) {
     return data;
 }
 function ARR_add_mandatory_columns(data) {
-    var old_data  = ARR_rotate(data.cur);
-    const old_len = old_data[0].length;
-    var new_data  = [];
+    var old_data   = ARR_rotate(data.cur);
+    data.bg_colors = ARR_rotate(data.bg_colors);
+    const old_len  = old_data[0].length;
+    var new_data   = [];
 
     for (var i=1; i < data.col_reqs[0].length; i+=1) {
         const index = ARR_search_first_column(old_data, data.col_reqs[0][i]);
@@ -100,8 +106,10 @@ function ARR_add_mandatory_columns(data) {
         }
         else if (data.col_reqs[1][i] === 'да') {
             new_data.push([data.col_reqs[0][i]]);
+            data.bg_colors.push([null]);
             for (var count=1; count < old_len; count+=1) {
                 new_data[ARR_last_index(new_data)].push('');
+                data.bg_colors[ARR_last_index(data.bg_colors)].push(null);
             }
         }
     }
@@ -110,6 +118,7 @@ function ARR_add_mandatory_columns(data) {
     }
 
     data.cur = ARR_rotate(new_data);
+    data.bg_colors = ARR_rotate(data.bg_colors);
     return data;
 }
 function ARR_check_double_titles(titles) {
@@ -137,13 +146,15 @@ function ARR_rm_RC_list(data, rm_list, type) {
     if (rm_list) {
         if (type == 'rows') {
             for (var i = rm_list.length-1; i >= 0; i-=1) {
-                data.splice(rm_list[i], 1);
+                data.cur.splice(rm_list[i], 1);
+                data.bg_colors.splice(rm_list[i], 1);
             }
         }
         else if (type == 'columns') {
-            for (var row=0; row < data.length; row+=1) {
+            for (var row=0; row < data.cur.length; row+=1) {
                 for (var i = rm_list.length-1; i >= 0; i-=1) {
-                    data[row].splice(rm_list[i], 1);
+                    data.cur[row].splice(rm_list[i], 1);
+                    data.bg_colors[row].splice(rm_list[i], 1);
                 }
             }
         }

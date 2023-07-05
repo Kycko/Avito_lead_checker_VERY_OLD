@@ -50,7 +50,7 @@ function check_email_in_cell(data, r, c) {
                                'Введите правильное значение, оставьте поле пустым для удаления или нажмите "Отмена", чтобы исправить его потом.\n\nТекущее значение:\n• ' + data.cur[r][c] +'\n\n',
                                ui.ButtonSet.OK_CANCEL);
         if (resp.getSelectedButton() == ui.Button.OK) {data.cur[r][c] = resp.getResponseText()}
-        else                                          {data.mark_red.push([r, c])}
+        else                                          {data.bg_colors[r][c] = Gcolors().hl_red}
     }
     return data;
 }

@@ -1,11 +1,20 @@
 // get & set the sheets data
 function SH_get_all_sheets_data() {
-    var   data = {mark_red : []};
+    var   data = {};
     const GRS  = Greq_sheets();
     all_sheets_list = SH_get_all_sheets_list()
 
     data.cur_sheet = SpreadsheetApp.getActiveSheet();
     data.cur       = SH_get_values(data.cur_sheet.getName(), all_sheets_list);
+
+    // bg_colors for bad cells highlighting
+    data.bg_colors = [];
+    for (var r=0; r < data.cur.length; r+=1) {
+        data.bg_colors.push([]);
+        for (var c=0; c < data.cur[r].length; c+=1) {
+            data.bg_colors[r].push(null);
+        }
+    }
 
     for (var key in GRS) {
         // all the data from '[script]' sheets will be ROTATED!
@@ -96,21 +105,22 @@ function SH_set_range_formatting(range, txt_color=Gcolors().black, txt_font='Cal
     }
 }
 function SH_hl_bad_titles(data) {
-    const GC   = Gcolors();
-    var colors = [[]];
+    const GC = Gcolors();
     var unused_titles = data.col_reqs[0];   // this is to highlight repeating titles
 
     for (var i=0; i < data.cur[0].length; i+=1) {
         const index = ARR_search_in_list(unused_titles, data.cur[0][i]);
         if (index >= 0) {
-            colors[0].push(GC.hl_green);
+            data.bg_colors[0][i] = GC.hl_green;
             unused_titles.splice(index, 1);
         }
-        else {colors[0].push(GC.hl_red)}
+        else {data.bg_colors[0][i] = GC.hl_red}
     }
-
-    data.cur_sheet.getRange(1, 1, 1, data.cur[0].length)
-        .setBackgrounds(colors);
+    return data;
+}
+function SH_hl_cells(data) {
+    data.cur_sheet.getRange(1, 1, data.cur.length, data.cur[0].length)
+        .setBackgrounds(data.bg_colors);
 }
 function SH_pin_first_row() {
     SpreadsheetApp.getActiveSheet().setFrozenRows(1);
