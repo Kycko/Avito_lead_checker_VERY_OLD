@@ -53,7 +53,7 @@ function ARR_check_user_data(data) {
     for (var i=0; i < data.cur.length; i+=1) {
         var check = ARR_search_in_list(['Рабочий e-mail', 'Частный e-mail'], data.cur[i][0], 'bool');
         if (check) {
-            data.cur = ARR_check_emails(data.cur, i, 1, 1, data.cur[i].length-1);
+            data = ARR_check_emails(data, i, 1, 1, data.cur[i].length-1);
         }
     }
     return ARR_rotate(data.cur);
@@ -63,7 +63,7 @@ function ARR_check_user_data(data) {
 function ARR_check_emails(data, FC_row, FC_col, rows_count, cols_count) {
     for (r=FC_row; r < FC_row+rows_count; r+=1) {
         for (c=FC_col; c < FC_col+cols_count; c+=1) {
-            data[r][c] = check_email(data[r][c]);
+            data = check_email_in_cell(data, r, c);
         }
     }
     return data;

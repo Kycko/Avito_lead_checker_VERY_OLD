@@ -28,7 +28,7 @@ function MM_check_column_names() {
 function MM_check_emails() {
     var data  = SH_get_all_sheets_data();
     var range = data.cur_sheet.getActiveRange();
-    data.cur  = ARR_check_emails(data.cur, range.getRow()-1, range.getColumn()-1, range.getHeight(), range.getWidth());
+    data  = ARR_check_emails(data, range.getRow()-1, range.getColumn()-1, range.getHeight(), range.getWidth());
     SH_set_values(data.cur, data.cur_sheet);
 }
 function MM_rm_empty_RC() {

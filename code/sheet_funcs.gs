@@ -1,6 +1,6 @@
 // get & set the sheets data
 function SH_get_all_sheets_data() {
-    var   data = {};
+    var   data = {mark_red : []};
     const GRS  = Greq_sheets();
     all_sheets_list = SH_get_all_sheets_list()
 
