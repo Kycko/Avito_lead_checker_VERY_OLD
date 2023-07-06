@@ -53,9 +53,11 @@ function ARR_check_user_data(data) {
     data.bg_colors = ARR_rotate(data.bg_colors);
 
     for (var i=0; i < data.cur.length; i+=1) {
-        var check = ARR_search_in_list(['Рабочий e-mail', 'Частный e-mail'], data.cur[i][0], 'bool');
-        if (check) {
+        if (ARR_search_in_list(['Рабочий e-mail', 'Частный e-mail'], data.cur[i][0], 'bool')) {
             data = ARR_check_emails(data, i, 1, 1, data.cur[i].length-1);
+        }
+        else if (data.cur[i][0] == 'Регион и город') {
+            data = ARR_check_cities(data, i, 1, 1, data.cur[i].length-1);
         }
     }
 
@@ -69,6 +71,23 @@ function ARR_check_emails(data, FC_row, FC_col, rows_count, cols_count) {
     for (r=FC_row; r < FC_row+rows_count; r+=1) {
         for (c=FC_col; c < FC_col+cols_count; c+=1) {
             data = check_email_in_cell(data, r, c);
+        }
+    }
+    return data;
+}
+function ARR_check_cities(data, FC_row, FC_col, rows_count, cols_count) {
+    const ui   = SpreadsheetApp.getUi();
+    const Gred = Gcolors().hl_red;
+    for (r=FC_row; r < FC_row+rows_count; r+=1) {
+        for (c=FC_col; c < FC_col+cols_count; c+=1) {
+            data.bg_colors[r][c] = null;
+            if (!ARR_search_in_list(data.cities[0], data.cur[r][c], 'bool')) {
+                const resp = ui.prompt('Неправильный регион/город',
+                                       ARR_recommend_correction(data.sugg, data.cur[r][c], 'регион/город'),
+                                       ui.ButtonSet.OK_CANCEL);
+                if (resp.getSelectedButton() == ui.Button.OK) {data.cur[r][c] = resp.getResponseText()}
+                else                                          {data.bg_colors[r][c] = Gred}
+            }
         }
     }
     return data;

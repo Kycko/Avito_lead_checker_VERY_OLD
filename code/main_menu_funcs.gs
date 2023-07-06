@@ -27,10 +27,17 @@ function MM_check_column_names() {
         SH_hl_cells(data);
     }
 }
+function MM_check_cities() {
+    var data  = SH_get_all_sheets_data();
+    var range = data.cur_sheet.getActiveRange();
+    data = ARR_check_cities(data, range.getRow()-1, range.getColumn()-1, range.getHeight(), range.getWidth());
+    SH_set_range_values(data.cur, range);
+    SH_hl_cells(data);
+}
 function MM_check_emails() {
     var data  = SH_get_all_sheets_data();
     var range = data.cur_sheet.getActiveRange();
-    data  = ARR_check_emails(data, range.getRow()-1, range.getColumn()-1, range.getHeight(), range.getWidth());
+    data = ARR_check_emails(data, range.getRow()-1, range.getColumn()-1, range.getHeight(), range.getWidth());
     SH_set_range_values(data.cur, range);
     SH_hl_cells(data);
 }
