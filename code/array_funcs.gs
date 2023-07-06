@@ -93,32 +93,38 @@ function ARR_check_loaded_columns(data) {
     return data;
 }
 function ARR_add_mandatory_columns(data) {
-    var old_data   = ARR_rotate(data.cur);
-    data.bg_colors = ARR_rotate(data.bg_colors);
-    const old_len  = old_data[0].length;
-    var new_data   = [];
+    var old_data      = ARR_rotate(data.cur);
+    var old_bg_colors = ARR_rotate(data.bg_colors);
+    const old_len     = old_data[0].length;
+    var new_data      = [];
+    var new_bg_colors = [];
 
     for (var i=1; i < data.col_reqs[0].length; i+=1) {
         const index = ARR_search_first_column(old_data, data.col_reqs[0][i]);
         if (index >= 0) {
             new_data.push(old_data[index]);
+            new_bg_colors.push(old_bg_colors[index]);
             old_data.splice(index, 1);
+            old_bg_colors.splice(index, 1);
         }
         else if (data.col_reqs[1][i] === 'да') {
             new_data.push([data.col_reqs[0][i]]);
-            data.bg_colors.push([null]);
+            new_bg_colors.push([null]);
             for (var count=1; count < old_len; count+=1) {
                 new_data[ARR_last_index(new_data)].push('');
-                data.bg_colors[ARR_last_index(data.bg_colors)].push(null);
+                new_bg_colors[ARR_last_index(new_bg_colors)].push(null);
             }
         }
     }
     if (old_data !== []) {
-        for (var i=0; i < old_data.length; i+=1) {new_data.push(old_data[i])}
+        for (var i=0; i < old_data.length; i+=1) {
+            new_data.push(old_data[i]);
+            new_bg_colors.push(old_bg_colors[i]);
+        }
     }
 
     data.cur = ARR_rotate(new_data);
-    data.bg_colors = ARR_rotate(data.bg_colors);
+    data.bg_colors = ARR_rotate(new_bg_colors);
     return data;
 }
 function ARR_check_double_titles(titles) {

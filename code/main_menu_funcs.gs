@@ -14,7 +14,7 @@ function MM_launch_all() {
     // sheet formatting
     SH_pin_first_row();
     SH_add_main_filter(data.cur_sheet);
-    if (CRS('sheet_text_formatting', data, show_msg=false)) {SH_text_formatting(data, true)}
+    if (CRS('sheet_text_formatting', data, show_msg=false)) {SH_text_formatting(data)}
     if (CRS('hl_bad_titles', data, show_msg=false)) {data = SH_hl_bad_titles(data)}
     SH_hl_cells(data);
 }
@@ -38,6 +38,7 @@ function MM_rm_empty_RC() {
     var data = SH_get_all_sheets_data();
     data = ARR_rm_empty_RC(data, true);     // RC = rows & columns; ARR = array
     SH_set_values(data.cur, data.cur_sheet);
+    SH_hl_cells(data);
 }
 function MM_sheet_text_formatting() {
     var data = SH_get_all_sheets_data();

@@ -6,15 +6,8 @@ function SH_get_all_sheets_data() {
 
     data.cur_sheet = SpreadsheetApp.getActiveSheet();
     data.cur       = SH_get_values(data.cur_sheet.getName(), all_sheets_list);
-
-    // bg_colors for bad cells highlighting
-    data.bg_colors = [];
-    for (var r=0; r < data.cur.length; r+=1) {
-        data.bg_colors.push([]);
-        for (var c=0; c < data.cur[r].length; c+=1) {
-            data.bg_colors[r].push(null);
-        }
-    }
+    data.bg_colors = data.cur_sheet.getRange(1, 1, data.cur_sheet.getMaxRows(), data.cur_sheet.getMaxColumns())
+                        .getBackgrounds();
 
     for (var key in GRS) {
         // all the data from '[script]' sheets will be ROTATED!
@@ -27,7 +20,7 @@ function SH_get_all_sheets_data() {
 function SH_get_values(name, all_sheets_list, rotate=false) {
     if (ARR_search_in_list(all_sheets_list, name, 'bool')) {
         const sheet = SpreadsheetApp.getActive().getSheetByName(name);
-        const range = sheet.getRange(1, 1, sheet.getMaxRows(), sheet.getMaxColumns())
+        const range = sheet.getRange(1, 1, sheet.getMaxRows(), sheet.getMaxColumns());
         range.breakApart();
         var   data  = range.getValues();
         if (rotate) {data = ARR_rotate(data)}
@@ -91,12 +84,10 @@ function SH_fit_size(sheet, new_size) {
         sheet.deleteColumns(new_size.columns+1, -num);
     }
 }
-function SH_text_formatting(data, reset_title=false) {
+function SH_text_formatting(data) {
     var cur_range = data.cur_sheet.getRange(1, 1, data.cur.length, data.cur[0].length);
     SH_set_range_formatting(cur_range);
     SpreadsheetApp.flush();
-    data.cur_sheet.getRange(2-Number(reset_title), 1, data.cur.length-1, data.cur[0].length)
-        .setBackground(null);   // don't change the title backgrounds, they show errors
     data.cur_sheet.autoResizeColumns(1, data.cur[0].length);
     SH_set_req_wrapping(data);
     SH_set_req_column_width(data);

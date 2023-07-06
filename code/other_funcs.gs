@@ -36,6 +36,7 @@ function find_substring(string, sub, type='index') {
 
 // r = row, c = column
 function check_email_in_cell(data, r, c) {
+    data.bg_colors[r][c] = null;
     var list  = data.cur[r][c].split(',');
     var valid = true;
     for (i=0; i < list.length; i+=1) {
