@@ -26,13 +26,6 @@ function get_col_letter_from_num(column) {
     }
     return letter;
 }
-function find_substring(string, sub, type='index') {
-    const index = string.toLowerCase().indexOf(sub.toLowerCase());
-    if (index >= 0) {
-        if (type === 'index') {return index}
-        else                  {return true}
-    }
-}
 
 // r = row, c = column
 function check_email_in_cell(data, r, c) {
@@ -40,21 +33,16 @@ function check_email_in_cell(data, r, c) {
     var list  = data.cur[r][c].split(',');
     var valid = true;
     for (i=0; i < list.length; i+=1) {
-        if (!check_email(list[i])) {valid = false}
+        if (!STR_check_email(list[i])) {valid = false}
     }
 
     if (!valid) {
-        const R    = r+1; // R = row in sheets notation
-        const cell = get_col_letter_from_num(c+1) + R;
         const ui   = SpreadsheetApp.getUi();
-        const resp = ui.prompt('Неправильный e-mail в ячейке ' + cell,
+        const resp = ui.prompt('Неправильный e-mail',
                                'Введите правильное значение, оставьте поле пустым для удаления или нажмите "Отмена", чтобы исправить его потом.\n\nТекущее значение:\n• ' + data.cur[r][c] +'\n\n',
                                ui.ButtonSet.OK_CANCEL);
         if (resp.getSelectedButton() == ui.Button.OK) {data.cur[r][c] = resp.getResponseText()}
         else                                          {data.bg_colors[r][c] = Gcolors().hl_red}
     }
     return data;
-}
-function check_email(string) {
-    return false;
 }

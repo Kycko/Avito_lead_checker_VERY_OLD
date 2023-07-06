@@ -141,7 +141,7 @@ function ARR_recommend_column_names(col_vars, cur_title) {
 
     var vars = '';
     for (var i=0; i < col_vars[0].length; i+=1) {
-        if (find_substring(cur_title, col_vars[0][i], 'bool')) {vars += '• ' + col_vars[1][i] + '\n'}
+        if (STR_find_sub(cur_title, col_vars[0][i], 'bool')) {vars += '• ' + col_vars[1][i] + '\n'}
     }
     if (vars) {final_msg += 'Возможные варианты:\n' + vars + '\n'}
     return final_msg;
@@ -168,18 +168,11 @@ function ARR_rm_RC_list(data, rm_list, type) {
     return data;
 }
 
-// type = return 'index' or 'item'
-function ARR_last_item(array, type) {
-    if (array) {
-        var index = array.length-1;
-
-        if (type === 'index') {
-            return index;
-        }
-        else {
-            return array[index];
-        }
-    }
+function ARR_last_item(array) {
+    if (array) {return array[array.length-1]}
+}
+function ARR_last_index(array) {
+    if (array) {return array.length-1}
 }
 
 // type = return 'index' or 'bool' (just to know if the name is in the array)
@@ -226,14 +219,6 @@ function ARR_rotate(old) {
         }
     }
     return rotated;
-}
-function ARR_last_index(array) {
-    if (array) {
-        return array.length-1;
-    }
-    else {
-        return null;
-    }
 }
 
 // FC = first cell, must be array indexes (not sheet indexes)
