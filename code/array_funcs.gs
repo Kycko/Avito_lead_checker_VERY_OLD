@@ -81,6 +81,12 @@ function ARR_check_cities(data, FC_row, FC_col, rows_count, cols_count) {
     for (r=FC_row; r < FC_row+rows_count; r+=1) {
         for (c=FC_col; c < FC_col+cols_count; c+=1) {
             data.bg_colors[r][c] = null;
+
+            var index = ARR_search_in_list(data.autocorr[1], data.cur[r][c]);
+            if (index >= 0 && data.autocorr[0][index] === 'регион/город') {
+                data.cur[r][c] = data.autocorr[2][index];
+            }
+
             if (!ARR_search_in_list(data.cities[0], data.cur[r][c], 'bool')) {
                 const resp = ui.prompt('Неправильный регион/город',
                                        ARR_recommend_correction(data.sugg, data.cur[r][c], 'регион/город'),
@@ -97,7 +103,7 @@ function ARR_check_loaded_columns(data) {
     const ui = SpreadsheetApp.getUi();
     for (var i=0; i < data.cur[0].length; i+=1) {
         var index = ARR_search_in_list(data.autocorr[1], data.cur[0][i]);
-        if (index >= 0 && data.autocorr[0][index] === 'Название столбца') {
+        if (index >= 0 && data.autocorr[0][index] === 'название столбца') {
             data.cur[0][i] = data.autocorr[2][index];
         }
 
