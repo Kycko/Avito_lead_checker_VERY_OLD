@@ -6,7 +6,8 @@ function STR_find_sub(string, sub, type='index') {
     }
 }
 function STR_check_email(string) {
-    if ((string.match(/@/g)||[]).length != 1) {return false}
+    if      (string == '')                         {return true}
+    else if ((string.match(/@/g)||[]).length != 1) {return false}
     else {
         const domain = ARR_last_item(string.split('@'));
         if      (!STR_find_sub(domain, '.', 'bool')) {return false}

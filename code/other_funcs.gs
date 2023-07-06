@@ -53,5 +53,6 @@ function check_email_in_cell(data, r, c) {
             }
         }
     }
+    data.cur[r][c] = data.cur[r][c].toString().toLowerCase();
     return data;
 }
