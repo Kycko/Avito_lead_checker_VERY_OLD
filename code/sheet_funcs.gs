@@ -43,8 +43,18 @@ function SH_set_values(data, sheet) {
         columns : data[0].length
     }
     SH_fit_size(sheet, size);
-    sheet.getRange(1, 1, size.rows, size.columns)
-        .setValues(data);
+    SH_set_range_values(data, sheet.getRange(1, 1, size.rows, size.columns));
+}
+function SH_set_range_values(data, range) {
+    const row = range.getRow()-1;
+    const col = range.getColumn()-1;
+    const height = range.getHeight();
+    const width = range.getWidth();
+
+    if (data.length != height || data[0].length != width) {
+        data = ARR_crop(data, row, col, height, width);
+    }
+    range.setValues(data);
 }
 
 function SH_get_all_sheets_list() {

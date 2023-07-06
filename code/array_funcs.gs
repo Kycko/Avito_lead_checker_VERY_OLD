@@ -229,3 +229,15 @@ function ARR_last_index(array) {
         return null;
     }
 }
+
+// FC = first cell, must be array indexes (not sheet indexes)
+function ARR_crop(old_data, FC_row, FC_col, rows_count, cols_count) {
+    var new_data = [];
+    for (r=FC_row; r < FC_row+rows_count; r+=1) {
+        new_data.push([]);
+        for (c=FC_col; c < FC_col+cols_count; c+=1) {
+            new_data[ARR_last_index(new_data)].push(old_data[r][c]);
+        }
+    }
+    return new_data;
+}
