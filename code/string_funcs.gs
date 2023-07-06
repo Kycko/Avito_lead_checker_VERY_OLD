@@ -10,7 +10,8 @@ function STR_check_email(string) {
     else {
         const domain = ARR_last_item(string.split('@'));
         if      (!STR_find_sub(domain, '.', 'bool')) {return false}
-        else if ( STR_find_sub(domain, '|', 'bool')) {return false}
+        else if ( STR_find_sub(string, '|', 'bool')) {return false}
+        else if ( STR_find_sub(string, ' ', 'bool')) {return false}
     }
     return true;
 }
