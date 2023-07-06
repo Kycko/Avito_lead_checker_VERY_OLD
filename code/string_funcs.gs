@@ -1,5 +1,5 @@
 function STR_find_sub(string, sub, type='index') {
-    const index = string.toLowerCase().indexOf(sub.toLowerCase());
+    const index = string.toString().toLowerCase().indexOf(sub.toString().toLowerCase());
     if (index >= 0) {
         if (type === 'index') {return index}
         else                  {return true}

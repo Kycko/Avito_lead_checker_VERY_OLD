@@ -80,6 +80,7 @@ function ARR_check_cities(data, FC_row, FC_col, rows_count, cols_count) {
     const Gred = Gcolors().hl_red;
     for (r=FC_row; r < FC_row+rows_count; r+=1) {
         for (c=FC_col; c < FC_col+cols_count; c+=1) {
+            const init_value = data.cur[r][c];
             data.bg_colors[r][c] = null;
 
             var index = ARR_search_in_list(data.autocorr[1], data.cur[r][c]);
@@ -87,12 +88,20 @@ function ARR_check_cities(data, FC_row, FC_col, rows_count, cols_count) {
                 data.cur[r][c] = data.autocorr[2][index];
             }
 
-            if (!ARR_search_in_list(data.cities[0], data.cur[r][c], 'bool')) {
-                const resp = ui.prompt('Неправильный регион/город',
-                                       ARR_recommend_correction(data.sugg, data.cur[r][c], 'регион/город'),
-                                       ui.ButtonSet.OK_CANCEL);
-                if (resp.getSelectedButton() == ui.Button.OK) {data.cur[r][c] = resp.getResponseText()}
-                else                                          {data.bg_colors[r][c] = Gred}
+            var valid = false;
+            while (!valid) {
+                valid = ARR_search_in_list(data.cities[0], data.cur[r][c], 'bool');
+                if (!valid) {
+                    const resp = ui.prompt('Неправильный регион/город',
+                    ARR_recommend_correction(data.sugg, data.cur[r][c], 'регион/город'),
+                    ui.ButtonSet.OK_CANCEL);
+                    if (resp.getSelectedButton() == ui.Button.OK) {data.cur[r][c] = resp.getResponseText()}
+                    else {
+                        data.cur[r][c] = init_value;
+                        data.bg_colors[r][c] = Gred;
+                        valid = true;
+                    }
+                }
             }
         }
     }
@@ -221,7 +230,7 @@ function ARR_search_first_column(data, name, type='index') {
 }
 function ARR_search_in_list(list, txt, type='index') {
     for (var i=0; i < list.length; i+=1) {
-        if (list[i].toLowerCase() === txt.toLowerCase()) {
+        if (list[i].toLowerCase() === txt.toString().toLowerCase()) {
             if (type === 'index') {return i}
             else                  {return true}
         }

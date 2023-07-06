@@ -30,19 +30,28 @@ function get_col_letter_from_num(column) {
 // r = row, c = column
 function check_email_in_cell(data, r, c) {
     data.bg_colors[r][c] = null;
+    const init_value = data.cur[r][c];
     var list  = data.cur[r][c].split(',');
-    var valid = true;
-    for (i=0; i < list.length; i+=1) {
-        if (!STR_check_email(list[i])) {valid = false}
-    }
+    var valid = false;
 
-    if (!valid) {
-        const ui   = SpreadsheetApp.getUi();
-        const resp = ui.prompt('Неправильный e-mail',
-                               'Введите правильное значение, оставьте поле пустым для удаления или нажмите "Отмена", чтобы исправить его потом.\n\nТекущее значение:\n• ' + data.cur[r][c] +'\n\n',
-                               ui.ButtonSet.OK_CANCEL);
-        if (resp.getSelectedButton() == ui.Button.OK) {data.cur[r][c] = resp.getResponseText()}
-        else                                          {data.bg_colors[r][c] = Gcolors().hl_red}
+    while (!valid) {
+        valid = true;
+        for (i=0; i < list.length; i+=1) {
+            if (!STR_check_email(list[i])) {valid = false}
+        }
+
+        if (!valid) {
+            const ui   = SpreadsheetApp.getUi();
+            const resp = ui.prompt('Неправильный e-mail',
+            'Введите правильное значение, оставьте поле пустым для удаления или нажмите "Отмена", чтобы исправить его потом.\n\nТекущее значение:\n• ' + data.cur[r][c] +'\n\n',
+            ui.ButtonSet.OK_CANCEL);
+            if (resp.getSelectedButton() == ui.Button.OK) {data.cur[r][c] = resp.getResponseText()}
+            else {
+                data.cur[r][c] = init_value;
+                data.bg_colors[r][c] = Gcolors().hl_red;
+                valid = true;
+            }
+        }
     }
     return data;
 }
