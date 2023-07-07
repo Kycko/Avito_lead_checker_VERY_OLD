@@ -31,11 +31,11 @@ function get_col_letter_from_num(column) {
 function check_email_in_cell(data, r, c) {
     data.bg_colors[r][c] = null;
     const init_value = data.cur[r][c];
-    var list  = data.cur[r][c].split(',');
     var valid = false;
 
     while (!valid) {
         valid = true;
+        var list = data.cur[r][c].toString().split(',');
         for (i=0; i < list.length; i+=1) {
             if (!STR_check_email(list[i])) {valid = false}
         }
