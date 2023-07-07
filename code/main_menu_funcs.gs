@@ -27,20 +27,6 @@ function MM_check_column_names() {
         SH_hl_cells(data);
     }
 }
-function MM_check_cities() {
-    var data  = SH_get_all_sheets_data();
-    var range = data.cur_sheet.getActiveRange();
-    data = ARR_check_cities(data, range.getRow()-1, range.getColumn()-1, range.getHeight(), range.getWidth());
-    SH_set_range_values(data.cur, range);
-    SH_hl_cells(data);
-}
-function MM_check_emails() {
-    var data  = SH_get_all_sheets_data();
-    var range = data.cur_sheet.getActiveRange();
-    data = ARR_check_emails(data, range.getRow()-1, range.getColumn()-1, range.getHeight(), range.getWidth());
-    SH_set_range_values(data.cur, range);
-    SH_hl_cells(data);
-}
 function MM_rm_empty_RC() {
     var data = SH_get_all_sheets_data();
     data = ARR_rm_empty_RC(data, true);     // RC = rows & columns; ARR = array
@@ -50,4 +36,22 @@ function MM_rm_empty_RC() {
 function MM_sheet_text_formatting() {
     var data = SH_get_all_sheets_data();
     if (CRS('sheet_text_formatting', data)) {SH_text_formatting(data)}
+}
+
+function MM_check_cities() {MM_check_UD('регион/город')}
+function MM_check_emails() {MM_check_UD('e-mail')}
+
+// secondary function just to keep the code simple
+// UD = user data
+function MM_check_UD(type) {
+    var data    = SH_get_all_sheets_data();
+    var SHrange = data.cur_sheet.getActiveRange();
+    var ARrange = {r : SHrange.getRow()-1,
+                   c : SHrange.getColumn()-1,
+                   h : SHrange.getHeight(),
+                   w : SHrange.getWidth()}
+
+    data = ARR_check_UD_range(data, ARrange, type);
+    SH_set_range_values(data.cur, SHrange);
+    SH_hl_cells(data);
 }
