@@ -173,13 +173,18 @@ function ARR_recommend_correction(sugg, cur, type) {
     var final_msg = 'Введите правильный вариант или нажмите "Отмена", чтобы исправить позже.\n\nТекущее значение в ячейке:\n• ' +
                     cur + '\n\n';
 
-    var vars = '';
+    var vars = [];
     for (var i=0; i < sugg[0].length; i+=1) {
         if (sugg[0][i] === type && STR_find_sub(cur, sugg[1][i], 'bool')) {
-            vars += '• ' + sugg[2][i] + '\n';
+            vars.push(sugg[2][i]);
         }
     }
-    if (vars) {final_msg += 'Возможные варианты:\n' + vars + '\n'}
+    if (vars.length) {
+        final_msg += 'Возможные варианты:\n';
+        vars = ARR_rm_doubles_in_list(vars);
+        for (i=0; i < vars.length; i+=1) {final_msg += '• ' + vars[i] + '\n'}
+        final_msg += '\n';
+    }
     return final_msg;
 }
 
@@ -267,4 +272,11 @@ function ARR_crop(old_data, FC_row, FC_col, rows_count, cols_count) {
         }
     }
     return new_data;
+}
+function ARR_rm_doubles_in_list(old_list) {
+    var new_list = [];
+    for (i=0; i < old_list.length; i+=1) {
+        if (!ARR_search_in_list(new_list, old_list[i], 'bool')) {new_list.push(old_list[i])}
+    }
+    return new_list;
 }
