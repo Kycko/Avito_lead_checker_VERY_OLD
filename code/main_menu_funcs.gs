@@ -38,20 +38,23 @@ function MM_sheet_text_formatting() {
     if (CRS('sheet_text_formatting', data)) {SH_text_formatting(data)}
 }
 
-function MM_check_cities() {MM_check_UD('регион/город')}
-function MM_check_emails() {MM_check_UD('e-mail')}
+function MM_check_cities()     {MM_check_UD('регион/город', 'check_cities')}
+function MM_check_emails()     {MM_check_UD('e-mail', 'check_email')}
+function MM_check_categories() {MM_check_UD('категория', 'check_categories')}
 
 // secondary function just to keep the code simple
 // UD = user data
-function MM_check_UD(type) {
+function MM_check_UD(type, CRS_type) {
     var data    = SH_get_all_sheets_data();
-    var SHrange = data.cur_sheet.getActiveRange();
-    var ARrange = {r : SHrange.getRow()-1,
-                   c : SHrange.getColumn()-1,
-                   h : SHrange.getHeight(),
-                   w : SHrange.getWidth()}
+    if (CRS(CRS_type, data)) {
+        var SHrange = data.cur_sheet.getActiveRange();
+        var ARrange = {r : SHrange.getRow()-1,
+            c : SHrange.getColumn()-1,
+            h : SHrange.getHeight(),
+            w : SHrange.getWidth()}
 
-    data = ARR_check_UD_range(data, ARrange, type);
-    SH_set_range_values(data.cur, SHrange);
-    SH_hl_cells(data);
+            data = ARR_check_UD_range(data, ARrange, type);
+            SH_set_range_values(data.cur, SHrange);
+            SH_hl_cells(data);
+    }
 }

@@ -54,8 +54,15 @@ function ARR_check_user_data(data) {
 
     for (var i=0; i < data.cur.length; i+=1) {
         var range = {r:i, c:1, h:1, w:data.cur[i].length-1};
-        if (STR_find_sub(data.cur[i][0], 'e-mail', 'bool')) {data = ARR_check_UD_range(data, range, 'e-mail')}
-        else if (data.cur[i][0] == 'Регион и город')        {data = ARR_check_UD_range(data, range, 'регион/город')}
+        if (STR_find_sub(data.cur[i][0], 'e-mail', 'bool') && CRS('check_email', data)) {
+            data = ARR_check_UD_range(data, range, 'e-mail');
+        }
+        else if (data.cur[i][0] == 'Регион и город' && CRS('check_cities', data)) {
+            data = ARR_check_UD_range(data, range, 'регион/город');
+        }
+        else if (data.cur[i][0] == 'Категория' && CRS('check_categories', data)) {
+            data = ARR_check_UD_range(data, range, 'категория');
+        }
     }
 
     data.cur       = ARR_rotate(data.cur);
@@ -65,10 +72,11 @@ function ARR_check_user_data(data) {
 
 // range = {r, c, h, w} (first row, first col, height, width)
 function ARR_check_UD_range(data, range, type) {
+    var USI          = {from : [], to : []};        // USI = user input, just to autocorrect doubled strings
     for (r=range.r; r < range.r+range.h; r+=1) {
         for (c=range.c; c < range.c+range.w; c+=1) {
-            const init_value     = data.cur[r][c];
-            const GC             = Gcolors();
+            const init_value = data.cur[r][c];
+            const GC         = Gcolors();
             data = autocorr_UD(data, r, c, type);
 
             var valid = false;
@@ -76,13 +84,33 @@ function ARR_check_UD_range(data, range, type) {
                 valid = validate_UD(data, r, c, type);
                 if (valid) {data.bg_colors[r][c] = GC.hl_light_green}
                 else {
-                    const ui   = SpreadsheetApp.getUi();
-                    const resp = UI_show_UD_error(data, type, ui);
-                    if (resp.getSelectedButton() == ui.Button.OK) {data.cur[r][c] = resp.getResponseText()}
+                    const index = ARR_search_in_list(USI.from, data.cur[r][c]);
+                    if (index >= 0) {
+                        if (USI.to[index]) {data.cur[r][c] = USI.to[index]}
+                        else {
+                            data.cur[r][c] = init_value;
+                            data.bg_colors[r][c] = GC.hl_red;
+                            valid = true;
+                        }
+                    }
                     else {
-                        data.cur[r][c] = init_value;
-                        data.bg_colors[r][c] = GC.hl_red;
-                        valid = true;
+                        const ui   = SpreadsheetApp.getUi();
+                        const resp = UI_show_UD_error(data, type, ui);
+                        if (resp.getSelectedButton() == ui.Button.OK) {
+                            data.cur[r][c] = resp.getResponseText();
+                            if (validate_UD(data, r, c, type)) {
+                                USI.from.push(init_value);
+                                USI.to.push(data.cur[r][c]);
+                            }
+                        }
+                        else {
+                            data.cur[r][c] = init_value;
+                            data.bg_colors[r][c] = GC.hl_red;
+                            valid = true;
+
+                            USI.from.push(init_value);
+                            USI.to.push('');
+                        }
                     }
                 }
             }

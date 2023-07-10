@@ -29,8 +29,9 @@ function get_col_letter_from_num(column) {
 
 // UD = user data
 function autocorr_UD(data, r, c, type) {
+    const autocorr_list = ['регион/город', 'категория'];
     if      (type === 'e-mail')       {data.cur[r][c] = data.cur[r][c].toString().toLowerCase()}
-    else if (type === 'регион/город') {
+    else if (ARR_search_in_list(autocorr_list, type, 'bool')) {
         var index = ARR_search_in_list(data.autocorr[1], data.cur[r][c]);
         if (index >= 0 && data.autocorr[0][index] === type) {
             data.cur[r][c] = data.autocorr[2][index];
@@ -48,6 +49,9 @@ function validate_UD(data, r, c, type) {
     }
     else if (type === 'регион/город') {
         var valid = ARR_search_in_list(data.cities[0], data.cur[r][c], 'bool');
+    }
+    else if (type === 'категория') {
+        var valid = ARR_search_in_list(data.cat[0], data.cur[r][c], 'bool');
     }
     return valid;
 }

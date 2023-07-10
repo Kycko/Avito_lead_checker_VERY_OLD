@@ -24,5 +24,9 @@ function UI_show_UD_error(data, type, ui) {
         var title = 'Неправильный регион/город';
         var msg   = ARR_recommend_correction(data.sugg, data.cur[r][c], type);
     }
+    else if (type === 'категория') {
+        var title = 'Неправильная категория';
+        var msg   = ARR_recommend_correction(data.sugg, data.cur[r][c], type);
+    }
     return ui.prompt(title, msg, ui.ButtonSet.OK_CANCEL);
 }
