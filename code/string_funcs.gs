@@ -12,7 +12,15 @@ function STR_check_email(string) {
         const domain = ARR_last_item(string.split('@'));
         if      (!STR_find_sub(domain, '.', 'bool')) {return false}
         else if ( STR_find_sub(string, '|', 'bool')) {return false}
+        else if ( STR_find_sub(string, '’', 'bool')) {return false}
         else if ( STR_find_sub(string, ' ', 'bool')) {return false}
     }
     return true;
+}
+function STR_trim_city(city) {
+    const search = ['г. ', 'г ', 'г.'];
+    for (i=0; i < search.length; i+=1) {
+        if (STR_find_sub(city, search[i]) === 0) {return city.replace(search[i], '')}
+    }
+    return city;
 }

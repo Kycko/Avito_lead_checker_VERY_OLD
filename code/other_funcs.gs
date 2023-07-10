@@ -32,6 +32,7 @@ function autocorr_UD(data, r, c, type) {
     const autocorr_list = ['регион/город', 'категория'];
     if      (type === 'e-mail')       {data.cur[r][c] = data.cur[r][c].toString().toLowerCase()}
     else if (ARR_search_in_list(autocorr_list, type, 'bool')) {
+        if (type === 'регион/город') {data.cur[r][c] = STR_trim_city(data.cur[r][c])}
         var index = ARR_search_in_list(data.autocorr[1], data.cur[r][c]);
         if (index >= 0 && data.autocorr[0][index] === type) {
             data.cur[r][c] = data.autocorr[2][index];
