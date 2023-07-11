@@ -57,3 +57,25 @@ function validate_UD(data, r, c, type) {
     }
     return valid;
 }
+
+// cat_row = category row
+function verify_vertical(data, r, c, cat_row) {
+    const index = ARR_search_in_list(data.cat[0], data.cur[cat_row][c]);
+    if (index >= 0) {
+        data.cur[r][c] = data.cat[2][index];
+        data.bg_colors[r][c] = Gcolors().hl_light_green;
+    }
+    else {
+        data.cur[r][c] = '';
+        data.bg_colors[r][c] = Gcolors().hl_red;
+    }
+    return data;
+}
+
+function rotate_my_range(old_range) {
+    const new_range = {r : old_range.c,
+                       c : old_range.r,
+                       h : old_range.w,
+                       w : old_range.h}
+    return new_range;
+}

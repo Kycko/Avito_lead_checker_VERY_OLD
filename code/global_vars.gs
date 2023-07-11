@@ -27,7 +27,7 @@ function Gno_sheet_msgs() {
         sheets : ['cities']
     }
     G.check_categories = {
-        title  : 'Невозможно проверить категории/менеджеров',
+        title  : 'Невозможно проверить категории, вертикали и менеджеров',
         sheets : ['cat']
     }
     G.hl_bad_titles = {
@@ -61,6 +61,7 @@ function Gtext() {
                        ['separator'],   // разделительная линия
                        ['🏠 Проверить города в выделенном диапазоне',      'MM_check_cities'],
                        ['🛠 Проверить категории в выделенном диапазоне',   'MM_check_categories'],
+                       ['💢 Проверить вертикали в выделенном диапазоне',   'MM_check_verticals'],
                        ['@ Проверить e-mail в выделенном диапазоне',       'MM_check_emails']];
 
     return G;

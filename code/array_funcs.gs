@@ -54,14 +54,17 @@ function ARR_check_user_data(data) {
 
     for (var i=0; i < data.cur.length; i+=1) {
         var range = {r:i, c:1, h:1, w:data.cur[i].length-1};
-        if (STR_find_sub(data.cur[i][0], 'e-mail', 'bool') && CRS('check_email', data)) {
+        if (STR_find_sub(data.cur[i][0], 'e-mail', 'bool') && CRS('check_email', data, show_msg=false)) {
             data = ARR_check_UD_range(data, range, 'e-mail');
         }
-        else if (data.cur[i][0] == 'Регион и город' && CRS('check_cities', data)) {
+        else if (data.cur[i][0] == 'Регион и город' && CRS('check_cities', data, show_msg=false)) {
             data = ARR_check_UD_range(data, range, 'регион/город');
         }
-        else if (data.cur[i][0] == 'Категория' && CRS('check_categories', data)) {
+        else if (data.cur[i][0] == 'Категория' && CRS('check_categories', data, show_msg=false)) {
             data = ARR_check_UD_range(data, range, 'категория');
+        }
+        else if (data.cur[i][0] == 'Вертикаль' && CRS('check_categories', data, show_msg=false)) {
+            data = ARR_fix_vert_and_man(data, range, 'вертикаль');
         }
     }
 
@@ -73,8 +76,8 @@ function ARR_check_user_data(data) {
 // range = {r, c, h, w} (first row, first col, height, width)
 function ARR_check_UD_range(data, range, type) {
     var USI          = {from : [], to : []};        // USI = user input, just to autocorrect doubled strings
-    for (r=range.r; r < range.r+range.h; r+=1) {
-        for (c=range.c; c < range.c+range.w; c+=1) {
+    for (var r=range.r; r < range.r+range.h; r+=1) {
+        for (var c=range.c; c < range.c+range.w; c+=1) {
             const init_value = data.cur[r][c];
             const GC         = Gcolors();
             data = autocorr_UD(data, r, c, type);
@@ -95,7 +98,7 @@ function ARR_check_UD_range(data, range, type) {
                     }
                     else {
                         const ui   = SpreadsheetApp.getUi();
-                        const resp = UI_show_UD_error(data, type, ui);
+                        const resp = UI_show_UD_error(data, data.cur[r][c], type, ui);
                         if (resp.getSelectedButton() == ui.Button.OK) {
                             data.cur[r][c] = resp.getResponseText();
                             if (validate_UD(data, r, c, type)) {
@@ -116,6 +119,42 @@ function ARR_check_UD_range(data, range, type) {
             }
         }
     }
+    return data;
+}
+function ARR_check_req_cols(data, req_cols, type) {
+    var txt     = '';
+    var indexes = [];
+    for (var i=0; i < req_cols.length; i+=1) {
+        const ind = ARR_search_first_column(data.cur, req_cols[i]);
+        if (ind >= 0) {
+            indexes.push(ind);
+        }
+        else {txt += '• ' + req_cols[i] + '\n'}
+    }
+    if (txt) {
+        if                   (type === 'вертикаль') {var title = 'Невозможно проверить вертикали'}
+        else if               (type === 'менеджер') {var title = 'Невозможно проверить менеджеров'}
+        if (req_cols.length - indexes.length === 1) {var msg   = 'В таблице отсутствует нужный столбец:\n' + txt}
+        else                                        {var msg   = 'В таблице отсутствуют нужные столбцы:\n' + txt}
+        UI_show_msg(title, msg);
+    }
+    return indexes;
+}
+
+// vert and man = verticals and managers
+function ARR_fix_vert_and_man(data, range, type) {
+    if (range.h === 1) {
+        if     (type === 'вертикаль') {var req_cols = ['Категория']}
+        else if (type === 'менеджер') {var req_cols = ['Категория', 'Регион и город']}
+        const col_indexes = ARR_check_req_cols(data, req_cols, type);
+
+        if (col_indexes.length === req_cols.length) {
+            for (var c=range.c; c < range.c+range.w; c+=1) {
+                data = verify_vertical(data, range.r, c, col_indexes[0]);
+            }
+        }
+    }
+    else {UI_show_msg('Невозможно проверить', 'Выделите только один столбец.')}
     return data;
 }
 
@@ -230,7 +269,7 @@ function ARR_last_index(array) {
 // type = return 'index' or 'bool' (just to know if the name is in the array)
 function ARR_search_title(data, name, type='index') {
     for (var i=0; i < data[0].length; i+=1) {
-        if (data[0][i].toLowerCase() === name.toLowerCase()) {
+        if (data[0][i].toString().toLowerCase() === name.toString().toLowerCase()) {
             if (type === 'index') {return i}
             else {return true}
         }
@@ -238,7 +277,7 @@ function ARR_search_title(data, name, type='index') {
 }
 function ARR_search_first_column(data, name, type='index') {
     for (var i=0; i < data.length; i+=1) {
-        if (data[i][0].toLowerCase() === name.toLowerCase()) {
+        if (data[i][0].toString().toLowerCase() === name.toString().toLowerCase()) {
             if (type === 'index') {return i}
             else {return true}
         }

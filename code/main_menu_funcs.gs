@@ -41,6 +41,7 @@ function MM_sheet_text_formatting() {
 function MM_check_cities()     {MM_check_UD('регион/город', 'check_cities')}
 function MM_check_emails()     {MM_check_UD('e-mail', 'check_email')}
 function MM_check_categories() {MM_check_UD('категория', 'check_categories')}
+function MM_check_verticals()  {MM_check_UD('вертикаль', 'check_categories')}
 
 // secondary function just to keep the code simple
 // UD = user data
@@ -49,12 +50,20 @@ function MM_check_UD(type, CRS_type) {
     if (CRS(CRS_type, data)) {
         var SHrange = data.cur_sheet.getActiveRange();
         var ARrange = {r : SHrange.getRow()-1,
-            c : SHrange.getColumn()-1,
-            h : SHrange.getHeight(),
-            w : SHrange.getWidth()}
+                       c : SHrange.getColumn()-1,
+                       h : SHrange.getHeight(),
+                       w : SHrange.getWidth()}
 
-            data = ARR_check_UD_range(data, ARrange, type);
-            SH_set_range_values(data.cur, SHrange);
-            SH_hl_cells(data);
+        if (type === 'вертикаль') {
+            data.cur       = ARR_rotate(data.cur);
+            data.bg_colors = ARR_rotate(data.bg_colors);
+            ARrange        = rotate_my_range(ARrange);
+            data           = ARR_fix_vert_and_man(data, ARrange, type);
+            data.cur       = ARR_rotate(data.cur);
+            data.bg_colors = ARR_rotate(data.bg_colors);
+        }
+        else {data = ARR_check_UD_range(data, ARrange, type)}
+        SH_set_range_values(data.cur, SHrange);
+        SH_hl_cells(data);
     }
 }
