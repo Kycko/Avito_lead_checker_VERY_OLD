@@ -29,6 +29,7 @@ function get_col_letter_from_num(column) {
 
 // UD = user data
 function autocorr_UD(data, r, c, type) {
+    data.cur[r][c] = data.cur[r][c].toString().trim();
     const autocorr_list = ['регион/город', 'категория'];
     if      (type === 'e-mail')       {data.cur[r][c] = data.cur[r][c].toString().toLowerCase()}
     else if (ARR_search_in_list(autocorr_list, type, 'bool')) {
