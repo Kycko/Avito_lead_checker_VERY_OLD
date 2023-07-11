@@ -6,7 +6,8 @@ function onOpen() {
     menu.addItem(GT.MM_launch_all[0], GT.MM_launch_all[1]);
     menu.addSeparator();
     for (var i=0; i < GT.MM_items.length; i+=1) {
-        menu.addItem(GT.MM_items[i][0], GT.MM_items[i][1]);
+        if (GT.MM_items[i][0] === 'separator') {menu.addSeparator()}
+        else                                   {menu.addItem(GT.MM_items[i][0], GT.MM_items[i][1])}
     }
     menu.addToUi();
 }
