@@ -38,15 +38,17 @@ function MM_sheet_text_formatting() {
     if (CRS('sheet_text_formatting', data)) {SH_text_formatting(data)}
 }
 
-function MM_check_cities()     {MM_check_UD('регион/город', 'check_cities')}
-function MM_check_emails()     {MM_check_UD('e-mail', 'check_email')}
-function MM_check_categories() {MM_check_UD('категория', 'check_categories')}
-function MM_check_verticals()  {MM_check_UD('вертикаль', 'check_categories')}
-function MM_check_managers()   {MM_check_UD('менеджер', 'check_managers')}
+function MM_check_cities()          {MM_check_UD('регион/город', 'check_cities')}
+function MM_check_emails()          {MM_check_UD('e-mail', 'check_email')}
+function MM_check_categories()      {MM_check_UD('категория', 'check_categories')}
+function MM_check_verticals()       {MM_check_UD('вертикаль', 'check_categories')}
+function MM_check_verticals_blank() {MM_check_UD('вертикаль', 'check_categories', true)}
+function MM_check_managers()        {MM_check_UD('менеджер', 'check_managers')}
+function MM_check_managers_blank()  {MM_check_UD('менеджер', 'check_managers', true)}
 
 // secondary function just to keep the code simple
 // UD = user data
-function MM_check_UD(type, CRS_type) {
+function MM_check_UD(type, CRS_type, only_blank=false) {
     var data    = SH_get_all_sheets_data();
     if (CRS(CRS_type, data)) {
         var SHrange = data.cur_sheet.getActiveRange();
@@ -59,7 +61,7 @@ function MM_check_UD(type, CRS_type) {
             data.cur       = ARR_rotate(data.cur);
             data.bg_colors = ARR_rotate(data.bg_colors);
             ARrange        = rotate_my_range(ARrange);
-            data           = ARR_fix_vert_and_man(data, ARrange, type);
+            data           = ARR_fix_vert_and_man(data, ARrange, type, only_blank);
             data.cur       = ARR_rotate(data.cur);
             data.bg_colors = ARR_rotate(data.bg_colors);
         }

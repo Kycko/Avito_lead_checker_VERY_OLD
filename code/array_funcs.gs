@@ -145,7 +145,7 @@ function ARR_check_req_cols(data, req_cols, type) {
 }
 
 // vert and man = verticals and managers
-function ARR_fix_vert_and_man(data, range, type) {
+function ARR_fix_vert_and_man(data, range, type, only_blank=false) {
     if (range.h === 1) {
         if     (type === 'вертикаль') {var req_cols = ['Категория']}
         else if (type === 'менеджер') {var req_cols = ['Категория', 'Регион и город']}
@@ -153,8 +153,10 @@ function ARR_fix_vert_and_man(data, range, type) {
 
         if (col_indexes.length === req_cols.length) {
             for (var c=range.c; c < range.c+range.w; c+=1) {
-                if     (type === 'вертикаль') {data = verify_vertical(data, range.r, c, col_indexes[0])}
-                else if (type === 'менеджер') {data = verify_manager (data, range.r, c, col_indexes[0], col_indexes[1])}
+                if (!only_blank || (only_blank && !data.cur[range.r][c].length)) {
+                    if     (type === 'вертикаль') {data = verify_vertical(data, range.r, c, col_indexes[0])}
+                    else if (type === 'менеджер') {data = verify_manager (data, range.r, c, col_indexes[0], col_indexes[1])}
+                }
             }
         }
     }
