@@ -69,6 +69,9 @@ function ARR_check_user_data(data) {
         else if (data.cur[i][0] == 'Ответственный менеджер в сделке' && CRS('check_managers', data, show_msg=false)) {
             data = ARR_fix_vert_and_man(data, range, 'менеджер');
         }
+        else if (data.cur[i][0] == 'Источник' && CRS('check_sources', data, show_msg=false)) {
+            data = ARR_check_UD_range(data, range, 'источник');
+        }
     }
 
     data.cur       = ARR_rotate(data.cur);
@@ -146,7 +149,7 @@ function ARR_check_req_cols(data, req_cols, type) {
 
 // vert and man = verticals and managers
 function ARR_fix_vert_and_man(data, range, type, only_blank=false) {
-    if (range.h === 1) {
+    if (range.h === 1 && range.c > 0) {
         if     (type === 'вертикаль') {var req_cols = ['Категория']}
         else if (type === 'менеджер') {var req_cols = ['Категория', 'Регион и город']}
         const col_indexes = ARR_check_req_cols(data, req_cols, type);
@@ -160,7 +163,7 @@ function ARR_fix_vert_and_man(data, range, type, only_blank=false) {
             }
         }
     }
-    else {UI_show_msg('Невозможно проверить', 'Выделите только один столбец.')}
+    else {UI_show_msg('Невозможно проверить', 'Выделите ячейки только в одном столбце, без первой строки.')}
     return data;
 }
 

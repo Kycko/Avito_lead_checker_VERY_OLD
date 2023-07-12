@@ -45,6 +45,7 @@ function MM_check_verticals()       {MM_check_UD('вертикаль', 'check_ca
 function MM_check_verticals_blank() {MM_check_UD('вертикаль', 'check_categories', true)}
 function MM_check_managers()        {MM_check_UD('менеджер', 'check_managers')}
 function MM_check_managers_blank()  {MM_check_UD('менеджер', 'check_managers', true)}
+function MM_check_sources()         {MM_check_UD('источник', 'check_sources')}
 
 // secondary function just to keep the code simple
 // UD = user data

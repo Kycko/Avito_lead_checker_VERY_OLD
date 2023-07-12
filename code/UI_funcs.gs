@@ -29,5 +29,9 @@ function UI_show_UD_error(data, cur, type, ui) {
         var title = 'Неправильная категория';
         var msg   = ARR_recommend_correction(data.sugg, cur, type);
     }
+    else if (type === 'источник') {
+        var title = 'Неправильный источник';
+        var msg   = ARR_recommend_correction(data.sugg, cur, type);
+    }
     return ui.prompt(title, msg, ui.ButtonSet.OK_CANCEL);
 }
