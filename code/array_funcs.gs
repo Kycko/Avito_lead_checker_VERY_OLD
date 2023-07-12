@@ -66,6 +66,9 @@ function ARR_check_user_data(data) {
         else if (data.cur[i][0] == 'Вертикаль' && CRS('check_categories', data, show_msg=false)) {
             data = ARR_fix_vert_and_man(data, range, 'вертикаль');
         }
+        else if (data.cur[i][0] == 'Ответственный менеджер в сделке' && CRS('check_managers', data, show_msg=false)) {
+            data = ARR_fix_vert_and_man(data, range, 'менеджер');
+        }
     }
 
     data.cur       = ARR_rotate(data.cur);
@@ -150,7 +153,8 @@ function ARR_fix_vert_and_man(data, range, type) {
 
         if (col_indexes.length === req_cols.length) {
             for (var c=range.c; c < range.c+range.w; c+=1) {
-                data = verify_vertical(data, range.r, c, col_indexes[0]);
+                if     (type === 'вертикаль') {data = verify_vertical(data, range.r, c, col_indexes[0])}
+                else if (type === 'менеджер') {data = verify_manager (data, range.r, c, col_indexes[0], col_indexes[1])}
             }
         }
     }

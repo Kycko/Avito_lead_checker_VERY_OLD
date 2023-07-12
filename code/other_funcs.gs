@@ -58,6 +58,14 @@ function validate_UD(data, r, c, type) {
     return valid;
 }
 
+function rotate_my_range(old_range) {
+    const new_range = {r : old_range.c,
+                       c : old_range.r,
+                       h : old_range.w,
+                       w : old_range.h}
+    return new_range;
+}
+
 // cat_row = category row
 function verify_vertical(data, r, c, cat_row) {
     const index = ARR_search_in_list(data.cat[0], data.cur[cat_row][c]);
@@ -71,11 +79,33 @@ function verify_vertical(data, r, c, cat_row) {
     }
     return data;
 }
+function verify_manager(data, r, c, cat_row, city_row) {
+    data.cur[r][c]       = '';
+    data.bg_colors[r][c] = Gcolors().hl_red;
 
-function rotate_my_range(old_range) {
-    const new_range = {r : old_range.c,
-                       c : old_range.r,
-                       h : old_range.w,
-                       w : old_range.h}
-    return new_range;
+    var index = ARR_search_in_list(data.cat[0], data.cur[cat_row][c]);
+    if (index >= 0) {
+        const cat_group = data.cat[1][index];
+        for (var i=1; i < data.man[0].length; i+=1) {
+            if (data.man[0][i] === cat_group) {
+                if (data.man[1][i] === 'все') {
+                    data.cur[r][c] = data.man[2][i];
+                    data.bg_colors[r][c] = Gcolors().hl_light_green;
+                    return data;
+                }
+                else {
+                    var city_ind = ARR_search_in_list(data.cities[0], data.cur[city_row][c]);
+                    if (city_ind >= 0) {
+                        if (STR_find_sub(data.man[1][i], data.cities[1][city_ind], 'bool')) {
+                            data.cur[r][c] = data.man[2][i];
+                            data.bg_colors[r][c] = Gcolors().hl_light_green;
+                            return data;
+                        }
+                    }
+                    else {return data}
+                }
+            }
+        }
+    }
+    return data;
 }

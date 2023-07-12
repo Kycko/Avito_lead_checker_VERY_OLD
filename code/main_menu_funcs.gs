@@ -42,6 +42,7 @@ function MM_check_cities()     {MM_check_UD('регион/город', 'check_ci
 function MM_check_emails()     {MM_check_UD('e-mail', 'check_email')}
 function MM_check_categories() {MM_check_UD('категория', 'check_categories')}
 function MM_check_verticals()  {MM_check_UD('вертикаль', 'check_categories')}
+function MM_check_managers()   {MM_check_UD('менеджер', 'check_managers')}
 
 // secondary function just to keep the code simple
 // UD = user data
@@ -54,7 +55,7 @@ function MM_check_UD(type, CRS_type) {
                        h : SHrange.getHeight(),
                        w : SHrange.getWidth()}
 
-        if (type === 'вертикаль') {
+        if (ARR_search_in_list(['вертикаль', 'менеджер'], type, 'bool')) {
             data.cur       = ARR_rotate(data.cur);
             data.bg_colors = ARR_rotate(data.bg_colors);
             ARrange        = rotate_my_range(ARrange);
