@@ -53,6 +53,7 @@ function ARR_check_user_data(data) {
     data.bg_colors = ARR_rotate(data.bg_colors);
 
     for (var i=0; i < data.cur.length; i+=1) {
+        const just_check_blanks = ['Название лида', 'Наименование проекта', 'Название компании', 'Имя'];
         var range = {r:i, c:1, h:1, w:data.cur[i].length-1};
         if (STR_find_sub(data.cur[i][0], 'e-mail', 'bool') && CRS('check_email', data, show_msg=false)) {
             data = ARR_check_UD_range(data, range, 'e-mail');
@@ -71,6 +72,9 @@ function ARR_check_user_data(data) {
         }
         else if (data.cur[i][0] == 'Источник' && CRS('check_sources', data, show_msg=false)) {
             data = ARR_check_UD_range(data, range, 'источник');
+        }
+        else if (ARR_search_in_list(just_check_blanks, data.cur[i][0], 'bool')) {
+            data = ARR_check_blanks(data, range, data.cur[i][0].toString().toLowerCase());
         }
     }
 
@@ -145,6 +149,19 @@ function ARR_check_req_cols(data, req_cols, type) {
         UI_show_msg(title, msg);
     }
     return indexes;
+}
+function ARR_check_blanks(data, range, type='', highlight=true) {
+    const GC = Gcolors();
+    for (var r=range.r; r < range.r+range.h; r+=1) {
+        for (var c=range.c; c < range.c+range.w; c+=1) {
+            if (ARR_search_in_list(['Название компании', 'Имя'], type)) {data = autocorr_UD(data, r, c, type)}
+            if (data.cur[r][c]) {
+                if (highlight) {data.bg_colors[r][c] = GC.hl_light_green}
+            }
+            else                {data.bg_colors[r][c] = GC.hl_red}
+        }
+    }
+    return data;
 }
 
 // vert and man = verticals and managers

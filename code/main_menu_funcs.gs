@@ -46,11 +46,13 @@ function MM_check_verticals_blank() {MM_check_UD('вертикаль', 'check_ca
 function MM_check_managers()        {MM_check_UD('менеджер', 'check_managers')}
 function MM_check_managers_blank()  {MM_check_UD('менеджер', 'check_managers', true)}
 function MM_check_sources()         {MM_check_UD('источник', 'check_sources')}
+function MM_highlight_blanks()      {MM_check_UD('пустые', 'highlight_blanks')}
+function MM_add_Unknown()           {MM_check_UD('add_Unknown', 'highlight_blanks')}
 
 // secondary function just to keep the code simple
 // UD = user data
 function MM_check_UD(type, CRS_type, only_blank=false) {
-    var data    = SH_get_all_sheets_data();
+    var data = SH_get_all_sheets_data();
     if (CRS(CRS_type, data)) {
         var SHrange = data.cur_sheet.getActiveRange();
         var ARrange = {r : SHrange.getRow()-1,
@@ -66,7 +68,9 @@ function MM_check_UD(type, CRS_type, only_blank=false) {
             data.cur       = ARR_rotate(data.cur);
             data.bg_colors = ARR_rotate(data.bg_colors);
         }
-        else {data = ARR_check_UD_range(data, ARrange, type)}
+        else if (type === 'пустые')      {data = ARR_check_blanks(data, ARrange, '', false)}
+        else if (type === 'add_Unknown') {data = ARR_check_blanks(data, ARrange, 'имя', false)}
+        else                        {data = ARR_check_UD_range(data, ARrange, type)}
         SH_set_range_values(data.cur, SHrange);
         SH_hl_cells(data);
     }
