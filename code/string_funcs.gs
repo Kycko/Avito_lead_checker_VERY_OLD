@@ -18,7 +18,12 @@ function STR_check_email(string) {
     return true;
 }
 function STR_format_phone(phone) {
-    phone = phone.replace(/\D+/g, '');
+    phone = phone.toString().replace(/\D+/g, '');
+    if      (phone.toString().length === 10) {phone = '7' + phone.toString()}
+    else if (phone.toString().length === 11) {
+        if (phone.toString().charAt(0) == '8') {phone = '7' + phone.toString().slice(1)}
+    }
+    else if (phone.toString().length < 10) {phone = '79999999999'}
     return phone;
 }
 function STR_trim_city(city) {

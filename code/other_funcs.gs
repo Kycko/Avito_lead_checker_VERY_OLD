@@ -51,7 +51,7 @@ function validate_UD(data, r, c, type) {
         }
     }
     else if (type === 'телефон') {
-        var valid = data.cur[r][c].length === 11;
+        var valid = data.cur[r][c].length === 11 && data.cur[r][c].toString().charAt(0) == '7';
     }
     else if (type === 'регион/город') {
         var valid = ARR_search_in_list(data.cities[0], data.cur[r][c], 'bool');
