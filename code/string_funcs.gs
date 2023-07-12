@@ -17,6 +17,10 @@ function STR_check_email(string) {
     }
     return true;
 }
+function STR_format_phone(phone) {
+    phone = phone.replace(/\D+/g, '');
+    return phone;
+}
 function STR_trim_city(city) {
     const search = ['г. ', 'г ', 'г.'];
     for (i=0; i < search.length; i+=1) {

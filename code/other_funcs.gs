@@ -31,7 +31,8 @@ function get_col_letter_from_num(column) {
 function autocorr_UD(data, r, c, type) {
     data.cur[r][c] = data.cur[r][c].toString().trim();  // trim spaces for all the user data
     const autocorr_list = ['регион/город', 'категория', 'источник', 'название компании', 'имя'];
-    if      (type === 'e-mail')       {data.cur[r][c] = data.cur[r][c].toString().toLowerCase()}
+    if      (type === 'e-mail')  {data.cur[r][c] = data.cur[r][c].toString().toLowerCase()}
+    else if (type === 'телефон') {data.cur[r][c] = STR_format_phone(data.cur[r][c])}
     else if (ARR_search_in_list(autocorr_list, type, 'bool')) {
         if (type === 'регион/город') {data.cur[r][c] = STR_trim_city(data.cur[r][c])}
         var index = ARR_search_in_list(data.autocorr[1], data.cur[r][c]);
@@ -48,6 +49,9 @@ function validate_UD(data, r, c, type) {
         for (i=0; i < list.length; i+=1) {
             if (!STR_check_email(list[i])) {valid = false}
         }
+    }
+    else if (type === 'телефон') {
+        var valid = data.cur[r][c].length === 11;
     }
     else if (type === 'регион/город') {
         var valid = ARR_search_in_list(data.cities[0], data.cur[r][c], 'bool');

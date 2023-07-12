@@ -1,7 +1,7 @@
 // G  = global vars
 function Gcolors() {
     var G = {};
-    G.hl_light_green = '#daffe7'; // hl = highlight
+    G.hl_light_green = '#e4ffed'; // hl = highlight
     G.hl_green       = '#93dfaf'; // hl = highlight
     G.hl_red         = '#ea9999'; // hl = highlight
     G.black          = '#000000'; // i.e. default font color
@@ -14,19 +14,17 @@ function Gno_sheet_msgs() {
                               sheets : ['col_reqs', 'autocorr', 'sugg', 'cities', 'cat', 'man', 'sources']}
     G.check_column_names    = {title : 'Невозможно проверить названия столбцов',
                               sheets : ['col_reqs', 'autocorr', 'sugg']}
-    G.check_email           = {title : 'Невозможно проверить адреса e-mail',
-                              sheets : []}
     G.check_cities          = {title : 'Невозможно проверить города',
                               sheets : ['cities']}
     G.check_categories      = {title : 'Невозможно проверить категории и вертикали',
                               sheets : ['cat']}
     G.check_managers        = {title : 'Невозможно проверить менеджеров',
                               sheets : ['cat', 'man', 'cities']}
-    G.check_sources        = {title : 'Невозможно проверить источники',
+    G.check_sources         = {title : 'Невозможно проверить источники',
                               sheets : ['sources']}
     G.hl_bad_titles         = {title : 'Невозможно подсветить неправильные названия столбцов',
                               sheets : ['col_reqs']}
-    G.highlight_blanks      = {title : 'Невозможно подсветить пустые ячейки',
+    G.empty_req             = {title : '',
                               sheets : []}
     G.sheet_text_formatting = {title : 'Невозможно выполнить форматирование ячеек',
                               sheets : ['col_reqs']}
@@ -62,6 +60,7 @@ function Gtext() {
                        ['👦 Проверить менеджеров в выделенном диапазоне',                         'MM_check_managers'],
                        ['👦 Проверить менеджеров только в пустых ячейках выделенного диапазона',  'MM_check_managers_blank'],
                        ['📘 Проверить источники в выделенном диапазоне',                           'MM_check_sources'],
+                       ['📞 Проверить телефоны в выделенном диапазоне',                            'MM_check_phones'],
                        ['@ Проверить e-mail в выделенном диапазоне',                               'MM_check_emails']];
 
     return G;

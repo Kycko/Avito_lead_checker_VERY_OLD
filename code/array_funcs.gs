@@ -55,8 +55,11 @@ function ARR_check_user_data(data) {
     for (var i=0; i < data.cur.length; i+=1) {
         const just_check_blanks = ['Название лида', 'Наименование проекта', 'Название компании', 'Имя'];
         var range = {r:i, c:1, h:1, w:data.cur[i].length-1};
-        if (STR_find_sub(data.cur[i][0], 'e-mail', 'bool') && CRS('check_email', data, show_msg=false)) {
+        if (STR_find_sub(data.cur[i][0], 'e-mail', 'bool')) {
             data = ARR_check_UD_range(data, range, 'e-mail');
+        }
+        else if (STR_find_sub(data.cur[i][0], 'телефон', 'bool')) {
+            data = ARR_check_UD_range(data, range, 'телефон');
         }
         else if (data.cur[i][0] == 'Регион и город' && CRS('check_cities', data, show_msg=false)) {
             data = ARR_check_UD_range(data, range, 'регион/город');
@@ -85,7 +88,7 @@ function ARR_check_user_data(data) {
 
 // range = {r, c, h, w} (first row, first col, height, width)
 function ARR_check_UD_range(data, range, type) {
-    var USI          = {from : [], to : []};        // USI = user input, just to autocorrect doubled strings
+    var USI = {from : [], to : []}; // USI = user input, just to autocorrect doubled strings
     for (var r=range.r; r < range.r+range.h; r+=1) {
         for (var c=range.c; c < range.c+range.w; c+=1) {
             const init_value = data.cur[r][c];
