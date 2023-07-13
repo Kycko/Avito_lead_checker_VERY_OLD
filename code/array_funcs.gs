@@ -48,7 +48,7 @@ function ARR_check_column_names(data) {
     ARR_check_double_titles(data.cur[0]);
     return data;
 }
-function ARR_check_user_data(data) {
+function ARR_check_user_data(data, fix_man) {
     data.cur       = ARR_rotate(data.cur);
     data.bg_colors = ARR_rotate(data.bg_colors);
 
@@ -70,7 +70,7 @@ function ARR_check_user_data(data) {
         else if (data.cur[i][0] == 'Вертикаль' && CRS('check_categories', data, show_msg=false)) {
             data = ARR_fix_vert_and_man(data, range, 'вертикаль');
         }
-        else if (data.cur[i][0] == 'Ответственный менеджер в сделке' && CRS('check_managers', data, show_msg=false)) {
+        else if (fix_man && data.cur[i][0] == 'Ответственный менеджер в сделке' && CRS('check_managers', data, show_msg=false)) {
             data = ARR_fix_vert_and_man(data, range, 'менеджер');
         }
         else if (data.cur[i][0] == 'Источник' && CRS('check_sources', data, show_msg=false)) {
@@ -157,7 +157,7 @@ function ARR_check_blanks(data, range, type='', highlight=true) {
     const GC = Gcolors();
     for (var r=range.r; r < range.r+range.h; r+=1) {
         for (var c=range.c; c < range.c+range.w; c+=1) {
-            if (ARR_search_in_list(['Название компании', 'Имя'], type)) {data = autocorr_UD(data, r, c, type)}
+            if (ARR_search_in_list(['Название компании', 'Имя'], type, 'bool')) {data = autocorr_UD(data, r, c, type)}
             if (data.cur[r][c]) {
                 if (highlight) {data.bg_colors[r][c] = GC.hl_light_green}
             }

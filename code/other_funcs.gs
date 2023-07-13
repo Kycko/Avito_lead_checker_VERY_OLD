@@ -29,15 +29,19 @@ function get_col_letter_from_num(column) {
 
 // UD = user data
 function autocorr_UD(data, r, c, type) {
+    Logger.log(type);
     data.cur[r][c] = data.cur[r][c].toString().trim();  // trim spaces for all the user data
     const autocorr_list = ['регион/город', 'категория', 'источник', 'название компании', 'имя'];
     if      (type === 'e-mail')  {data.cur[r][c] = data.cur[r][c].toString().toLowerCase()}
     else if (type === 'телефон') {data.cur[r][c] = STR_format_phone(data.cur[r][c])}
     else if (ARR_search_in_list(autocorr_list, type, 'bool')) {
         if (type === 'регион/город') {data.cur[r][c] = STR_trim_city(data.cur[r][c])}
-        var index = ARR_search_in_list(data.autocorr[1], data.cur[r][c]);
-        if (index >= 0 && data.autocorr[0][index] === type) {
-            data.cur[r][c] = data.autocorr[2][index];
+        for (var i=0; i < data.autocorr[1].length; i+=1) {
+            var check = data.autocorr[0][i].toString().toLowerCase() == type;
+            if (check && data.autocorr[1][i] == data.cur[r][c]) {
+                data.cur[r][c] = data.autocorr[2][i];
+                return data;
+            }
         }
     }
     return data;
