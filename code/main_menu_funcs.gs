@@ -1,12 +1,14 @@
 function MM_launch_all_no_man() {MM_launch_all(false)}
 function MM_launch_all(fix_man=true) {
+    const SD = UI_MM_show_dialogues();  // SD = show dialogues
+
     // get all the data
     var data = SH_get_all_sheets_data();
     CRS('launch_all', data);
 
     // change the data (only in memory, not in the sheets)
     data = ARR_rm_empty_RC(data, true); // RC = rows & columns; ARR = array
-    if (CRS('check_column_names', data, show_msg=false)) {data = ARR_check_column_names(data)}
+    if (CRS('check_column_names', data, show_msg=false)) {data = ARR_check_column_names(data, SD)}
     data = ARR_check_user_data(data, fix_man);
 
     // write all the changed data in the sheets
@@ -20,9 +22,10 @@ function MM_launch_all(fix_man=true) {
     SH_hl_cells(data);
 }
 function MM_check_column_names() {
+    const SD = UI_MM_show_dialogues();
     var data = SH_get_all_sheets_data();
     if (CRS('check_column_names', data)) {
-        data = ARR_check_column_names(data);
+        data = ARR_check_column_names(data, SD);
         SH_set_values(data.cur, data.cur_sheet);
         data = SH_hl_bad_titles(data);
         SH_hl_cells(data);

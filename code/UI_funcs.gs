@@ -9,9 +9,14 @@ function onOpen() {
     menu.addToUi();
 }
 
-function UI_show_msg(title, msg) {
+function UI_show_msg(title, msg, question=false) {
     const ui = SpreadsheetApp.getUi();
-    ui.alert(title, msg, ui.ButtonSet.OK);
+    if (question) {var buttons = ui.ButtonSet.YES_NO}
+    else          {var buttons = ui.ButtonSet.OK}
+    const resp = ui.alert(title, msg, buttons);
+
+    if     (resp == ui.Button.YES) {return true}
+    else if (resp == ui.Button.NO) {return false}
 }
 function UI_show_UD_error(data, cur, type, ui) {
     if (type === 'e-mail') {
@@ -31,4 +36,9 @@ function UI_show_UD_error(data, cur, type, ui) {
         var msg   = ARR_recommend_correction(data.sugg, cur, type);
     }
     return ui.prompt(title, msg, ui.ButtonSet.OK_CANCEL);
+}
+function UI_MM_show_dialogues() {
+    const title = 'Предлагать сразу исправлять ошибки?';
+    const msg   = 'Если нет, диалоговые окна не будут появляться, а все ошибки будут подсвечены красным.';
+    return UI_show_msg(title, msg, true);
 }

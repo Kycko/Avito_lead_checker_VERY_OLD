@@ -42,10 +42,10 @@ function ARR_find_empty_RC(data, ignore_title) {
     }
     return final;
 }
-function ARR_check_column_names(data) {
-    data = ARR_check_loaded_columns(data);
+function ARR_check_column_names(data, SD) {
+    data = ARR_check_loaded_columns(data, SD);
     data = ARR_add_mandatory_columns(data);
-    ARR_check_double_titles(data.cur[0]);
+    if (SD) {ARR_check_double_titles(data.cur[0])}
     return data;
 }
 function ARR_check_user_data(data, fix_man) {
@@ -195,7 +195,7 @@ function ARR_fix_vert_and_man(data, range, type, only_blank=false) {
     return data;
 }
 
-function ARR_check_loaded_columns(data) {
+function ARR_check_loaded_columns(data, SD) {
     const ui = SpreadsheetApp.getUi();
     for (var i=0; i < data.cur[0].length; i+=1) {
         var index = ARR_search_in_list(data.autocorr[1], data.cur[0][i]);
@@ -204,7 +204,7 @@ function ARR_check_loaded_columns(data) {
         }
 
         index = ARR_search_in_list(data.col_reqs[0], data.cur[0][i]);
-        if (data.cur[0][i] && index == null) {
+        if (SD && data.cur[0][i] && index == null) {
             const resp = ui.prompt('Неправильное название столбца',
                                    ARR_recommend_correction(data.sugg, data.cur[0][i], 'название столбца'),
                                    ui.ButtonSet.OK_CANCEL);
