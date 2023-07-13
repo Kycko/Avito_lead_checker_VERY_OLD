@@ -48,7 +48,7 @@ function ARR_check_column_names(data, SD) {
     if (SD) {ARR_check_double_titles(data.cur[0])}
     return data;
 }
-function ARR_check_user_data(data, fix_man) {
+function ARR_check_user_data(data, fix_man, SD) {
     data.cur       = ARR_rotate(data.cur);
     data.bg_colors = ARR_rotate(data.bg_colors);
 
@@ -56,16 +56,16 @@ function ARR_check_user_data(data, fix_man) {
         const just_check_blanks = ['Название лида', 'Наименование проекта', 'Название компании', 'Имя'];
         var range = {r:i, c:1, h:1, w:data.cur[i].length-1};
         if (STR_find_sub(data.cur[i][0], 'e-mail', 'bool')) {
-            data = ARR_check_UD_range(data, range, 'e-mail');
+            data = ARR_check_UD_range(data, range, 'e-mail', SD);
         }
         else if (STR_find_sub(data.cur[i][0], 'телефон', 'bool')) {
-            data = ARR_check_UD_range(data, range, 'телефон');
+            data = ARR_check_UD_range(data, range, 'телефон', false);
         }
         else if (data.cur[i][0] == 'Регион и город' && CRS('check_cities', data, show_msg=false)) {
-            data = ARR_check_UD_range(data, range, 'регион/город');
+            data = ARR_check_UD_range(data, range, 'регион/город', SD);
         }
         else if (data.cur[i][0] == 'Категория' && CRS('check_categories', data, show_msg=false)) {
-            data = ARR_check_UD_range(data, range, 'категория');
+            data = ARR_check_UD_range(data, range, 'категория', SD);
         }
         else if (data.cur[i][0] == 'Вертикаль' && CRS('check_categories', data, show_msg=false)) {
             data = ARR_fix_vert_and_man(data, range, 'вертикаль');
@@ -74,7 +74,7 @@ function ARR_check_user_data(data, fix_man) {
             data = ARR_fix_vert_and_man(data, range, 'менеджер');
         }
         else if (data.cur[i][0] == 'Источник' && CRS('check_sources', data, show_msg=false)) {
-            data = ARR_check_UD_range(data, range, 'источник');
+            data = ARR_check_UD_range(data, range, 'источник', SD);
         }
         else if (ARR_search_in_list(just_check_blanks, data.cur[i][0], 'bool')) {
             data = ARR_check_blanks(data, range, data.cur[i][0].toString().toLowerCase());
@@ -87,7 +87,7 @@ function ARR_check_user_data(data, fix_man) {
 }
 
 // range = {r, c, h, w} (first row, first col, height, width)
-function ARR_check_UD_range(data, range, type) {
+function ARR_check_UD_range(data, range, type, SD) {
     var USI = {from : [], to : []}; // USI = user input, just to autocorrect doubled strings
     for (var r=range.r; r < range.r+range.h; r+=1) {
         for (var c=range.c; c < range.c+range.w; c+=1) {
@@ -102,7 +102,7 @@ function ARR_check_UD_range(data, range, type) {
                     data.bg_colors[r][c] = GC.hl_light_green;
                 }
                 else {
-                    if (type === 'телефон') {
+                    if (!SD) {
                         data.bg_colors[r][c] = GC.hl_red;
                         valid = true;
                     }

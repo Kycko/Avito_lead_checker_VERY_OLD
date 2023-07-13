@@ -9,7 +9,7 @@ function MM_launch_all(fix_man=true) {
     // change the data (only in memory, not in the sheets)
     data = ARR_rm_empty_RC(data, true); // RC = rows & columns; ARR = array
     if (CRS('check_column_names', data, show_msg=false)) {data = ARR_check_column_names(data, SD)}
-    data = ARR_check_user_data(data, fix_man);
+    data = ARR_check_user_data(data, fix_man, SD);
 
     // write all the changed data in the sheets
     SH_set_values(data.cur, data.cur_sheet);
@@ -75,7 +75,8 @@ function MM_check_UD(type, CRS_type, only_blank=false) {
         }
         else if (type === 'пустые')      {data = ARR_check_blanks(data, ARrange, '', false)}
         else if (type === 'add_Unknown') {data = ARR_check_blanks(data, ARrange, 'имя', false)}
-        else                             {data = ARR_check_UD_range(data, ARrange, type)}
+        else if (type === 'телефон')     {data = ARR_check_UD_range(data, ARrange, type, false)}
+        else                             {data = ARR_check_UD_range(data, ARrange, type, UI_MM_show_dialogues())}
         SH_set_range_values(data.cur, SHrange);
         SH_hl_cells(data);
     }
