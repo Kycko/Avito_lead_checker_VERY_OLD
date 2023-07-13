@@ -29,7 +29,6 @@ function get_col_letter_from_num(column) {
 
 // UD = user data
 function autocorr_UD(data, r, c, type) {
-    Logger.log(type);
     data.cur[r][c] = data.cur[r][c].toString().trim();  // trim spaces for all the user data
     const autocorr_list = ['регион/город', 'категория', 'источник', 'название компании', 'имя'];
     if      (type === 'e-mail')  {data.cur[r][c] = data.cur[r][c].toString().toLowerCase()}
@@ -55,7 +54,7 @@ function validate_UD(data, r, c, type) {
                 if (!STR_check_email(list[i])) {valid = false}
             }
             else if (type === 'телефон') {
-                if (!list[i].length === 11 || !list[i].toString().charAt(0) == '7') {valid = false}
+                if (list[i].length !== 11 || list[i].toString().charAt(0) != '7') {valid = false}
             }
         }
     }

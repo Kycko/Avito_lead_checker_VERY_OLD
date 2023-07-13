@@ -27,6 +27,10 @@ function STR_format_phone(phone) {
         }
         else if (phones[i].toString().length < 10) {phones[i] = '79999999999'}
     }
+
+    for (var i=0; i < phones.length; i+=1) {
+        if (phones.length > 1 && phones[i] === '79999999999') {phones.splice(i,1)}
+    }
     return phones.join();
 }
 function STR_trim_city(city) {

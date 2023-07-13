@@ -98,34 +98,42 @@ function ARR_check_UD_range(data, range, type) {
             var valid = false;
             while (!valid) {
                 valid = validate_UD(data, r, c, type);
-                if (valid) {data.bg_colors[r][c] = GC.hl_light_green}
+                if (valid) {
+                    data.bg_colors[r][c] = GC.hl_light_green;
+                }
                 else {
-                    const index = ARR_search_in_list(USI.from, data.cur[r][c]);
-                    if (index >= 0) {
-                        if (USI.to[index]) {data.cur[r][c] = USI.to[index]}
-                        else {
-                            data.cur[r][c] = init_value;
-                            data.bg_colors[r][c] = GC.hl_red;
-                            valid = true;
-                        }
+                    if (type === 'телефон') {
+                        data.bg_colors[r][c] = GC.hl_red;
+                        valid = true;
                     }
                     else {
-                        const ui   = SpreadsheetApp.getUi();
-                        const resp = UI_show_UD_error(data, data.cur[r][c], type, ui);
-                        if (resp.getSelectedButton() == ui.Button.OK) {
-                            data.cur[r][c] = resp.getResponseText();
-                            if (validate_UD(data, r, c, type)) {
-                                USI.from.push(init_value);
-                                USI.to.push(data.cur[r][c]);
+                        const index = ARR_search_in_list(USI.from, data.cur[r][c]);
+                        if (index >= 0) {
+                            if (USI.to[index]) {data.cur[r][c] = USI.to[index]}
+                            else {
+                                data.cur[r][c] = init_value;
+                                data.bg_colors[r][c] = GC.hl_red;
+                                valid = true;
                             }
                         }
                         else {
-                            data.cur[r][c] = init_value;
-                            data.bg_colors[r][c] = GC.hl_red;
-                            valid = true;
+                            const ui   = SpreadsheetApp.getUi();
+                            const resp = UI_show_UD_error(data, data.cur[r][c], type, ui);
+                            if (resp.getSelectedButton() == ui.Button.OK) {
+                                data.cur[r][c] = resp.getResponseText();
+                                if (validate_UD(data, r, c, type)) {
+                                    USI.from.push(init_value);
+                                    USI.to.push(data.cur[r][c]);
+                                }
+                            }
+                            else {
+                                data.cur[r][c] = init_value;
+                                data.bg_colors[r][c] = GC.hl_red;
+                                valid = true;
 
-                            USI.from.push(init_value);
-                            USI.to.push('');
+                                USI.from.push(init_value);
+                                USI.to.push('');
+                            }
                         }
                     }
                 }
