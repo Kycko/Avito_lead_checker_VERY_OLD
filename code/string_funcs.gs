@@ -18,13 +18,16 @@ function STR_check_email(string) {
     return true;
 }
 function STR_format_phone(phone) {
-    phone = phone.toString().replace(/\D+/g, '');
-    if      (phone.toString().length === 10) {phone = '7' + phone.toString()}
-    else if (phone.toString().length === 11) {
-        if (phone.toString().charAt(0) == '8') {phone = '7' + phone.toString().slice(1)}
+    var phones = phone.split(',');
+    for (var i=0; i < phones.length; i+=1) {
+        phones[i] = phones[i].toString().replace(/\D+/g, '');
+        if      (phones[i].toString().length === 10) {phones[i] = '7' + phones[i].toString()}
+        else if (phones[i].toString().length === 11) {
+            if (phones[i].toString().charAt(0) == '8') {phones[i] = '7' + phones[i].toString().slice(1)}
+        }
+        else if (phones[i].toString().length < 10) {phones[i] = '79999999999'}
     }
-    else if (phone.toString().length < 10) {phone = '79999999999'}
-    return phone;
+    return phones.join();
 }
 function STR_trim_city(city) {
     const search = ['г. ', 'г ', 'г.'];

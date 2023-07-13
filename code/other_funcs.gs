@@ -47,15 +47,17 @@ function autocorr_UD(data, r, c, type) {
     return data;
 }
 function validate_UD(data, r, c, type) {
-    if (type === 'e-mail') {
+    if (ARR_search_in_list(['телефон', 'e-mail'], type, 'bool')) {
         var valid = true;
         var list  = data.cur[r][c].toString().split(',');
         for (i=0; i < list.length; i+=1) {
-            if (!STR_check_email(list[i])) {valid = false}
+            if (type === 'e-mail') {
+                if (!STR_check_email(list[i])) {valid = false}
+            }
+            else if (type === 'телефон') {
+                if (!list[i].length === 11 || !list[i].toString().charAt(0) == '7') {valid = false}
+            }
         }
-    }
-    else if (type === 'телефон') {
-        var valid = data.cur[r][c].length === 11 && data.cur[r][c].toString().charAt(0) == '7';
     }
     else if (type === 'регион/город') {
         var valid = ARR_search_in_list(data.cities[0], data.cur[r][c], 'bool');

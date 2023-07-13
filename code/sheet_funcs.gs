@@ -5,9 +5,11 @@ function SH_get_all_sheets_data() {
     all_sheets_list = SH_get_all_sheets_list()
 
     data.cur_sheet = SpreadsheetApp.getActiveSheet();
+    const range    = data.cur_sheet.getRange(1, 1, data.cur_sheet.getMaxRows(), data.cur_sheet.getMaxColumns());
+
+    range.setNumberFormat('@STRING@');
     data.cur       = SH_get_values(data.cur_sheet.getName(), all_sheets_list);
-    data.bg_colors = data.cur_sheet.getRange(1, 1, data.cur_sheet.getMaxRows(), data.cur_sheet.getMaxColumns())
-                        .getBackgrounds();
+    data.bg_colors = range.getBackgrounds();
 
     for (var key in GRS) {
         // all the data from '[script]' sheets will be ROTATED!
