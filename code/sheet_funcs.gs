@@ -10,6 +10,7 @@ function SH_get_all_sheets_data() {
     range.setNumberFormat('@STRING@');
     data.cur       = SH_get_values(data.cur_sheet.getName(), all_sheets_list);
     data.bg_colors = range.getBackgrounds();
+    data.title     = ARR_search_title_row(data.cur);    // number of title row
 
     for (var key in GRS) {
         // all the data from '[script]' sheets will be ROTATED!
@@ -108,51 +109,48 @@ function SH_set_range_formatting(range, txt_color=Gcolors().black, txt_font='Cal
     }
 }
 function SH_hl_bad_titles(data) {
-    const GC = Gcolors();
+    const tit = data.title;
+    const GC  = Gcolors();
     var unused_titles = data.col_reqs[0];   // this is to highlight repeating titles
 
-    for (var i=0; i < data.cur[0].length; i+=1) {
-        const index = ARR_search_in_list(unused_titles, data.cur[0][i]);
+    for (var i=0; i < data.cur[tit].length; i+=1) {
+        const index = ARR_search_in_list(unused_titles, data.cur[tit][i]);
         if (index >= 0) {
-            data.bg_colors[0][i] = GC.hl_green;
+            data.bg_colors[tit][i] = GC.hl_green;
             unused_titles.splice(index, 1);
         }
-        else {data.bg_colors[0][i] = GC.hl_red}
+        else {data.bg_colors[tit][i] = GC.hl_red}
     }
     return data;
 }
 function SH_hl_cells(data) {
-    data.cur_sheet.getRange(1, 1, data.cur.length, data.cur[0].length)
-        .setBackgrounds(data.bg_colors);
+    data.cur_sheet.getRange(1, 1, data.cur.length, data.cur[0].length).setBackgrounds(data.bg_colors);
 }
-function SH_pin_first_row() {
-    SpreadsheetApp.getActiveSheet().setFrozenRows(1);
-}
-function SH_add_main_filter(sheet) {
-    var cur_filter = sheet.getFilter();
+function SH_pin_first_rows(count) {SpreadsheetApp.getActiveSheet().setFrozenRows(count)}
+function SH_add_filter(range) {
+    var cur_filter = range.getSheet().getFilter();
     if (cur_filter) {cur_filter.remove()}
-    sheet.getDataRange().createFilter();
+    range.createFilter();
 }
 
 // req – only change the columns listed in Greq_sheets().columns
 function SH_set_req_wrapping(data, columns='all') {
+    const tit = data.title;
     if (columns === 'all') {
         for (var i=0; i < data.col_reqs[4].length; i+=1) {
             if (data.col_reqs[4][i] == 'да') {
-                var index = ARR_search_title(data.cur, data.col_reqs[0][i]);
-                if (index != null) {
-                    data.cur_sheet.getRange(2, index+1, data.cur.length-1)
-                        .setWrap(true);
-                }
+                var index = ARR_search_in_list(data.cur[tit], data.col_reqs[0][i]);
+                if (index != null) {data.cur_sheet.getRange(tit+2, index+1, data.cur.length-tit-1).setWrap(true)}
             }
         }
     }
 }
 function SH_set_req_column_width(data, columns='all') {
+    const tit = data.title;
     if (columns === 'all') {
         for (var i=0; i < data.cur[0].length; i+=1) {
             const cur_width = data.cur_sheet.getColumnWidth(i+1);
-            var index = ARR_search_title(data.col_reqs, data.cur[0][i]);
+            var index = ARR_search_in_list(data.col_reqs[0], data.cur[tit][i]);
             var num   = Number(data.col_reqs[3][index]);
             if (index != null && num) {
                 if (cur_width > data.col_reqs[3][index]) {

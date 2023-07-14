@@ -1,37 +1,32 @@
 // if ignore_title, it'll remove the column even if it has some data in the first title cell
-function ARR_rm_empty_RC(data, ignore_title=false) {
-    var rm_lists = ARR_find_empty_RC(data.cur, ignore_title);
+function ARR_rm_empty_RC(data, ignore_title=false, title_rows=1) {
+    var rm_lists = ARR_find_empty_RC(data.cur, ignore_title, title_rows);
     data = ARR_rm_RC_list(data, rm_lists.rows, 'rows');
     data = ARR_rm_RC_list(data, rm_lists.columns, 'columns');
     return data;
 }
-function ARR_find_empty_RC(data, ignore_title) {
+function ARR_find_empty_RC(table, ignore_title, title_rows=1) {
     var rows    = [];   // будем добавлять, если найдём пустую строку
     var columns = [];   // сначала в списке все столбцы, потом будем убирать из списка, если найдём НЕ пустой
-    for (var i=0; i < data[0].length; i+=1) {
-        columns.push(i);
-    }
+    for (var i=0; i < table[0].length; i+=1) {columns.push(i)}
 
-    var temp = Number(ignore_title);
-    if (data.length > temp) {
-        for (var row=temp; row < data.length; row+=1) {
+    var temp = Number(ignore_title) * title_rows;
+    if (table.length > temp) {
+        for (var row=temp; row < table.length; row+=1) {
             var empty_row      = true;
             var non_empty_cols = [];
-            for (var col=0; col < data[row].length; col+=1) {
-                if (data[row][col] !== '') {
+            for (var col=0; col < table[row].length; col+=1) {
+                if (table[row][col] !== '') {
                     empty_row = false;
                     non_empty_cols.push(col);
                 }
             }
-            if (empty_row) {
-                rows.push(row);
-            }
+
+            if (empty_row) {rows.push(row)}
             if (columns) {
                 for (var i=0; i < non_empty_cols.length; i+=1) {
                     var index = columns.indexOf(non_empty_cols[i]);
-                    if (index >= 0) {
-                        columns.splice(index, 1);
-                    }
+                    if (index >= 0) {columns.splice(index, 1)}
                 }
             }
         }
@@ -45,44 +40,74 @@ function ARR_find_empty_RC(data, ignore_title) {
 function ARR_check_column_names(data, SD) {
     data = ARR_check_loaded_columns(data, SD);
     data = ARR_add_mandatory_columns(data);
-    if (SD) {ARR_check_double_titles(data.cur[0])}
+    if (SD) {ARR_check_double_titles(data.cur[data.title])}
     return data;
 }
 function ARR_check_user_data(data, fix_man, SD) {
     data.cur       = ARR_rotate(data.cur);
     data.bg_colors = ARR_rotate(data.bg_colors);
+    var  tit       = data.title;
 
     for (var i=0; i < data.cur.length; i+=1) {
         const just_check_blanks = ['Название лида', 'Наименование проекта', 'Название компании', 'Имя'];
-        var range = {r:i, c:1, h:1, w:data.cur[i].length-1};
-        if (STR_find_sub(data.cur[i][0], 'e-mail', 'bool')) {
+        var range = {r:i, c:tit+1, h:1, w:data.cur[i].length-tit-1};
+        if (STR_find_sub(data.cur[i][tit], 'e-mail', 'bool')) {
             data = ARR_check_UD_range(data, range, 'e-mail', SD);
         }
-        else if (STR_find_sub(data.cur[i][0], 'телефон', 'bool')) {
+        else if (STR_find_sub(data.cur[i][tit], 'телефон', 'bool')) {
             data = ARR_check_UD_range(data, range, 'телефон', false);
         }
-        else if (data.cur[i][0] == 'Регион и город' && CRS('check_cities', data, show_msg=false)) {
+        else if (data.cur[i][tit] == 'Регион и город' && CRS('check_cities', data, show_msg=false)) {
             data = ARR_check_UD_range(data, range, 'регион/город', SD);
         }
-        else if (data.cur[i][0] == 'Категория' && CRS('check_categories', data, show_msg=false)) {
+        else if (data.cur[i][tit] == 'Категория' && CRS('check_categories', data, show_msg=false)) {
             data = ARR_check_UD_range(data, range, 'категория', SD);
         }
-        else if (data.cur[i][0] == 'Вертикаль' && CRS('check_categories', data, show_msg=false)) {
+        else if (data.cur[i][tit] == 'Вертикаль' && CRS('check_categories', data, show_msg=false)) {
             data = ARR_fix_vert_and_man(data, range, 'вертикаль');
         }
-        else if (fix_man && data.cur[i][0] == 'Ответственный менеджер в сделке' && CRS('check_managers', data, show_msg=false)) {
+        else if (fix_man && data.cur[i][tit] == 'Ответственный менеджер в сделке' && CRS('check_managers', data, show_msg=false)) {
             data = ARR_fix_vert_and_man(data, range, 'менеджер');
         }
-        else if (data.cur[i][0] == 'Источник' && CRS('check_sources', data, show_msg=false)) {
+        else if (data.cur[i][tit] == 'Источник' && CRS('check_sources', data, show_msg=false)) {
             data = ARR_check_UD_range(data, range, 'источник', SD);
         }
-        else if (ARR_search_in_list(just_check_blanks, data.cur[i][0], 'bool')) {
-            data = ARR_check_blanks(data, range, data.cur[i][0].toString().toLowerCase());
+        else if (ARR_search_in_list(just_check_blanks, data.cur[i][tit], 'bool')) {
+            data = ARR_check_blanks(data, range, data.cur[i][tit].toString().toLowerCase());
         }
     }
 
+    if (data.col_reqs.length) {data = ARR_final_errors_list(data)}
     data.cur       = ARR_rotate(data.cur);
     data.bg_colors = ARR_rotate(data.bg_colors);
+    return data;
+}
+function ARR_final_errors_list(data) {
+    var tit  = data.title;
+    const GC = Gcolors();
+    for (var r=0; r < data.cur.length; r+=1) {
+        var unique = [];
+        var errors = 0;
+        for (var c=tit+1; c < data.cur[r].length; c+=1) {
+            if (!ARR_search_in_list(unique, data.cur[r][c], 'bool')) {unique.push(data.cur[r][c])}
+            if (data.bg_colors[r][c] == GC.hl_red)                   {errors += 1}
+        }
+
+        // UC = uniques color, EC = errors color
+        const index = ARR_search_in_list(data.col_reqs[0], data.cur[r][tit]);
+        if (index >= 0 && unique.length > Number(data.col_reqs[5][index])) {var UC = GC.hl_red}
+        else                                                               {var UC = GC.hl_light_green}
+        if (errors)                                                        {var EC = GC.hl_red}
+        else                                                               {var EC = GC.hl_light_green}
+
+        for (var c=0; c < tit; c+=1) {
+            data.cur      [r].splice(0, 1);
+            data.bg_colors[r].splice(0, 1);
+        }
+        data.cur      [r].unshift('Уникальных: ' + unique.length.toString(), 'Ошибок: ' + errors.toString());
+        data.bg_colors[r].unshift(UC, EC);
+    }
+    data.title = 2;
     return data;
 }
 
@@ -98,9 +123,7 @@ function ARR_check_UD_range(data, range, type, SD) {
             var valid = false;
             while (!valid) {
                 valid = validate_UD(data, r, c, type);
-                if (valid) {
-                    data.bg_colors[r][c] = GC.hl_light_green;
-                }
+                if (valid) {data.bg_colors[r][c] = GC.hl_light_green}
                 else {
                     if (!SD) {
                         data.bg_colors[r][c] = GC.hl_red;
@@ -146,7 +169,7 @@ function ARR_check_req_cols(data, req_cols, type) {
     var txt     = '';
     var indexes = [];
     for (var i=0; i < req_cols.length; i+=1) {
-        const ind = ARR_search_first_column(data.cur, req_cols[i]);
+        const ind = ARR_search_in_column(data.cur, req_cols[i], 0);
         if (ind >= 0) {
             indexes.push(ind);
         }
@@ -196,19 +219,20 @@ function ARR_fix_vert_and_man(data, range, type, only_blank=false) {
 }
 
 function ARR_check_loaded_columns(data, SD) {
-    const ui = SpreadsheetApp.getUi();
-    for (var i=0; i < data.cur[0].length; i+=1) {
-        var index = ARR_search_in_list(data.autocorr[1], data.cur[0][i]);
+    const tit = data.title;
+    const ui  = SpreadsheetApp.getUi();
+    for (var i=0; i < data.cur[tit].length; i+=1) {
+        var index = ARR_search_in_list(data.autocorr[1], data.cur[tit][i]);
         if (index >= 0 && data.autocorr[0][index] === 'название столбца') {
-            data.cur[0][i] = data.autocorr[2][index];
+            data.cur[tit][i] = data.autocorr[2][index];
         }
 
-        index = ARR_search_in_list(data.col_reqs[0], data.cur[0][i]);
-        if (SD && data.cur[0][i] && index == null) {
+        index = ARR_search_in_list(data.col_reqs[0], data.cur[tit][i]);
+        if (SD && data.cur[tit][i] && index == null) {
             const resp = ui.prompt('Неправильное название столбца',
-                                   ARR_recommend_correction(data.sugg, data.cur[0][i], 'название столбца'),
+                                   ARR_recommend_correction(data.sugg, data.cur[tit][i], 'название столбца'),
                                    ui.ButtonSet.OK_CANCEL);
-            if (resp.getSelectedButton() == ui.Button.OK) {data.cur[0][i] = resp.getResponseText()}
+            if (resp.getSelectedButton() == ui.Button.OK) {data.cur[tit][i] = resp.getResponseText()}
         }
     }
     return data;
@@ -221,7 +245,7 @@ function ARR_add_mandatory_columns(data) {
     var new_bg_colors = [];
 
     for (var i=1; i < data.col_reqs[0].length; i+=1) {
-        const index = ARR_search_first_column(old_data, data.col_reqs[0][i]);
+        const index = ARR_search_in_column(old_data, data.col_reqs[0][i], data.title);
         if (index >= 0) {
             new_data.push(old_data[index]);
             new_bg_colors.push(old_bg_colors[index]);
@@ -262,9 +286,7 @@ function ARR_recommend_correction(sugg, cur, type) {
 
     var vars = [];
     for (var i=0; i < sugg[0].length; i+=1) {
-        if (sugg[0][i] === type && STR_find_sub(cur, sugg[1][i], 'bool')) {
-            vars.push(sugg[2][i]);
-        }
+        if (sugg[0][i] === type && STR_find_sub(cur, sugg[1][i], 'bool')) {vars.push(sugg[2][i])}
     }
     if (vars.length) {
         final_msg += 'Возможные варианты:\n';
@@ -304,21 +326,19 @@ function ARR_last_index(array) {
 }
 
 // type = return 'index' or 'bool' (just to know if the name is in the array)
-function ARR_search_title(data, name, type='index') {
-    for (var i=0; i < data[0].length; i+=1) {
-        if (data[0][i].toString().toLowerCase() === name.toString().toLowerCase()) {
+function ARR_search_in_column(table, name, column, type='index') {
+    for (var i=0; i < table.length; i+=1) {
+        if (table[i][column].toString().toLowerCase() === name.toString().toLowerCase()) {
             if (type === 'index') {return i}
-            else {return true}
+            else                  {return true}
         }
     }
 }
-function ARR_search_first_column(data, name, type='index') {
-    for (var i=0; i < data.length; i+=1) {
-        if (data[i][0].toString().toLowerCase() === name.toString().toLowerCase()) {
-            if (type === 'index') {return i}
-            else {return true}
-        }
+function ARR_search_title_row(table) {
+    for (var r=0; r < table.length; r+=1) {
+        if (STR_find_sub_list(table[r][0], ['Уникальных: ', 'Ошибок: ']) !== 0) {return r}
     }
+    return 0;
 }
 function ARR_search_in_list(list, txt, type='index') {
     for (var i=0; i < list.length; i+=1) {
