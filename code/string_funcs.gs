@@ -2,13 +2,7 @@
 function STR_find_sub_list(string, list, type='index') {
     for (var i=0; i < list.length; i+=1) {
         const result = STR_find_sub(string, list[i], type);
-        if (result) {return result}
-    }
-
-    const index = string.toString().toLowerCase().indexOf(sub.toString().toLowerCase());
-    if (index >= 0) {
-        if (type === 'index') {return index}
-        else                  {return true}
+        if (result === true || result >= 0) {return result}
     }
 }
 function STR_find_sub(string, sub, type='index') {

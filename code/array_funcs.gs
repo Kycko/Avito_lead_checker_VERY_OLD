@@ -169,7 +169,7 @@ function ARR_check_req_cols(data, req_cols, type) {
     var txt     = '';
     var indexes = [];
     for (var i=0; i < req_cols.length; i+=1) {
-        const ind = ARR_search_in_column(data.cur, req_cols[i], 0);
+        const ind = ARR_search_in_column(data.cur, req_cols[i], data.title);
         if (ind >= 0) {
             indexes.push(ind);
         }
@@ -200,7 +200,7 @@ function ARR_check_blanks(data, range, type='', highlight=true) {
 
 // vert and man = verticals and managers
 function ARR_fix_vert_and_man(data, range, type, only_blank=false) {
-    if (range.h === 1 && range.c > 0) {
+    if (range.h === 1 && range.c > data.title) {
         if     (type === 'вертикаль') {var req_cols = ['Категория']}
         else if (type === 'менеджер') {var req_cols = ['Категория', 'Регион и город']}
         const col_indexes = ARR_check_req_cols(data, req_cols, type);
