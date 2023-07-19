@@ -43,7 +43,7 @@ function ARR_check_column_names(data, SD) {
     if (SD) {ARR_check_double_titles(data.cur[data.title])}
     return data;
 }
-function ARR_check_user_data(data, fix_man, SD) {
+function ARR_check_user_data(data, fix_man, SD, only_verify=false) {
     data.cur       = ARR_rotate(data.cur);
     data.bg_colors = ARR_rotate(data.bg_colors);
     var  tit       = data.title;
@@ -52,28 +52,28 @@ function ARR_check_user_data(data, fix_man, SD) {
         const just_check_blanks = ['Название лида', 'Наименование проекта', 'Название компании', 'Имя'];
         var range = {r:i, c:tit+1, h:1, w:data.cur[i].length-tit-1};
         if (STR_find_sub(data.cur[i][tit], 'e-mail', 'bool')) {
-            data = ARR_check_UD_range(data, range, 'e-mail', SD);
+            data = ARR_check_UD_range(data, range, 'e-mail', SD, only_verify);
         }
         else if (STR_find_sub(data.cur[i][tit], 'телефон', 'bool')) {
-            data = ARR_check_UD_range(data, range, 'телефон', false);
+            data = ARR_check_UD_range(data, range, 'телефон', false, only_verify);
         }
         else if (data.cur[i][tit] == 'Регион и город' && CRS('check_cities', data, show_msg=false)) {
-            data = ARR_check_UD_range(data, range, 'регион/город', SD);
+            data = ARR_check_UD_range(data, range, 'регион/город', SD, only_verify);
         }
         else if (data.cur[i][tit] == 'Категория' && CRS('check_categories', data, show_msg=false)) {
-            data = ARR_check_UD_range(data, range, 'категория', SD);
+            data = ARR_check_UD_range(data, range, 'категория', SD, only_verify);
         }
         else if (data.cur[i][tit] == 'Вертикаль' && CRS('check_categories', data, show_msg=false)) {
-            data = ARR_fix_vert_and_man(data, range, 'вертикаль');
+            data = ARR_fix_vert_and_man(data, range, 'вертикаль', only_verify);
         }
         else if (fix_man && data.cur[i][tit] == 'Ответственный менеджер в сделке' && CRS('check_managers', data, show_msg=false)) {
-            data = ARR_fix_vert_and_man(data, range, 'менеджер');
+            data = ARR_fix_vert_and_man(data, range, 'менеджер', only_verify);
         }
         else if (data.cur[i][tit] == 'Источник' && CRS('check_sources', data, show_msg=false)) {
-            data = ARR_check_UD_range(data, range, 'источник', SD);
+            data = ARR_check_UD_range(data, range, 'источник', SD, only_verify);
         }
         else if (ARR_search_in_list(just_check_blanks, data.cur[i][tit], 'bool')) {
-            data = ARR_check_blanks(data, range, data.cur[i][tit].toString().toLowerCase());
+            data = ARR_check_blanks(data, range, data.cur[i][tit].toString().toLowerCase(), only_verify);
         }
     }
 
@@ -112,50 +112,56 @@ function ARR_final_errors_list(data) {
 }
 
 // range = {r, c, h, w} (first row, first col, height, width)
-function ARR_check_UD_range(data, range, type, SD) {
-    var USI = {from : [], to : []}; // USI = user input, just to autocorrect doubled strings
+function ARR_check_UD_range(data, range, type, SD, only_verify) {
+    var USI  = {from : [], to : []};    // USI = user input, just to autocorrect doubled strings
+    const GC = Gcolors();
     for (var r=range.r; r < range.r+range.h; r+=1) {
         for (var c=range.c; c < range.c+range.w; c+=1) {
-            const init_value = data.cur[r][c];
-            const GC         = Gcolors();
-            data = autocorr_UD(data, r, c, type);
+            if (only_verify) {
+                if (validate_UD(data, r, c, type)) {data.bg_colors[r][c] = GC.hl_light_green}
+                else                               {data.bg_colors[r][c] = GC.hl_red}
+            }
+            else {
+                const init_value = data.cur[r][c];
+                data = autocorr_UD(data, r, c, type);
 
-            var valid = false;
-            while (!valid) {
-                valid = validate_UD(data, r, c, type);
-                if (valid) {data.bg_colors[r][c] = GC.hl_light_green}
-                else {
-                    if (!SD) {
-                        data.bg_colors[r][c] = GC.hl_red;
-                        valid = true;
-                    }
+                var valid = false;
+                while (!valid) {
+                    valid = validate_UD(data, r, c, type);
+                    if (valid) {data.bg_colors[r][c] = GC.hl_light_green}
                     else {
-                        const index = ARR_search_in_list(USI.from, data.cur[r][c]);
-                        if (index >= 0) {
-                            if (USI.to[index]) {data.cur[r][c] = USI.to[index]}
-                            else {
-                                data.cur[r][c] = init_value;
-                                data.bg_colors[r][c] = GC.hl_red;
-                                valid = true;
-                            }
+                        if (!SD) {
+                            data.bg_colors[r][c] = GC.hl_red;
+                            valid = true;
                         }
                         else {
-                            const ui   = SpreadsheetApp.getUi();
-                            const resp = UI_show_UD_error(data, data.cur[r][c], type, ui);
-                            if (resp.getSelectedButton() == ui.Button.OK) {
-                                data.cur[r][c] = resp.getResponseText();
-                                if (validate_UD(data, r, c, type)) {
-                                    USI.from.push(init_value);
-                                    USI.to.push(data.cur[r][c]);
+                            const index = ARR_search_in_list(USI.from, data.cur[r][c]);
+                            if (index >= 0) {
+                                if (USI.to[index]) {data.cur[r][c] = USI.to[index]}
+                                else {
+                                    data.cur[r][c] = init_value;
+                                    data.bg_colors[r][c] = GC.hl_red;
+                                    valid = true;
                                 }
                             }
                             else {
-                                data.cur[r][c] = init_value;
-                                data.bg_colors[r][c] = GC.hl_red;
-                                valid = true;
+                                const ui   = SpreadsheetApp.getUi();
+                                const resp = UI_show_UD_error(data, data.cur[r][c], type, ui);
+                                if (resp.getSelectedButton() == ui.Button.OK) {
+                                    data.cur[r][c] = resp.getResponseText();
+                                    if (validate_UD(data, r, c, type)) {
+                                        USI.from.push(init_value);
+                                        USI.to.push(data.cur[r][c]);
+                                    }
+                                }
+                                else {
+                                    data.cur[r][c] = init_value;
+                                    data.bg_colors[r][c] = GC.hl_red;
+                                    valid = true;
 
-                                USI.from.push(init_value);
-                                USI.to.push('');
+                                    USI.from.push(init_value);
+                                    USI.to.push('');
+                                }
                             }
                         }
                     }
@@ -184,11 +190,11 @@ function ARR_check_req_cols(data, req_cols, type) {
     }
     return indexes;
 }
-function ARR_check_blanks(data, range, type='', highlight=true) {
+function ARR_check_blanks(data, range, type='', only_verify=false, highlight=true) {
     const GC = Gcolors();
     for (var r=range.r; r < range.r+range.h; r+=1) {
         for (var c=range.c; c < range.c+range.w; c+=1) {
-            if (ARR_search_in_list(['Название компании', 'Имя'], type, 'bool')) {data = autocorr_UD(data, r, c, type)}
+            if (!only_verify && ARR_search_in_list(['Название компании', 'Имя'], type, 'bool')) {data = autocorr_UD(data, r, c, type)}
             if (data.cur[r][c]) {
                 if (highlight) {data.bg_colors[r][c] = GC.hl_light_green}
             }
@@ -199,7 +205,7 @@ function ARR_check_blanks(data, range, type='', highlight=true) {
 }
 
 // vert and man = verticals and managers
-function ARR_fix_vert_and_man(data, range, type, only_blank=false) {
+function ARR_fix_vert_and_man(data, range, type, only_blank=false, only_verify) {
     if (range.h === 1 && range.c > data.title) {
         if     (type === 'вертикаль') {var req_cols = ['Категория']}
         else if (type === 'менеджер') {var req_cols = ['Категория', 'Регион и город']}
@@ -208,8 +214,8 @@ function ARR_fix_vert_and_man(data, range, type, only_blank=false) {
         if (col_indexes.length === req_cols.length) {
             for (var c=range.c; c < range.c+range.w; c+=1) {
                 if (!only_blank || (only_blank && !data.cur[range.r][c].length)) {
-                    if     (type === 'вертикаль') {data = verify_vertical(data, range.r, c, col_indexes[0])}
-                    else if (type === 'менеджер') {data = verify_manager (data, range.r, c, col_indexes[0], col_indexes[1])}
+                    if     (type === 'вертикаль') {data = verify_vertical(data, range.r, c, col_indexes[0], only_verify)}
+                    else if (type === 'менеджер') {data = verify_manager (data, range.r, c, col_indexes[0], col_indexes[1], only_verify)}
                 }
             }
         }

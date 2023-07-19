@@ -79,21 +79,21 @@ function rotate_my_range(old_range) {
 }
 
 // cat_row = category row
-function verify_vertical(data, r, c, cat_row) {
+function verify_vertical(data, r, c, cat_row, only_verify) {
     const index = ARR_search_in_list(data.cat[0], data.cur[cat_row][c]);
     if (index >= 0) {
-        data.cur[r][c] = data.cat[2][index];
         data.bg_colors[r][c] = Gcolors().hl_light_green;
+        if (!only_verify) {data.cur[r][c] = data.cat[2][index]}
     }
     else {
-        data.cur[r][c] = '';
         data.bg_colors[r][c] = Gcolors().hl_red;
+        if (!only_verify) {data.cur[r][c] = ''}
     }
     return data;
 }
-function verify_manager(data, r, c, cat_row, city_row) {
-    data.cur[r][c]       = '';
+function verify_manager(data, r, c, cat_row, city_row, only_verify) {
     data.bg_colors[r][c] = Gcolors().hl_red;
+    if (!only_verify) {data.cur[r][c] = ''}
 
     var index = ARR_search_in_list(data.cat[0], data.cur[cat_row][c]);
     if (index >= 0) {
@@ -101,16 +101,16 @@ function verify_manager(data, r, c, cat_row, city_row) {
         for (var i=1; i < data.man[0].length; i+=1) {
             if (data.man[0][i] === cat_group) {
                 if (data.man[1][i] === 'все') {
-                    data.cur[r][c] = data.man[2][i];
                     data.bg_colors[r][c] = Gcolors().hl_light_green;
+                    if (!only_verify) {data.cur[r][c] = data.man[2][i]}
                     return data;
                 }
                 else {
                     var city_ind = ARR_search_in_list(data.cities[0], data.cur[city_row][c]);
                     if (city_ind >= 0) {
                         if (STR_find_sub(data.man[1][i], data.cities[1][city_ind], 'bool')) {
-                            data.cur[r][c] = data.man[2][i];
                             data.bg_colors[r][c] = Gcolors().hl_light_green;
+                            if (!only_verify) {data.cur[r][c] = data.man[2][i]}
                             return data;
                         }
                     }

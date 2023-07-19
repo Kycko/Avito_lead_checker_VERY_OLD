@@ -41,6 +41,13 @@ function MM_sheet_text_formatting() {
     var data = SH_get_all_sheets_data();
     if (CRS('sheet_text_formatting', data)) {SH_text_formatting(data)}
 }
+function MM_count_errors() {
+    var data = SH_get_all_sheets_data();
+    (CRS('launch_all', data));
+    data = ARR_check_user_data(data, true, false, true);
+    SH_set_values(data.cur, data.cur_sheet);
+    SH_hl_cells(data);
+}
 
 function MM_check_cities()          {MM_check_UD('регион/город', 'check_cities')}
 function MM_check_emails()          {MM_check_UD('e-mail', 'empty_req')}
@@ -73,8 +80,8 @@ function MM_check_UD(type, CRS_type, only_blank=false) {
             data.cur       = ARR_rotate(data.cur);
             data.bg_colors = ARR_rotate(data.bg_colors);
         }
-        else if (type === 'пустые')      {data = ARR_check_blanks(data, ARrange, '', false)}
-        else if (type === 'add_Unknown') {data = ARR_check_blanks(data, ARrange, 'имя', false)}
+        else if (type === 'пустые')      {data = ARR_check_blanks(data, ARrange, '', false, false)}
+        else if (type === 'add_Unknown') {data = ARR_check_blanks(data, ARrange, 'имя', false, false)}
         else if (type === 'телефон')     {data = ARR_check_UD_range(data, ARrange, type, false)}
         else                             {data = ARR_check_UD_range(data, ARrange, type, UI_MM_show_dialogues())}
         SH_set_range_values(data.cur, SHrange);
