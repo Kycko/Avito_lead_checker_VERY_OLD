@@ -148,6 +148,7 @@ function SH_set_req_wrapping(data, columns='all') {
 }
 function SH_set_req_column_width(data, columns='all') {
     const tit = data.title;
+    data.cur_sheet.setRowHeights(1, data.cur.length, 21);
     if (columns === 'all') {
         for (var i=0; i < data.cur[0].length; i+=1) {
             const cur_width = data.cur_sheet.getColumnWidth(i+1);

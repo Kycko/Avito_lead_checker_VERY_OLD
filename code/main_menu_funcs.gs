@@ -16,7 +16,7 @@ function MM_launch_all(fix_man=true) {
 
     // sheet formatting
     SH_pin_first_rows(data.title+1);
-    SH_add_filter(data.cur_sheet.getRange(data.title+1, 1, data.cur.length-data.title, data.cur.length));
+    SH_add_filter(data.cur_sheet.getRange(data.title+1, 1, data.cur.length-data.title, data.cur[data.title].length));
     if (CRS('sheet_text_formatting', data, show_msg=false)) {SH_text_formatting(data)}
     if (CRS('hl_bad_titles', data, show_msg=false)) {data = SH_hl_bad_titles(data)}
     SH_hl_cells(data);
