@@ -15,7 +15,7 @@ function MM_launch_all(fix_man=true) {
     SH_set_values(data.cur, data.cur_sheet);
 
     // sheet formatting
-    SH_pin_first_rows(data.title+1);
+    SH_pin_first_rows(data.cur_sheet, data.title+1);
     SH_add_filter(data.cur_sheet.getRange(data.title+1, 1, data.cur.length-data.title, data.cur[data.title].length));
     if (CRS('sheet_text_formatting', data, show_msg=false)) {SH_text_formatting(data)}
     if (CRS('hl_bad_titles', data, show_msg=false)) {data = SH_hl_bad_titles(data)}
@@ -47,6 +47,9 @@ function MM_count_errors() {
     data = ARR_check_user_data(data, true, false, true);
     SH_set_values(data.cur, data.cur_sheet);
     SH_hl_cells(data);
+
+    SH_pin_first_rows(data.cur_sheet, data.title+1);
+    SH_add_filter(data.cur_sheet.getRange(data.title+1, 1, data.cur.length-data.title, data.cur[data.title].length));
 }
 
 function MM_check_cities()          {MM_check_UD('регион/город', 'check_cities')}
