@@ -30,7 +30,7 @@ function get_col_letter_from_num(column) {
 // UD = user data
 function autocorr_UD(data, r, c, type) {
     data.cur[r][c] = data.cur[r][c].toString().trim();  // trim spaces for all the user data
-    const autocorr_list = ['регион/город', 'категория', 'источник', 'название компании', 'имя'];
+    const autocorr_list = ['регион/город', 'категория', 'источник', 'название компании', 'имя', 'статус', 'ответственный', 'доступен для всех'];
     if      (type === 'e-mail')  {data.cur[r][c] = data.cur[r][c].toString().toLowerCase()}
     else if (type === 'телефон') {data.cur[r][c] = STR_format_phone(data.cur[r][c])}
     else if (ARR_search_in_list(autocorr_list, type, 'bool')) {
@@ -67,6 +67,9 @@ function validate_UD(data, r, c, type) {
     else if (type === 'источник') {
         var valid = ARR_search_in_list(data.sources[0], data.cur[r][c], 'bool');
     }
+    else if (type === 'статус')            {var valid = data.cur[r][c] === 'Новый'}
+    else if (type === 'ответственный')     {var valid = data.cur[r][c] === 'Квалификаторы'}
+    else if (type === 'доступен для всех') {var valid = data.cur[r][c].toString().toLowerCase() === 'да'}
     return valid;
 }
 

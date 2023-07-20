@@ -19,8 +19,8 @@ function UI_show_msg(title, msg, question=false) {
     else if (resp == ui.Button.NO) {return false}
 }
 function UI_show_UD_error(data, cur, type, ui) {
-    if (type === 'e-mail') {
-        var title = 'Неправильный e-mail';
+    if (ARR_search_in_list(['e-mail', 'статус', 'ответственный', 'доступен для всех'], type, 'bool')) {
+        var title = 'Неправильный ' + type.toString();
         var msg   = 'Введите правильное значение, оставьте поле пустым для удаления или нажмите "Отмена", чтобы исправить его потом.\n\nТекущее значение:\n• ' + cur +'\n\n';
     }
     else if (type === 'регион/город') {
