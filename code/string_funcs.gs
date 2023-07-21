@@ -46,15 +46,21 @@ function STR_format_phone(phone, use_unknown) {
             if (phones[i] === '79999999999')                      {phones.splice(i,1)}
         }
     }
-    return phones.join();
+    return phones.join(',');
 }
 function STR_format_website(site) {
     const start = ['http://', 'https://', 'www.'];
-    for (var i=0; i < start.length; i+=1) {
-        if (STR_find_sub(site, start[i]) === 0) {site = site.toString().replace(start[i], '')}
+    site = site.toString().toLowerCase();
+    var list = site.split(',');
+
+    for (var l=0; l < list.length; l+=1) {
+        list[l] = list[l].toString().trim();
+        for (var i=0; i < start.length; i+=1) {
+            if (STR_find_sub(list[l], start[i]) === 0) {list[l] = list[l].toString().replace(start[i], '')}
+        }
+        while (list[l].toString().slice(-1) == '/') {list[l] = list[l].toString().slice(0, -1)}
     }
-    while (site.toString().slice(-1) == '/') {site = site.toString().slice(0, -1)}
-    return site;
+    return list.join(',');
 }
 function STR_trim_city(city) {
     const search = ['г. ', 'г ', 'г.'];

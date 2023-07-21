@@ -37,8 +37,9 @@ function autocorr_UD(data, r, c, type) {
     else if (ARR_search_in_list(autocorr_list, type, 'bool')) {
         if (type === 'регион/город') {data.cur[r][c] = STR_trim_city(data.cur[r][c])}
         for (var i=0; i < data.autocorr[1].length; i+=1) {
-            var check = data.autocorr[0][i].toString().toLowerCase() == type;
-            if (check && data.autocorr[1][i] == data.cur[r][c]) {
+            var check1 = data.autocorr[0][i].toString().toLowerCase() == type;
+            var check2 = data.autocorr[1][i].toString().toLowerCase() == data.cur[r][c].toString().toLowerCase();
+            if (check1 && check2) {
                 data.cur[r][c] = data.autocorr[2][i];
                 return data;
             }
