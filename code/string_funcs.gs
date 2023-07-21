@@ -48,10 +48,38 @@ function STR_format_phone(phone, use_unknown) {
     }
     return phones.join();
 }
+function STR_format_website(site) {
+    const start = ['http://', 'https://', 'www.'];
+    for (var i=0; i < start.length; i+=1) {
+        if (STR_find_sub(site, start[i]) === 0) {site = site.toString().replace(start[i], '')}
+    }
+    while (site.toString().slice(-1) == '/') {site = site.toString().slice(0, -1)}
+    return site;
+}
 function STR_trim_city(city) {
     const search = ['г. ', 'г ', 'г.'];
     for (i=0; i < search.length; i+=1) {
         if (STR_find_sub(city, search[i]) === 0) {return city.replace(search[i], '')}
     }
     return city;
+}
+
+// parts = parts of date (list with 3 numbers)
+function STR_recommend_dates(parts) {
+    var vars = [];
+    if (parts.length === 3) {
+        for (var i=0; i<3; i+=1) {
+            for (var j=0; j<3; j+=1) {
+                if (i !== j && validate_date([parts[i], parts[j], parts[3-i-j]])) {
+                    var day   = parts[i]    .toString();
+                    var month = parts[j]    .toString();
+                    var year  = parts[3-i-j].toString();
+                    if (day.length   === 1) {day   = '0'+day}
+                    if (month.length === 1) {month = '0'+month}
+                    vars.push(day + '.' + month + '.' + year);
+                }
+            }
+        }
+    }
+    return vars;
 }

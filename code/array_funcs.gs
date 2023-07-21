@@ -55,6 +55,9 @@ function ARR_check_user_data(data, fix_man, SD, only_verify=false) {
         if (STR_find_sub(data.cur[i][tit], 'e-mail', 'bool')) {
             data = ARR_check_UD_range(data, range, 'e-mail', SD, only_verify);
         }
+        else if (STR_find_sub(data.cur[i][tit], 'сайт', 'bool')) {
+            data = ARR_check_UD_range(data, range, 'сайт', SD, only_verify);
+        }
         else if (STR_find_sub(data.cur[i][tit], 'телефон', 'bool')) {
             data = ARR_check_UD_range(data, range, data.cur[i][tit].toString().toLowerCase(), false, only_verify);
         }
@@ -129,8 +132,8 @@ function ARR_check_UD_range(data, range, type, SD, only_verify) {
                 else                               {data.bg_colors[r][c] = GC.hl_red}
             }
             else {
-                const init_value = data.cur[r][c];
                 data = autocorr_UD(data, r, c, type);
+                const init_value = data.cur[r][c];
 
                 var valid = false;
                 while (!valid) {
@@ -153,7 +156,7 @@ function ARR_check_UD_range(data, range, type, SD, only_verify) {
                             }
                             else {
                                 const ui   = SpreadsheetApp.getUi();
-                                const resp = UI_show_UD_error(data, data.cur[r][c], type, ui);
+                                const resp = UI_show_UD_error(data, r, c, type, ui, range);
                                 if (resp.getSelectedButton() == ui.Button.OK) {
                                     data.cur[r][c] = resp.getResponseText();
                                     if (validate_UD(data, r, c, type)) {
@@ -235,6 +238,7 @@ function ARR_check_loaded_columns(data, SD) {
     const tit = data.title;
     const ui  = SpreadsheetApp.getUi();
     for (var i=0; i < data.cur[tit].length; i+=1) {
+        data.cur[tit][i] = data.cur[tit][i].toString().trim();
         var index = ARR_search_in_list(data.autocorr[1], data.cur[tit][i]);
         if (index >= 0 && data.autocorr[0][index] === 'название столбца') {
             data.cur[tit][i] = data.autocorr[2][index];
@@ -294,13 +298,17 @@ function ARR_check_double_titles(titles) {
     }
 }
 function ARR_recommend_correction(sugg, cur, type) {
-    var final_msg = 'Введите правильный вариант или нажмите "Отмена", чтобы исправить позже.\n\nТекущее значение в ячейке:\n• ' +
-                    cur + '\n\n';
+    var final_msg = 'Введите правильный вариант' + ['', ', оставьте поле пустым для удаления'][Number(type === 'дата')];
+    final_msg    += ' или нажмите "Отмена", чтобы исправить его потом.\n\nТекущее значение:\n• ' + cur +'\n\n';
 
-    var vars = [];
-    for (var i=0; i < sugg[0].length; i+=1) {
-        if (sugg[0][i] === type && STR_find_sub(cur, sugg[1][i], 'bool')) {vars.push(sugg[2][i])}
+    if (type === 'дата') {var vars = STR_recommend_dates(cur.toString().split('/'))}
+    else {
+        var vars = [];
+        for (var i=0; i < sugg[0].length; i+=1) {
+            if (sugg[0][i] === type && STR_find_sub(cur, sugg[1][i], 'bool')) {vars.push(sugg[2][i])}
+        }
     }
+
     if (vars.length) {
         final_msg += 'Возможные варианты:\n';
         vars = ARR_rm_doubles_in_list(vars);

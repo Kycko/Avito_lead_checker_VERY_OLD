@@ -18,27 +18,33 @@ function UI_show_msg(title, msg, question=false) {
     if     (resp == ui.Button.YES) {return true}
     else if (resp == ui.Button.NO) {return false}
 }
-function UI_show_UD_error(data, cur, type, ui) {
-    if (ARR_search_in_list(['e-mail', 'статус', 'ответственный', 'доступен для всех'], type, 'bool')) {
+function UI_show_UD_error(data, r, c, type, ui, range) {
+    if (ARR_search_in_list(['e-mail', 'статус', 'ответственный', 'доступен для всех', 'сайт'], type, 'bool')) {
         var title = 'Неправильный ' + type.toString();
-        var msg   = 'Введите правильное значение, оставьте поле пустым для удаления или нажмите "Отмена", чтобы исправить его потом.\n\nТекущее значение:\n• ' + cur +'\n\n';
+        var msg   = 'Введите правильное значение, оставьте поле пустым для удаления или нажмите "Отмена", чтобы исправить его потом.\n\nТекущее значение:\n• ' + data.cur[r][c] +'\n\n';
     }
     else if (type === 'дата') {
         var title = 'Неправильная дата';
-        var msg   = 'Введите правильное значение или нажмите "Отмена", чтобы исправить его потом.\n\nТекущее значение:\n• ' + cur +'\n\n';
+        var msg   = ARR_recommend_correction(data.sugg, data.cur[r][c], type);
     }
     else if (type === 'регион/город') {
         var title = 'Неправильный регион/город';
-        var msg   = ARR_recommend_correction(data.sugg, cur, type);
+        var msg   = ARR_recommend_correction(data.sugg, data.cur[r][c], type);
     }
     else if (type === 'категория') {
         var title = 'Неправильная категория';
-        var msg   = ARR_recommend_correction(data.sugg, cur, type);
+        var msg   = ARR_recommend_correction(data.sugg, data.cur[r][c], type);
     }
     else if (type === 'источник') {
         var title = 'Неправильный источник';
-        var msg   = ARR_recommend_correction(data.sugg, cur, type);
+        var msg   = ARR_recommend_correction(data.sugg, data.cur[r][c], type);
     }
+
+    // errors counter
+    const total   = range.h * range.w;
+    const current = (r-range.r)*range.w + (c-range.c+1);
+    title        += ' (' + current.toString() + ' из ' + total.toString() + ')'
+
     return ui.prompt(title, msg, ui.ButtonSet.OK_CANCEL);
 }
 function UI_MM_show_dialogues() {

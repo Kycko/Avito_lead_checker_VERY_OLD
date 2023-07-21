@@ -52,18 +52,20 @@ function MM_count_errors() {
     SH_add_filter(data.cur_sheet.getRange(data.title+1, 1, data.cur.length-data.title, data.cur[data.title].length));
 }
 
-function MM_check_cities()          {MM_check_UD('регион/город', 'check_cities')}
-function MM_check_emails()          {MM_check_UD('e-mail', 'empty_req')}
-function MM_check_categories()      {MM_check_UD('категория', 'check_categories')}
-function MM_check_verticals()       {MM_check_UD('вертикаль', 'check_categories')}
-function MM_check_verticals_blank() {MM_check_UD('вертикаль', 'check_categories', true)}
-function MM_check_managers()        {MM_check_UD('менеджер', 'check_managers')}
-function MM_check_managers_blank()  {MM_check_UD('менеджер', 'check_managers', true)}
-function MM_check_sources()         {MM_check_UD('источник', 'check_sources')}
+function MM_check_cities()          {MM_check_UD('регион/город',     'check_cities')}
+function MM_check_emails()          {MM_check_UD('e-mail',           'empty_req')}
+function MM_check_websites()        {MM_check_UD('сайт',             'empty_req')}
+function MM_check_categories()      {MM_check_UD('категория',        'check_categories')}
+function MM_check_verticals()       {MM_check_UD('вертикаль',        'check_categories')}
+function MM_check_verticals_blank() {MM_check_UD('вертикаль',        'check_categories', true)}
+function MM_check_managers()        {MM_check_UD('менеджер',         'check_managers')}
+function MM_check_managers_blank()  {MM_check_UD('менеджер',         'check_managers', true)}
+function MM_check_sources()         {MM_check_UD('источник',         'check_sources')}
+function MM_check_dates()           {MM_check_UD('дата',             'empty_req')}
 function MM_check_phones_main()     {MM_check_UD('основной телефон', 'empty_req')}
-function MM_check_phones_sec()      {MM_check_UD('другой телефон', 'empty_req')}
-function MM_highlight_blanks()      {MM_check_UD('пустые', 'empty_req')}
-function MM_add_Unknown()           {MM_check_UD('add_Unknown', 'empty_req')}
+function MM_check_phones_sec()      {MM_check_UD('другой телефон',   'empty_req')}
+function MM_highlight_blanks()      {MM_check_UD('пустые',           'empty_req')}
+function MM_add_Unknown()           {MM_check_UD('add_Unknown',      'empty_req')}
 
 // secondary function just to keep the code simple
 // UD = user data

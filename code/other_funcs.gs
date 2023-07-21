@@ -32,7 +32,8 @@ function autocorr_UD(data, r, c, type) {
     data.cur[r][c] = data.cur[r][c].toString().trim();  // trim spaces for all the user data
     const autocorr_list = ['регион/город', 'категория', 'источник', 'название компании', 'имя', 'статус', 'ответственный', 'доступен для всех'];
     if      (type === 'e-mail')                     {data.cur[r][c] = data.cur[r][c].toString().toLowerCase()}
-    else if (STR_find_sub(type, 'телефон', 'bool')) {data.cur[r][c] = STR_format_phone(data.cur[r][c], type === 'основной телефон')}
+    else if (type === 'сайт')                       {data.cur[r][c] = STR_format_website(data.cur[r][c])}
+    else if (STR_find_sub(type, 'телефон', 'bool')) {data.cur[r][c] = STR_format_phone  (data.cur[r][c], type === 'основной телефон')}
     else if (ARR_search_in_list(autocorr_list, type, 'bool')) {
         if (type === 'регион/город') {data.cur[r][c] = STR_trim_city(data.cur[r][c])}
         for (var i=0; i < data.autocorr[1].length; i+=1) {
@@ -64,6 +65,13 @@ function validate_UD(data, r, c, type) {
             }
         }
     }
+    else if (type === 'сайт') {
+        if      (!data.cur[r][c].length)                                                   {valid = true}
+        else if (!STR_find_sub(data.cur[r][c], '.', 'bool'))                               {valid = false}
+        else if (STR_find_sub_list(data.cur[r][c], ['http://', 'https://', 'www.']) === 0) {valid = false}
+        else if (data.cur[r][c].toString().slice(-1) == '/')                               {valid = false}
+        else                                                                               {valid = true}
+    }
     else if (type === 'регион/город') {
         var valid = ARR_search_in_list(data.cities[0], data.cur[r][c], 'bool');
     }
@@ -73,27 +81,26 @@ function validate_UD(data, r, c, type) {
     else if (type === 'источник') {
         var valid = ARR_search_in_list(data.sources[0], data.cur[r][c], 'bool');
     }
-    else if (type === 'дата') {
-        var list  = data.cur[r][c].toString().split('.');
-        Logger.log(list);
-        if (list.length === 3) {
-            var valid_list = [false, false, false];
-            if (Number(list[0]) > 0    && Number(list[0]) < 32)   {valid_list[0] = true}
-            if (Number(list[1]) > 0    && Number(list[1]) < 13)   {valid_list[1] = true}
-            if (Number(list[2]) > 2000 && Number(list[2]) < 2100) {valid_list[2] = true}
-            Logger.log(valid_list);
-
-            var valid = true;
-            for (var i=0; i < valid_list.length; i+=1) {
-                if (!valid_list[i]) {valid = false}
-            }
-        }
-        else {var valid = false}
-    }
+    else if (type === 'дата')              {var valid = validate_date(data.cur[r][c].toString().split('.'))}
     else if (type === 'статус')            {var valid = data.cur[r][c] === 'Новый'}
     else if (type === 'ответственный')     {var valid = data.cur[r][c] === 'Квалификаторы'}
     else if (type === 'доступен для всех') {var valid = data.cur[r][c].toString().toLowerCase() === 'да'}
     return valid;
+}
+function validate_date(list) {
+    if (list.length === 3) {
+        var valid_list = [false, false, false];
+        if (Number(list[0]) > 0    && Number(list[0]) < 32)   {valid_list[0] = true}
+        if (Number(list[1]) > 0    && Number(list[1]) < 13)   {valid_list[1] = true}
+        if (Number(list[2]) > 2000 && Number(list[2]) < 2100) {valid_list[2] = true}
+
+        var valid = true;
+        for (var i=0; i < valid_list.length; i+=1) {
+            if (!valid_list[i]) {valid = false}
+        }
+        return valid;
+    }
+    else {return false}
 }
 
 function rotate_my_range(old_range) {
