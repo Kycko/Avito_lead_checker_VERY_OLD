@@ -31,8 +31,8 @@ function get_col_letter_from_num(column) {
 function autocorr_UD(data, r, c, type) {
     data.cur[r][c] = data.cur[r][c].toString().trim();  // trim spaces for all the user data
     const autocorr_list = ['регион/город', 'категория', 'источник', 'название компании', 'имя', 'статус', 'ответственный', 'доступен для всех'];
-    if      (type === 'e-mail')  {data.cur[r][c] = data.cur[r][c].toString().toLowerCase()}
-    else if (type === 'телефон') {data.cur[r][c] = STR_format_phone(data.cur[r][c])}
+    if      (type === 'e-mail')                     {data.cur[r][c] = data.cur[r][c].toString().toLowerCase()}
+    else if (STR_find_sub(type, 'телефон', 'bool')) {data.cur[r][c] = STR_format_phone(data.cur[r][c], type === 'основной телефон')}
     else if (ARR_search_in_list(autocorr_list, type, 'bool')) {
         if (type === 'регион/город') {data.cur[r][c] = STR_trim_city(data.cur[r][c])}
         for (var i=0; i < data.autocorr[1].length; i+=1) {
@@ -46,15 +46,21 @@ function autocorr_UD(data, r, c, type) {
     return data;
 }
 function validate_UD(data, r, c, type) {
-    if (ARR_search_in_list(['телефон', 'e-mail'], type, 'bool')) {
+    if (STR_find_sub_list(type, ['телефон', 'e-mail'], 'bool')) {
         var valid = true;
         var list  = data.cur[r][c].toString().split(',');
         for (i=0; i < list.length; i+=1) {
             if (type === 'e-mail') {
                 if (!STR_check_email(list[i])) {valid = false}
             }
-            else if (type === 'телефон') {
+            else if (type === 'основной телефон') {
                 if (list[i].length !== 11 || list[i].toString().charAt(0) != '7') {valid = false}
+            }
+            else if (type === 'другой телефон') {
+                if (list[i] === '79999999999') {valid = false}
+                else if (list[i].length !== 0 && (list[i].length !== 11 || list[i].toString().charAt(0) != '7')) {
+                    valid = false;
+                }
             }
         }
     }

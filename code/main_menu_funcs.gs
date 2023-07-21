@@ -60,7 +60,8 @@ function MM_check_verticals_blank() {MM_check_UD('вертикаль', 'check_ca
 function MM_check_managers()        {MM_check_UD('менеджер', 'check_managers')}
 function MM_check_managers_blank()  {MM_check_UD('менеджер', 'check_managers', true)}
 function MM_check_sources()         {MM_check_UD('источник', 'check_sources')}
-function MM_check_phones()          {MM_check_UD('телефон', 'empty_req')}
+function MM_check_phones_main()     {MM_check_UD('основной телефон', 'empty_req')}
+function MM_check_phones_sec()      {MM_check_UD('другой телефон', 'empty_req')}
 function MM_highlight_blanks()      {MM_check_UD('пустые', 'empty_req')}
 function MM_add_Unknown()           {MM_check_UD('add_Unknown', 'empty_req')}
 
@@ -83,10 +84,10 @@ function MM_check_UD(type, CRS_type, only_blank=false) {
             data.cur       = ARR_rotate(data.cur);
             data.bg_colors = ARR_rotate(data.bg_colors);
         }
-        else if (type === 'пустые')      {data = ARR_check_blanks(data, ARrange, '', false, false)}
-        else if (type === 'add_Unknown') {data = ARR_check_blanks(data, ARrange, 'имя', false, false)}
-        else if (type === 'телефон')     {data = ARR_check_UD_range(data, ARrange, type, false)}
-        else                             {data = ARR_check_UD_range(data, ARrange, type, UI_MM_show_dialogues())}
+        else if (type === 'пустые')                     {data = ARR_check_blanks(data, ARrange, '', false, false)}
+        else if (type === 'add_Unknown')                {data = ARR_check_blanks(data, ARrange, 'имя', false, false)}
+        else if (STR_find_sub(type, 'телефон', 'bool')) {data = ARR_check_UD_range(data, ARrange, type, false)}
+        else                                            {data = ARR_check_UD_range(data, ARrange, type, UI_MM_show_dialogues())}
         SH_set_range_values(data.cur, SHrange);
         SH_hl_cells(data);
     }

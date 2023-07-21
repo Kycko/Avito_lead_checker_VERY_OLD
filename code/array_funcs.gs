@@ -56,7 +56,7 @@ function ARR_check_user_data(data, fix_man, SD, only_verify=false) {
             data = ARR_check_UD_range(data, range, 'e-mail', SD, only_verify);
         }
         else if (STR_find_sub(data.cur[i][tit], 'телефон', 'bool')) {
-            data = ARR_check_UD_range(data, range, 'телефон', false, only_verify);
+            data = ARR_check_UD_range(data, range, data.cur[i][tit].toString().toLowerCase(), false, only_verify);
         }
         else if (data.cur[i][tit] == 'Регион и город' && CRS('check_cities', data, show_msg=false)) {
             data = ARR_check_UD_range(data, range, 'регион/город', SD, only_verify);

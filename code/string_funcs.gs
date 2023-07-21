@@ -24,7 +24,7 @@ function STR_check_email(string) {
     }
     return true;
 }
-function STR_format_phone(phone) {
+function STR_format_phone(phone, use_unknown) {
     var phones = phone.split(',');
     for (var i=0; i < phones.length; i+=1) {
         phones[i] = phones[i].toString().replace(/\D+/g, '');
@@ -32,11 +32,19 @@ function STR_format_phone(phone) {
         else if (phones[i].toString().length === 11) {
             if (phones[i].toString().charAt(0) == '8') {phones[i] = '7' + phones[i].toString().slice(1)}
         }
-        else if (phones[i].toString().length < 10) {phones[i] = '79999999999'}
+        else if (phones[i].toString().length < 10) {
+            if (use_unknown) {phones[i] = '79999999999'}
+            else             {phones[i] = ''}
+        }
     }
 
     for (var i=0; i < phones.length; i+=1) {
-        if (phones.length > 1 && phones[i] === '79999999999') {phones.splice(i,1)}
+        if (use_unknown) {
+            if (phones.length > 1 && phones[i] === '79999999999') {phones.splice(i,1)}
+        }
+        else {
+            if (phones[i] === '79999999999')                      {phones.splice(i,1)}
+        }
     }
     return phones.join();
 }
