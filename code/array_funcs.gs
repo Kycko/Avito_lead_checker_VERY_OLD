@@ -73,6 +73,9 @@ function ARR_check_user_data(data, fix_man, SD, only_verify=false) {
         else if (data.cur[i][tit] == 'Источник' && CRS('check_sources', data, show_msg=false)) {
             data = ARR_check_UD_range(data, range, 'источник', SD, only_verify);
         }
+        else if (data.cur[i][tit] == 'Дата проведения мероприятия') {
+            data = ARR_check_UD_range(data, range, 'дата', SD, only_verify);
+        }
         else if (ARR_search_in_list(autofill, data.cur[i][tit], 'bool')) {
             data = ARR_check_UD_range(data, range, data.cur[i][tit].toString().toLowerCase(), SD, only_verify);
         }

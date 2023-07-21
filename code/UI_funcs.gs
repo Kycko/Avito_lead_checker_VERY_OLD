@@ -23,6 +23,10 @@ function UI_show_UD_error(data, cur, type, ui) {
         var title = 'Неправильный ' + type.toString();
         var msg   = 'Введите правильное значение, оставьте поле пустым для удаления или нажмите "Отмена", чтобы исправить его потом.\n\nТекущее значение:\n• ' + cur +'\n\n';
     }
+    else if (type === 'дата') {
+        var title = 'Неправильная дата';
+        var msg   = 'Введите правильное значение или нажмите "Отмена", чтобы исправить его потом.\n\nТекущее значение:\n• ' + cur +'\n\n';
+    }
     else if (type === 'регион/город') {
         var title = 'Неправильный регион/город';
         var msg   = ARR_recommend_correction(data.sugg, cur, type);
