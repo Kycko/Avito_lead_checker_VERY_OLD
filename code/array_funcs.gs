@@ -68,10 +68,10 @@ function ARR_check_user_data(data, fix_man, SD, only_verify=false) {
             data = ARR_check_UD_range(data, range, 'категория', SD, only_verify);
         }
         else if (data.cur[i][tit] == 'Вертикаль' && CRS('check_categories', data, show_msg=false)) {
-            data = ARR_fix_vert_and_man(data, range, 'вертикаль', only_verify);
+            data = ARR_fix_vert_and_man(data, range, 'вертикаль', false, only_verify);
         }
         else if (fix_man && data.cur[i][tit] == 'Ответственный менеджер в сделке' && CRS('check_managers', data, show_msg=false)) {
-            data = ARR_fix_vert_and_man(data, range, 'менеджер', only_verify);
+            data = ARR_fix_vert_and_man(data, range, 'менеджер', false, only_verify);
         }
         else if (data.cur[i][tit] == 'Источник' && CRS('check_sources', data, show_msg=false)) {
             data = ARR_check_UD_range(data, range, 'источник', SD, only_verify);
@@ -215,7 +215,7 @@ function ARR_check_blanks(data, range, type='', only_verify=false, highlight=tru
 }
 
 // vert and man = verticals and managers
-function ARR_fix_vert_and_man(data, range, type, only_blank=false, only_verify) {
+function ARR_fix_vert_and_man(data, range, type, only_blank=false, only_verify=false) {
     if (range.h === 1 && range.c > data.title) {
         if     (type === 'вертикаль') {var req_cols = ['Категория']}
         else if (type === 'менеджер') {var req_cols = ['Категория', 'Регион и город']}
