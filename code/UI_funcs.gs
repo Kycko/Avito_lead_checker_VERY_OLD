@@ -19,15 +19,12 @@ function UI_show_msg(title, msg, question=false) {
     else if (resp == ui.Button.NO) {return false}
 }
 function UI_show_UD_error(data, r, c, type, ui, range) {
-    const to_empty = ['e-mail',   'ответственный', 'сайт'];
-    const she      = ['дата',     'категория'];
-
     // title
-    if (ARR_search_in_list(she,      type, 'bool')) {var title = 'Неправильная ' + type}
-    else                                            {var title = 'Неправильный ' + type}
+    if (ARR_search_in_list(['дата', 'категория'], type, 'bool')) {var title = 'Неправильная ' + type}
+    else                                                         {var title = 'Неправильный ' + type}
 
     // message
-    if (ARR_search_in_list(to_empty, type, 'bool')) {
+    if (ARR_search_in_list(['e-mail', 'сайт'], type, 'bool')) {
         var msg   = 'Введите правильное значение, оставьте поле пустым для удаления или нажмите "Отмена", чтобы исправить его потом.\n\nТекущее значение:\n• ' + data.cur[r][c] +'\n\n';
     }
     else {var msg = ARR_recommend_correction(data.sugg, data.cur[r][c], type)}
