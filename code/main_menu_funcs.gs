@@ -55,6 +55,7 @@ function MM_count_errors() {
 function MM_check_cities()          {MM_check_UD('регион/город',     'check_cities')}
 function MM_check_emails()          {MM_check_UD('e-mail',           'empty_req')}
 function MM_check_websites()        {MM_check_UD('сайт',             'empty_req')}
+function MM_check_accounts()        {MM_check_UD('авито-аккаунт',    'empty_req')}
 function MM_check_categories()      {MM_check_UD('категория',        'check_categories')}
 function MM_check_verticals()       {MM_check_UD('вертикаль',        'check_categories')}
 function MM_check_verticals_blank() {MM_check_UD('вертикаль',        'check_categories', true)}
@@ -88,6 +89,7 @@ function MM_check_UD(type, CRS_type, only_blank=false) {
         }
         else if (type === 'пустые')                     {data = ARR_check_blanks(data, ARrange, '', false, false)}
         else if (type === 'add_Unknown')                {data = ARR_check_blanks(data, ARrange, 'имя', false, false)}
+        else if (type === 'авито-аккаунт')              {data = ARR_check_UD_range(data, ARrange, type, false, true)}
         else if (STR_find_sub(type, 'телефон', 'bool')) {data = ARR_check_UD_range(data, ARrange, type, false)}
         else                                            {data = ARR_check_UD_range(data, ARrange, type, UI_MM_show_dialogues())}
         SH_set_range_values(data.cur, SHrange);

@@ -86,6 +86,7 @@ function validate_UD(data, r, c, type) {
     else if (type === 'статус')            {var valid = data.cur[r][c] === 'Новый'}
     else if (type === 'ответственный')     {var valid = data.cur[r][c] === 'Квалификаторы'}
     else if (type === 'доступен для всех') {var valid = data.cur[r][c].toString().toLowerCase() === 'да'}
+    else if (type === 'авито-аккаунт')     {var valid = data.cur[r][c].length === data.cur[r][c].toString().replace(/\D+/g, '').length}
     return valid;
 }
 function validate_date(list) {

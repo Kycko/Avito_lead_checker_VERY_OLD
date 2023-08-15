@@ -79,6 +79,9 @@ function ARR_check_user_data(data, fix_man, SD, only_verify=false) {
         else if (data.cur[i][tit] == 'Дата проведения мероприятия') {
             data = ARR_check_UD_range(data, range, 'дата', SD, only_verify);
         }
+        else if (data.cur[i][tit] == 'Авито-аккаунт') {
+            data = ARR_check_UD_range(data, range, 'авито-аккаунт', false, true);
+        }
         else if (ARR_search_in_list(autofill, data.cur[i][tit], 'bool')) {
             data = ARR_check_UD_range(data, range, data.cur[i][tit].toString().toLowerCase(), SD, only_verify);
         }
@@ -122,7 +125,7 @@ function ARR_final_errors_list(data) {
 }
 
 // range = {r, c, h, w} (first row, first col, height, width)
-function ARR_check_UD_range(data, range, type, SD, only_verify) {
+function ARR_check_UD_range(data, range, type, SD, only_verify=false) {
     var USI  = {from : [], to : []};    // USI = user input, just to autocorrect doubled strings
     const GC = Gcolors();
     for (var r=range.r; r < range.r+range.h; r+=1) {
