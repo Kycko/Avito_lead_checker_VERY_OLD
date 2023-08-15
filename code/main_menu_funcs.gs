@@ -51,6 +51,22 @@ function MM_count_errors() {
     SH_pin_first_rows(data.cur_sheet, data.title+1);
     SH_add_filter(data.cur_sheet.getRange(data.title+1, 1, data.cur.length-data.title, data.cur[data.title].length));
 }
+function MM_add_comment_start() {MM_add_comment(true)}
+function MM_add_comment_end()   {MM_add_comment(false)}
+function MM_add_comment(start) {
+    var data    = SH_get_all_sheets_data();
+    var SHrange = data.cur_sheet.getActiveRange();
+    var ARrange = {r : SHrange.getRow()-1,
+                   c : SHrange.getColumn()-1,
+                   h : SHrange.getHeight(),
+                   w : SHrange.getWidth()}
+
+    var obj = ARR_join_comments(data, ARrange, start);
+    if (obj != 'break') {
+        SHrange = data.cur_sheet.getRange(obj.range.r+1, obj.range.c+1, obj.range.h);
+        SH_set_range_values(obj.data, SHrange);
+    }
+}
 
 function MM_check_cities()          {MM_check_UD('регион/город',     'check_cities')}
 function MM_check_emails()          {MM_check_UD('e-mail',           'empty_req')}

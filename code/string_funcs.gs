@@ -89,3 +89,19 @@ function STR_recommend_dates(parts) {
     }
     return vars;
 }
+
+function STR_join_comments(cur_comment, add_txt, separator, start) {
+    if (add_txt.toString().length && cur_comment.toString().length) {
+        if (separator === null) {
+            const ui   = SpreadsheetApp.getUi();
+            const resp = UI_ask_separator(ui);
+            if (resp.getSelectedButton() == ui.Button.OK) {separator = resp.getResponseText()}
+            else                                          {return null}
+        }
+        if (start) {var final_txt = add_txt + separator + cur_comment}
+        else       {var final_txt = cur_comment + separator + add_txt}
+    }
+    else {var final_txt = cur_comment + add_txt}
+
+    return {txt : final_txt, separator : separator}
+}

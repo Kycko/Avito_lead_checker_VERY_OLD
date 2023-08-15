@@ -187,6 +187,51 @@ function ARR_check_UD_range(data, range, type, SD, only_verify=false) {
     }
     return data;
 }
+function ARR_join_comments(data, range, start) {
+    var tit = data.title;
+    if (range.r > tit) {
+        var   separator   = null;
+        const add_title   = UI_add_title_in_comments();
+        var   comm_column = ARR_search_in_list(data.cur[tit], 'комментарий');
+        if (comm_column == -1) {
+            for (var i=0; i < data.cur.length; i+=1) {
+                if (i == tit) {data.cur[i].push('Комментарий')}
+                else          {data.cur[i].push('')}
+            }
+            comm_column = data.cur[0].length-1;
+        }
+
+        for (var r=range.r; r < range.r+range.h; r+=1) {
+            const cur_comment = data.cur[r][comm_column].toString().trim();
+            var   add_txt     = '';
+            for (var c=range.c; c < range.c+range.w; c+=1) {
+                data.cur[r][c] = data.cur[r][c].toString().trim();
+                if (add_txt.length && data.cur[r][c].length) {
+                    if (separator === null) {
+                        const ui   = SpreadsheetApp.getUi();
+                        const resp = UI_ask_separator(ui);
+                        if (resp.getSelectedButton() == ui.Button.OK) {separator = resp.getResponseText()}
+                        else                                          {return 'break'}
+                    }
+                    add_txt += separator;
+                }
+                add_txt += data.cur[r][c];
+            }
+            const obj = STR_join_comments(cur_comment, add_txt, separator, start);
+            if (obj === null) {return 'break'}
+            else {
+                data.cur[r][comm_column] = obj.txt;
+                separator                = obj.separator;
+            }
+        }
+        return {data  : data.cur,
+                range : {r:range.r, c:comm_column, h:range.h, w:1}}
+    }
+    else {
+        UI_show_msg('Невозможно добавить комментарии', 'Выделите ячейки без строк заголовков.');
+        return 'break';
+    }
+}
 function ARR_check_req_cols(data, req_cols, type) {
     var txt     = '';
     var indexes = [];
@@ -236,7 +281,7 @@ function ARR_fix_vert_and_man(data, range, type, only_blank=false, only_verify=f
             }
         }
     }
-    else {UI_show_msg('Невозможно проверить', 'Выделите ячейки только в одном столбце, без первой строки.')}
+    else {UI_show_msg('Невозможно проверить', 'Выделите ячейки только в одном столбце, без строк заголовков.')}
     return data;
 }
 
