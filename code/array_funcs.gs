@@ -79,6 +79,9 @@ function ARR_check_user_data(data, fix_man, SD, only_verify=false) {
         else if (data.cur[i][tit] == 'Дата проведения мероприятия') {
             data = ARR_check_UD_range(data, range, 'дата', SD, only_verify);
         }
+        else if (data.cur[i][tit] == 'Статус посещения мероприятия клиентом') {
+            data = ARR_check_UD_range(data, range, 'статус посещения мероприятия клиентом', SD, only_verify);
+        }
         else if (data.cur[i][tit] == 'Авито-аккаунт') {
             data = ARR_check_UD_range(data, range, 'авито-аккаунт', false, true);
         }
@@ -301,8 +304,12 @@ function ARR_check_double_titles(titles) {
     }
 }
 function ARR_recommend_correction(sugg, cur, type) {
-    var final_msg = 'Введите правильный вариант' + ['', ', оставьте поле пустым для удаления'][Number(type === 'дата')];
-    final_msg    += ' или нажмите "Отмена", чтобы исправить его потом.\n\nТекущее значение:\n• ' + cur +'\n\n';
+    var final_msg = 'Введите правильный вариант$$$ или нажмите "Отмена", чтобы исправить его потом.\n\nТекущее значение:\n• ' + cur +'\n\n';
+
+    const temp = ['дата', 'статус посещения мероприятия клиентом'];
+    if (ARR_search_in_list(temp, type, 'bool')) {var string = ', оставьте поле пустым для удаления'}
+    else                                        {var string = ''}
+    final_msg  = final_msg.replace('$$$', string);
 
     if (type === 'дата') {var vars = STR_recommend_dates(cur.toString().split('/'))}
     else {

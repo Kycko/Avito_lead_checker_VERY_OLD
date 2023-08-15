@@ -19,18 +19,18 @@ function UI_show_msg(title, msg, question=false) {
     else if (resp == ui.Button.NO) {return false}
 }
 function UI_show_UD_error(data, r, c, type, ui, range) {
-    if (ARR_search_in_list(['e-mail', 'ответственный', 'сайт'], type, 'bool')) {
-        var title = 'Неправильный ' + type.toString();
+    const to_empty = ['e-mail',   'ответственный', 'сайт'];
+    const she      = ['дата',     'категория'];
+
+    // title
+    if (ARR_search_in_list(she,      type, 'bool')) {var title = 'Неправильная ' + type}
+    else                                            {var title = 'Неправильный ' + type}
+
+    // message
+    if (ARR_search_in_list(to_empty, type, 'bool')) {
         var msg   = 'Введите правильное значение, оставьте поле пустым для удаления или нажмите "Отмена", чтобы исправить его потом.\n\nТекущее значение:\n• ' + data.cur[r][c] +'\n\n';
     }
-    else if (ARR_search_in_list(['дата', 'категория'], type, 'bool')) {
-        var title = 'Неправильная ' + type;
-        var msg   = ARR_recommend_correction(data.sugg, data.cur[r][c], type);
-    }
-    else if (ARR_search_in_list(['источник', 'регион/город', 'статус', 'доступен для всех'], type, 'bool')) {
-        var title = 'Неправильный ' + type;
-        var msg   = ARR_recommend_correction(data.sugg, data.cur[r][c], type);
-    }
+    else {var msg = ARR_recommend_correction(data.sugg, data.cur[r][c], type)}
 
     // errors counter
     const total   = range.h * range.w;
