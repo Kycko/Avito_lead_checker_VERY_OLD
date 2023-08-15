@@ -83,8 +83,8 @@ function validate_UD(data, r, c, type) {
         var valid = ARR_search_in_list(data.sources[0], data.cur[r][c], 'bool');
     }
     else if (type === 'дата')              {var valid = validate_date(data.cur[r][c].toString().split('.'))}
-    else if (type === 'статус')            {var valid = data.cur[r][c] === 'Новый'}
-    else if (type === 'ответственный')     {var valid = data.cur[r][c] === 'Квалификаторы'}
+    else if (type === 'статус')            {var valid = data.cur[r][c].toString().toLowerCase() === 'новый'}
+    else if (type === 'ответственный')     {var valid = data.cur[r][c].toString().toLowerCase() === 'квалификаторы'}
     else if (type === 'доступен для всех') {var valid = data.cur[r][c].toString().toLowerCase() === 'да'}
     else if (type === 'авито-аккаунт')     {var valid = data.cur[r][c].length === data.cur[r][c].toString().replace(/\D+/g, '').length}
     return valid;

@@ -19,24 +19,16 @@ function UI_show_msg(title, msg, question=false) {
     else if (resp == ui.Button.NO) {return false}
 }
 function UI_show_UD_error(data, r, c, type, ui, range) {
-    if (ARR_search_in_list(['e-mail', 'статус', 'ответственный', 'доступен для всех', 'сайт'], type, 'bool')) {
+    if (ARR_search_in_list(['e-mail', 'ответственный', 'сайт'], type, 'bool')) {
         var title = 'Неправильный ' + type.toString();
         var msg   = 'Введите правильное значение, оставьте поле пустым для удаления или нажмите "Отмена", чтобы исправить его потом.\n\nТекущее значение:\n• ' + data.cur[r][c] +'\n\n';
     }
-    else if (type === 'дата') {
-        var title = 'Неправильная дата';
+    else if (ARR_search_in_list(['дата', 'категория'], type, 'bool')) {
+        var title = 'Неправильная ' + type;
         var msg   = ARR_recommend_correction(data.sugg, data.cur[r][c], type);
     }
-    else if (type === 'регион/город') {
-        var title = 'Неправильный регион/город';
-        var msg   = ARR_recommend_correction(data.sugg, data.cur[r][c], type);
-    }
-    else if (type === 'категория') {
-        var title = 'Неправильная категория';
-        var msg   = ARR_recommend_correction(data.sugg, data.cur[r][c], type);
-    }
-    else if (type === 'источник') {
-        var title = 'Неправильный источник';
+    else if (ARR_search_in_list(['источник', 'регион/город', 'статус', 'доступен для всех'], type, 'bool')) {
+        var title = 'Неправильный ' + type;
         var msg   = ARR_recommend_correction(data.sugg, data.cur[r][c], type);
     }
 
