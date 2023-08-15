@@ -63,8 +63,9 @@ function MM_add_comment(start) {
 
     var obj = ARR_join_comments(data, ARrange, start);
     if (obj != 'break') {
-        SHrange = data.cur_sheet.getRange(obj.range.r+1, obj.range.c+1, obj.range.h);
-        SH_set_range_values(obj.data, SHrange);
+        SHrange = obj.data.cur_sheet.getRange(obj.range.r+1, obj.range.c+1, obj.range.h);
+        SH_set_range_values(obj.data.cur, SHrange);
+        SH_add_filter(obj.data.cur_sheet.getRange(obj.data.title+1, 1, obj.data.cur.length-data.title, obj.data.cur[data.title].length));
     }
 }
 

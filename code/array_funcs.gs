@@ -193,7 +193,7 @@ function ARR_join_comments(data, range, start) {
         var   separator   = null;
         const add_title   = UI_add_title_in_comments();
         var   comm_column = ARR_search_in_list(data.cur[tit], 'комментарий');
-        if (comm_column == -1) {
+        if (comm_column  == null) {
             for (var i=0; i < data.cur.length; i+=1) {
                 if (i == tit) {data.cur[i].push('Комментарий')}
                 else          {data.cur[i].push('')}
@@ -224,8 +224,8 @@ function ARR_join_comments(data, range, start) {
                 separator                = obj.separator;
             }
         }
-        return {data  : data.cur,
-                range : {r:range.r, c:comm_column, h:range.h, w:1}}
+        return {data  : data,
+                range : {r:0, c:comm_column, h:data.cur.length, w:1}}
     }
     else {
         UI_show_msg('Невозможно добавить комментарии', 'Выделите ячейки без строк заголовков.');
