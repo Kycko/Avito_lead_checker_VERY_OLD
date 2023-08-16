@@ -29,7 +29,7 @@ function get_col_letter_from_num(column) {
 
 // UD = user data
 function autocorr_UD(data, r, c, type) {
-    data.cur[r][c] = data.cur[r][c].toString().trim();  // trim spaces for all the user data
+    data.cur[r][c]      = data.cur[r][c].toString().trim(); // trim spaces for all the user data
     const autocorr_list = ['регион/город', 'категория', 'источник', 'название компании', 'имя', 'статус', 'ответственный', 'доступен для всех'];
     if (type === 'e-mail') {
         data.cur[r][c] = data.cur[r][c].toString().toLowerCase()
@@ -160,7 +160,9 @@ function verify_manager(data, r, c, cat_row, city_row, only_verify) {
                     if (city_ind >= 0) {
                         if (STR_find_sub(data.man[1][i], data.cities[1][city_ind], 'bool')) {
                             if (only_verify) {
-                                if (data.cur[r][c].length && data.cur[r][c] == data.man[2][i]) {data.bg_colors[r][c] = Gcolors().hl_light_green}
+                                if (data.cur[r][c].length && data.cur[r][c] == data.man[2][i]) {
+                                    data.bg_colors[r][c] = Gcolors().hl_light_green;
+                                }
                             }
                             else {data = change_and_notify_vert_or_man(data, r, c, init_str, data.man[2][i], Gcolors().hl_light_green, 'менеджер')}
                             return data;
@@ -179,6 +181,7 @@ function change_and_notify_vert_or_man(data, r, c, init_str, new_str, new_color,
     data.cur[r][c] = new_str;
     if (init_str.length && init_str != new_str) {
         if (new_str.length) {data.bg_colors[r][c] = Gcolors().hl_yellow}
+        data.notes[r][c] = 'Предыдущее значение ячейки: ' + init_str;
         if     (type === 'вертикаль') {data.vert_changed    = true}
         else if (type === 'менеджер') {data.manager_changed = true}
     }

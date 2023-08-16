@@ -46,6 +46,7 @@ function ARR_check_column_names(data, SD) {
 function ARR_check_user_data(data, fix_man, SD, only_verify=false) {
     data.cur       = ARR_rotate(data.cur);
     data.bg_colors = ARR_rotate(data.bg_colors);
+    data.notes     = ARR_rotate(data.notes);
     var  tit       = data.title;
 
     for (var i=0; i < data.cur.length; i+=1) {
@@ -96,6 +97,7 @@ function ARR_check_user_data(data, fix_man, SD, only_verify=false) {
     if (data.col_reqs.length) {data = ARR_final_errors_list(data)}
     data.cur       = ARR_rotate(data.cur);
     data.bg_colors = ARR_rotate(data.bg_colors);
+    data.notes     = ARR_rotate(data.notes);
     return data;
 }
 function ARR_final_errors_list(data) {
@@ -119,9 +121,11 @@ function ARR_final_errors_list(data) {
         for (var c=0; c < tit; c+=1) {
             data.cur      [r].splice(0, 1);
             data.bg_colors[r].splice(0, 1);
+            data.notes    [r].splice(0, 1);
         }
         data.cur      [r].unshift('Уникальных: ' + unique.length.toString(), 'Ошибок: ' + errors.toString());
-        data.bg_colors[r].unshift(UC, EC);
+        data.bg_colors[r].unshift(UC  , EC);
+        data.notes    [r].unshift(null, null);
     }
     data.title = 2;
     return data;
@@ -129,8 +133,9 @@ function ARR_final_errors_list(data) {
 
 // range = {r, c, h, w} (first row, first col, height, width)
 function ARR_check_UD_range(data, range, type, SD, only_verify=false) {
-    var USI  = {from : [], to : []};    // USI = user input, just to autocorrect doubled strings
+    var  USI = {from: [], to: []};  // USI = user input, just to autocorrect doubled strings
     const GC = Gcolors();
+
     for (var r=range.r; r < range.r+range.h; r+=1) {
         for (var c=range.c; c < range.c+range.w; c+=1) {
             if (only_verify) {
@@ -167,7 +172,7 @@ function ARR_check_UD_range(data, range, type, SD, only_verify=false) {
                                     data.cur[r][c] = resp.getResponseText();
                                     if (validate_UD(data, r, c, type)) {
                                         USI.from.push(init_value);
-                                        USI.to.push(data.cur[r][c]);
+                                        USI.to  .push(data.cur[r][c]);
                                     }
                                 }
                                 else {
@@ -176,7 +181,7 @@ function ARR_check_UD_range(data, range, type, SD, only_verify=false) {
                                     valid = true;
 
                                     USI.from.push(init_value);
-                                    USI.to.push('');
+                                    USI.to  .push('');
                                 }
                             }
                         }
@@ -313,39 +318,48 @@ function ARR_check_loaded_columns(data, SD) {
 function ARR_add_mandatory_columns(data) {
     var old_data      = ARR_rotate(data.cur);
     var old_bg_colors = ARR_rotate(data.bg_colors);
+    var old_notes     = ARR_rotate(data.notes);
     const old_len     = old_data[0].length;
     var new_data      = [];
     var new_bg_colors = [];
+    var new_notes     = [];
 
     for (var i=1; i < data.col_reqs[0].length; i+=1) {
         const index = ARR_search_in_column(old_data, data.col_reqs[0][i], data.title);
         if (index >= 0) {
-            new_data.push(old_data[index]);
-            new_bg_colors.push(old_bg_colors[index]);
-            old_data.splice(index, 1);
-            old_bg_colors.splice(index, 1);
+            new_data     .push  (old_data     [index]);
+            new_bg_colors.push  (old_bg_colors[index]);
+            new_notes    .push  (old_notes    [index]);
+            old_data     .splice(index,       1);
+            old_bg_colors.splice(index,       1);
+            old_notes    .splice(index,       1);
         }
         else if (data.col_reqs[1][i] === 'да') {
             var temp_data   = [];
             var temp_colors = [];
+            var temp_notes  = [];
             for (var count=0; count < old_len; count+=1) {
                 temp_data  .push('');
                 temp_colors.push(null);
+                temp_notes .push(null);
             }
             temp_data[data.title] = data.col_reqs[0][i];
             new_data     .push(temp_data);
             new_bg_colors.push(temp_colors);
+            new_notes    .push(temp_notes);
         }
     }
     if (old_data !== []) {
         for (var i=0; i < old_data.length; i+=1) {
-            new_data.push(old_data[i]);
+            new_data     .push(old_data     [i]);
             new_bg_colors.push(old_bg_colors[i]);
+            new_notes    .push(old_notes    [i]);
         }
     }
 
-    data.cur = ARR_rotate(new_data);
+    data.cur       = ARR_rotate(new_data);
     data.bg_colors = ARR_rotate(new_bg_colors);
+    data.notes     = ARR_rotate(new_notes);
     return data;
 }
 function ARR_check_double_titles(titles) {
@@ -386,15 +400,17 @@ function ARR_rm_RC_list(data, rm_list, type) {
     if (rm_list) {
         if (type == 'rows') {
             for (var i = rm_list.length-1; i >= 0; i-=1) {
-                data.cur.splice(rm_list[i], 1);
+                data.cur      .splice(rm_list[i], 1);
                 data.bg_colors.splice(rm_list[i], 1);
+                data.notes    .splice(rm_list[i], 1);
             }
         }
         else if (type == 'columns') {
             for (var row=0; row < data.cur.length; row+=1) {
                 for (var i = rm_list.length-1; i >= 0; i-=1) {
-                    data.cur[row].splice(rm_list[i], 1);
+                    data.cur      [row].splice(rm_list[i], 1);
                     data.bg_colors[row].splice(rm_list[i], 1);
+                    data.notes    [row].splice(rm_list[i], 1);
                 }
             }
         }
@@ -470,4 +486,14 @@ function ARR_rm_doubles_in_list(old_list) {
         if (!ARR_search_in_list(new_list, old_list[i], 'bool')) {new_list.push(old_list[i])}
     }
     return new_list;
+}
+function ARR_create_empty_table(rows, columns, data=null) {
+    var final = [];
+    for (var r=0; r<rows; r+=1) {
+        final.push([]);
+        for (var c=0; c<columns; c+=1) {
+            final[r].push(data);
+        }
+    }
+    return final;
 }

@@ -12,7 +12,8 @@ function MM_launch_all(fix_man=true) {
     data = ARR_check_user_data(data, fix_man, SD);
 
     // write all the changed data in the sheets
-    SH_set_values(data.cur, data.cur_sheet);
+    SH_set_values(data.cur,   data.cur_sheet);
+    SH_set_notes (data.notes, data.cur_sheet);
     UI_show_vert_man_toast(data);
 
     // sheet formatting

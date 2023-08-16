@@ -7,12 +7,15 @@ function SH_get_all_sheets_data() {
     all_sheets_list = SH_get_all_sheets_list()
 
     data.cur_sheet = SpreadsheetApp.getActiveSheet();
-    const range    = data.cur_sheet.getRange(1, 1, data.cur_sheet.getMaxRows(), data.cur_sheet.getMaxColumns());
+    const size     = {rows   : data.cur_sheet.getMaxRows(),
+                      columns: data.cur_sheet.getMaxColumns()}
+    const range    = data.cur_sheet.getRange(1, 1, size.rows, size.columns);
 
     range.setNumberFormat('@STRING@');
     data.cur       = SH_get_values(data.cur_sheet.getName(), all_sheets_list);
     data.bg_colors = range.getBackgrounds();
-    data.title     = ARR_search_title_row(data.cur);    // number of title row
+    data.notes     = ARR_create_empty_table(size.rows, size.columns);
+    data.title     = ARR_search_title_row  (data.cur);    // number of title row
 
     for (var key in GRS) {
         // all the data from '[script]' sheets will be ROTATED!
@@ -54,6 +57,7 @@ function SH_set_range_values(data, range) {
     }
     range.setValues(data);
 }
+function SH_set_notes(notes, sheet) {sheet.getRange(1, 1, notes.length, notes[0].length).setNotes(notes)}
 
 function SH_get_all_sheets_list() {
     var   list   = [];
@@ -97,7 +101,7 @@ function SH_text_formatting(data) {
     SH_set_req_wrapping(data);
     SH_set_req_column_width(data);
 }
-function SH_set_range_formatting(range, txt_color=Gcolors().black, txt_font='Calibri', txt_size=11, wrap=SpreadsheetApp.WrapStrategy.CLIP, Valign='middle', Halign='left', clear_notes=true, borders='default', bold='normal') {
+function SH_set_range_formatting(range, txt_color=Gcolors().black, txt_font='Calibri', txt_size=11, wrap=SpreadsheetApp.WrapStrategy.CLIP, Valign='middle', Halign='left', borders='default', bold='normal') {
     range
         .setFontColor(txt_color)
         .setFontFamily(txt_font)
@@ -106,7 +110,6 @@ function SH_set_range_formatting(range, txt_color=Gcolors().black, txt_font='Cal
         .setWrapStrategy(wrap)
         .setVerticalAlignment(Valign)
         .setHorizontalAlignment(Halign);
-    if (clear_notes) {range.clearNote()}
     if (borders === 'default') {
         range.setBorder(true, true, true, true, true, true, Gcolors().brd_grey, null);
     }
