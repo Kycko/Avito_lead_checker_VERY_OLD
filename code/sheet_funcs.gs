@@ -1,6 +1,8 @@
 // get & set the sheets data
 function SH_get_all_sheets_data() {
-    var   data = {};
+    // 2 'changed' properties to show the notification about this changes
+    var   data = {vert_changed    : false,
+                  manager_changed : false}
     const GRS  = Greq_sheets();
     all_sheets_list = SH_get_all_sheets_list()
 

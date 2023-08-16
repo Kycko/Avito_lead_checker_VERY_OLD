@@ -4,6 +4,7 @@ function Gcolors() {
     G.hl_light_green = '#e4ffed'; // hl = highlight
     G.hl_green       = '#93dfaf'; // hl = highlight
     G.hl_red         = '#ea9999'; // hl = highlight
+    G.hl_yellow      = '#ffe599'; // hl = highlight
     G.black          = '#000000'; // i.e. default font color
     G.brd_grey       = '#cccccc'; // brd = cell borders
     return G;

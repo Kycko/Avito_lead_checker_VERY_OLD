@@ -51,3 +51,11 @@ function UI_ask_separator(ui) {
     const msg   = 'Введите символы, которые будут разделять в комментарии данные из разных столбцов. Пробелы тоже учитываются, т. е. в большинстве случаев нужно ввести "пробел|пробел".\n\nЕсли оставить это поле пустым, данные из разных столбцов будут соединены без разделителей.\nЕсли нажать "Отмена" или закрыть это окно, скрипт завершит свою работу, не выполнив никаких действий.\n\n';
     return ui.prompt(title, msg, ui.ButtonSet.OK_CANCEL);
 }
+function UI_show_vert_man_toast(data) {
+    if      (!data.vert_changed && !data.manager_changed) {return}
+    else if ( data.vert_changed && !data.manager_changed) {var title = 'Вертикаль изменена!'}
+    else if (!data.vert_changed &&  data.manager_changed) {var title = 'Менеджеры изменены!'}
+    else if ( data.vert_changed &&  data.manager_changed) {var title = 'Вертикали и менеджеры изменены!'}
+    const msg = 'Все автоматически изменённые ячейки будут подсвечены жёлтым цветом.';
+    SpreadsheetApp.getActive().toast(msg, title, 10);
+}

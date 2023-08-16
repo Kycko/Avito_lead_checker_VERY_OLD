@@ -118,23 +118,18 @@ function rotate_my_range(old_range) {
 
 // cat_row = category row
 function verify_vertical(data, r, c, cat_row, only_verify) {
+    const GC    = Gcolors();
     const index = ARR_search_in_list(data.cat[0], data.cur[cat_row][c]);
 
     if (only_verify) {
-        if (index >= 0) {
-            if (data.cur[r][c] == data.cat[2][index]) {data.bg_colors[r][c] = Gcolors().hl_light_green}
-            else                                      {data.bg_colors[r][c] = Gcolors().hl_red}
-        }
-        else {data.bg_colors[r][c] = Gcolors().hl_red}
+        if (index >= 0 && data.cur[r][c] == data.cat[2][index]) {data.bg_colors[r][c] = GC.hl_light_green}
+        else                                                    {data.bg_colors[r][c] = GC.hl_red}
     }
     else {
-        if (index >= 0) {
-            data.bg_colors[r][c] = Gcolors().hl_light_green;
-            data.cur[r][c] = data.cat[2][index];
-        }
+        if (index >= 0) {data = change_and_notify_vert_or_man(data, r, c, data.cat[2][index], GC.hl_light_green)}
         else {
-            data.bg_colors[r][c] = Gcolors().hl_red;
-            data.cur[r][c] = '';
+            data.bg_colors[r][c] = GC.hl_red;
+            data.cur[r][c]       = '';
         }
     }
     return data;
@@ -176,6 +171,19 @@ function verify_manager(data, r, c, cat_row, city_row, only_verify) {
                 }
             }
         }
+    }
+    return data;
+}
+
+// при автоматическом изменении вертикалей и менеджеров уведомляем пользователя
+function change_and_notify_vert_or_man(data, r, c, new_str, new_color) {
+    const       init_str = data.cur[r][c];
+    data.cur      [r][c] = new_str;
+    data.bg_colors[r][c] = new_color;
+
+    if (init_str != new_str) {
+        data.bg_colors[r][c] = Gcolors().hl_yellow;
+        data.vert_changed = true;
     }
     return data;
 }

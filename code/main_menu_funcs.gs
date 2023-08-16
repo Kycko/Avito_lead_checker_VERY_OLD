@@ -13,6 +13,7 @@ function MM_launch_all(fix_man=true) {
 
     // write all the changed data in the sheets
     SH_set_values(data.cur, data.cur_sheet);
+    UI_show_vert_man_toast(data);
 
     // sheet formatting
     SH_pin_first_rows(data.cur_sheet, data.title+1);
@@ -33,7 +34,7 @@ function MM_check_column_names() {
 }
 function MM_rm_empty_RC() {
     var data = SH_get_all_sheets_data();
-    data = ARR_rm_empty_RC(data, true);     // RC = rows & columns; ARR = array
+    data = ARR_rm_empty_RC(data, true, data.title+1);   // RC = rows & columns; ARR = array
     SH_set_values(data.cur, data.cur_sheet);
     SH_hl_cells(data);
 }

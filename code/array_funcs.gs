@@ -326,12 +326,15 @@ function ARR_add_mandatory_columns(data) {
             old_bg_colors.splice(index, 1);
         }
         else if (data.col_reqs[1][i] === 'да') {
-            new_data.push([data.col_reqs[0][i]]);
-            new_bg_colors.push([null]);
-            for (var count=1; count < old_len; count+=1) {
-                new_data[ARR_last_index(new_data)].push('');
-                new_bg_colors[ARR_last_index(new_bg_colors)].push(null);
+            var temp_data   = [];
+            var temp_colors = [];
+            for (var count=0; count < old_len; count+=1) {
+                temp_data  .push('');
+                temp_colors.push(null);
             }
+            temp_data[data.title] = data.col_reqs[0][i];
+            new_data     .push(temp_data);
+            new_bg_colors.push(temp_colors);
         }
     }
     if (old_data !== []) {
