@@ -126,7 +126,7 @@ function verify_vertical(data, r, c, cat_row, only_verify) {
         else                                                    {data.bg_colors[r][c] = GC.hl_red}
     }
     else {
-        if (index >= 0) {data = change_and_notify_vert_or_man(data, r, c, data.cat[2][index], GC.hl_light_green)}
+        if (index >= 0) {data = change_and_notify_vert_or_man(data, r, c, data.cur[r][c], data.cat[2][index], GC.hl_light_green, 'вертикаль')}
         else {
             data.bg_colors[r][c] = GC.hl_red;
             data.cur[r][c]       = '';
@@ -135,6 +135,7 @@ function verify_vertical(data, r, c, cat_row, only_verify) {
     return data;
 }
 function verify_manager(data, r, c, cat_row, city_row, only_verify) {
+    const init_str       = data.cur[r][c];
     data.bg_colors[r][c] = Gcolors().hl_red;
     if (!only_verify) {data.cur[r][c] = ''}
 
@@ -147,10 +148,7 @@ function verify_manager(data, r, c, cat_row, city_row, only_verify) {
                     if (only_verify) {
                         if (data.cur[r][c].length && data.cur[r][c] == data.man[2][i]) {data.bg_colors[r][c] = Gcolors().hl_light_green}
                     }
-                    else {
-                        data.cur[r][c] = data.man[2][i];
-                        if (data.cur[r][c].length) {data.bg_colors[r][c] = Gcolors().hl_light_green}
-                    }
+                    else {data = change_and_notify_vert_or_man(data, r, c, init_str, data.man[2][i], Gcolors().hl_light_green, 'менеджер')}
                     return data;
                 }
                 else {
@@ -160,10 +158,7 @@ function verify_manager(data, r, c, cat_row, city_row, only_verify) {
                             if (only_verify) {
                                 if (data.cur[r][c].length && data.cur[r][c] == data.man[2][i]) {data.bg_colors[r][c] = Gcolors().hl_light_green}
                             }
-                            else {
-                                data.cur[r][c] = data.man[2][i];
-                                if (data.cur[r][c].length) {data.bg_colors[r][c] = Gcolors().hl_light_green}
-                            }
+                            else {data = change_and_notify_vert_or_man(data, r, c, init_str, data.man[2][i], Gcolors().hl_light_green, 'менеджер')}
                             return data;
                         }
                     }
@@ -176,14 +171,13 @@ function verify_manager(data, r, c, cat_row, city_row, only_verify) {
 }
 
 // при автоматическом изменении вертикалей и менеджеров уведомляем пользователя
-function change_and_notify_vert_or_man(data, r, c, new_str, new_color) {
-    const       init_str = data.cur[r][c];
-    data.cur      [r][c] = new_str;
-    data.bg_colors[r][c] = new_color;
-
-    if (init_str != new_str) {
-        data.bg_colors[r][c] = Gcolors().hl_yellow;
-        data.vert_changed = true;
+function change_and_notify_vert_or_man(data, r, c, init_str, new_str, new_color, type) {
+    data.cur[r][c] = new_str;
+    if (init_str.length && init_str != new_str) {
+        if (new_str.length) {data.bg_colors[r][c] = Gcolors().hl_yellow}
+        if     (type === 'вертикаль') {data.vert_changed    = true}
+        else if (type === 'менеджер') {data.manager_changed = true}
     }
+    else {data.bg_colors[r][c] = new_color}
     return data;
 }

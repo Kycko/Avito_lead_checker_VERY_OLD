@@ -20,8 +20,9 @@ function UI_show_msg(title, msg, question=false) {
 }
 function UI_show_UD_error(data, r, c, type, ui, range) {
     // title
-    if (ARR_search_in_list(['дата', 'категория'], type, 'bool')) {var title = 'Неправильная ' + type}
-    else                                                         {var title = 'Неправильный ' + type}
+    if      (type === 'статус посещения мероприятия клиентом')        {var title = 'Неправильный статус посещения мероприятия'}
+    else if (ARR_search_in_list(['дата', 'категория'], type, 'bool')) {var title = 'Неправильная ' + type}
+    else                                                              {var title = 'Неправильный ' + type}
 
     // message
     if (ARR_search_in_list(['e-mail', 'сайт'], type, 'bool')) {
@@ -32,7 +33,7 @@ function UI_show_UD_error(data, r, c, type, ui, range) {
     // errors counter
     const total   = range.h * range.w;
     const current = (r-range.r)*range.w + (c-range.c+1);
-    title        += ' (' + current.toString() + ' из ' + total.toString() + ')'
+    title        += ' (' + current.toString() + ' из ' + total.toString() + ')'
 
     return ui.prompt(title, msg, ui.ButtonSet.OK_CANCEL);
 }
@@ -57,5 +58,5 @@ function UI_show_vert_man_toast(data) {
     else if (!data.vert_changed &&  data.manager_changed) {var title = 'Менеджеры изменены!'}
     else if ( data.vert_changed &&  data.manager_changed) {var title = 'Вертикали и менеджеры изменены!'}
     const msg = 'Все автоматически изменённые ячейки будут подсвечены жёлтым цветом.';
-    SpreadsheetApp.getActive().toast(msg, title, 10);
+    SpreadsheetApp.getActive().toast(msg, title, 12);
 }
