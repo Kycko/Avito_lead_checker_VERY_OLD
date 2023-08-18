@@ -185,6 +185,6 @@ function change_and_notify_vert_or_man(data, r, c, init_str, new_str, new_color,
         if     (type === 'вертикаль') {data.vert_changed    = true}
         else if (type === 'менеджер') {data.manager_changed = true}
     }
-    else {data.bg_colors[r][c] = new_color}
+    else if (init_str.length) {data.bg_colors[r][c] = new_color}
     return data;
 }
