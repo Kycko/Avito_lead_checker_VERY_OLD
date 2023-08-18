@@ -51,8 +51,10 @@ function ARR_check_user_data(data, fix_man, SD, only_verify=false) {
 
     for (var i=0; i < data.cur.length; i+=1) {
         const just_check_blanks = ['Название лида', 'Наименование проекта', 'Название компании', 'Имя'];
-        const autofill          = ['Статус', 'Ответственный', 'Доступен для всех'];
+        const autofill          = ['Статус',        'Ответственный', 'Доступен для всех'];
+        const only_numbers      = ['Авито-аккаунт', 'ИНН'];
         var range = {r:i, c:tit+1, h:1, w:data.cur[i].length-tit-1};
+
         if (STR_find_sub(data.cur[i][tit], 'e-mail', 'bool')) {
             data = ARR_check_UD_range(data, range, 'e-mail', SD, only_verify);
         }
@@ -83,8 +85,8 @@ function ARR_check_user_data(data, fix_man, SD, only_verify=false) {
         else if (data.cur[i][tit] == 'Статус посещения мероприятия клиентом') {
             data = ARR_check_UD_range(data, range, 'статус посещения мероприятия клиентом', SD, only_verify);
         }
-        else if (data.cur[i][tit] == 'Авито-аккаунт') {
-            data = ARR_check_UD_range(data, range, 'авито-аккаунт', false, true);
+        else if (ARR_search_in_list(only_numbers, data.cur[i][tit], 'bool')) {
+            data = ARR_check_UD_range(data, range, 'только цифры', false, true);
         }
         else if (ARR_search_in_list(autofill, data.cur[i][tit], 'bool')) {
             data = ARR_check_UD_range(data, range, data.cur[i][tit].toString().toLowerCase(), SD, only_verify);

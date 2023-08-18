@@ -90,7 +90,7 @@ function validate_UD(data, r, c, type) {
     else if (type === 'статус')            {var valid = data.cur[r][c].toString().toLowerCase() === 'новый'}
     else if (type === 'ответственный')     {var valid = data.cur[r][c].toString().toLowerCase() === 'квалификаторы'}
     else if (type === 'доступен для всех') {var valid = data.cur[r][c].toString().toLowerCase() === 'да'}
-    else if (type === 'авито-аккаунт')     {var valid = data.cur[r][c].length === data.cur[r][c].toString().replace(/\D+/g, '').length}
+    else if (type === 'только цифры')     {var valid = data.cur[r][c].length === data.cur[r][c].toString().replace(/\D+/g, '').length}
     else if (type === 'статус посещения мероприятия клиентом') {
         var valid = ARR_search_in_list(['visited', 'not visited'], data.cur[r][c].toString().toLowerCase(), 'bool');
     }
