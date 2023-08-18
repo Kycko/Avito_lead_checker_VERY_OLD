@@ -400,21 +400,10 @@ function ARR_recommend_correction(sugg, cur, type) {
 // type = 'rows' or 'columns'
 function ARR_rm_RC_list(data, rm_list, type) {
     if (rm_list) {
-        if (type == 'rows') {
-            for (var i = rm_list.length-1; i >= 0; i-=1) {
-                data.cur      .splice(rm_list[i], 1);
-                data.bg_colors.splice(rm_list[i], 1);
-                data.notes    .splice(rm_list[i], 1);
-            }
-        }
-        else if (type == 'columns') {
-            for (var row=0; row < data.cur.length; row+=1) {
-                for (var i = rm_list.length-1; i >= 0; i-=1) {
-                    data.cur      [row].splice(rm_list[i], 1);
-                    data.bg_colors[row].splice(rm_list[i], 1);
-                    data.notes    [row].splice(rm_list[i], 1);
-                }
-            }
+        for (var i = rm_list.length-1; i >= 0; i-=1) {
+            data.cur       = ARR_rm_RC(data.cur,       type, rm_list[i]);
+            data.bg_colors = ARR_rm_RC(data.bg_colors, type, rm_list[i]);
+            data.notes     = ARR_rm_RC(data.notes,     type, rm_list[i]);
         }
     }
     return data;
@@ -498,4 +487,15 @@ function ARR_create_empty_table(rows, columns, data=null) {
         }
     }
     return final;
+}
+
+// type = 'rows' or 'columns'
+function ARR_rm_RC(table, type, num, count=1) {
+    if (type === 'rows') {table.splice(num, count)}
+    else {
+        for (var row=0; row < table.length; row+=1) {
+            table[row].splice(num, count);
+        }
+    }
+    return table;
 }
