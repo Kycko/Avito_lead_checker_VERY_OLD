@@ -1,10 +1,18 @@
 /** @OnlyCurrentDoc */
 function onOpen() {
     const GT = Gtext();
+
     var menu = SpreadsheetApp.getUi().createMenu(GT.MM_title);
     for (var i=0; i < GT.MM_items.length; i+=1) {
         if (GT.MM_items[i][0] === 'separator') {menu.addSeparator()}
         else                                   {menu.addItem(GT.MM_items[i][0], GT.MM_items[i][1])}
+    }
+    menu.addToUi();
+
+    menu = SpreadsheetApp.getUi().createMenu(GT.MM_title_2);
+    for (var i=0; i < GT.MM_items_2.length; i+=1) {
+        if (GT.MM_items_2[i][0] === 'separator') {menu.addSeparator()}
+        else                                     {menu.addItem(GT.MM_items_2[i][0], GT.MM_items_2[i][1])}
     }
     menu.addToUi();
 }
