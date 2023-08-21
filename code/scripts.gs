@@ -37,23 +37,24 @@ function SCR_evening_СС(type='common') {
     cur_sheet.getRange(1, 1,            1, table[0].length).setBackground  (Gcolors().hl_light_orange);
     SH_pin_first_rows(cur_sheet);
 }
-function SCR_retention_ASD() {
+function SCR_retention_ASD_goods() {SCR_retention_ASD('goods')}
+function SCR_retention_ASD(type='common') {
     // get the data
     const cur_sheet = SpreadsheetApp.getActiveSheet();
     var       table = SH_get_values(cur_sheet.getName(), SH_get_all_sheets_list());
 
     // modify the data
-    table           = ARR_rm_RC (table, 'rows',    0, 1);
-    table           = ARR_rm_RC (table, 'columns', 0, 1);
-    table           = ARR_rm_RC (table, 'columns', 5, 2);
-    table           = ARR_add_RC(table, 'columns', 0, 3);
+    if (type === 'common') {table = ARR_rm_RC(table, 'rows', 0, 1)}
+    table = ARR_rm_RC (table, 'columns', 0, 1);
+    table = ARR_rm_RC (table, 'columns', 5 + Number(type === 'goods'), 2);
+    table = ARR_add_RC(table, 'columns', 0, 3);
 
     table[0][0] = 'Источник';
     table[0][1] = 'Название лида';
     table[0][2] = 'Наименование проекта';
 
-    const from      = ['Город',          'Phone'];
-    const to        = ['Регион и город', 'Основной телефон'];
+    const from      = ['Город',          'Phone',            'Phone1',           'Phone2'];
+    const to        = ['Регион и город', 'Основной телефон', 'Основной телефон', 'Другой телефон'];
     for (var i=0; i < from.length; i+=1) {
         const index = ARR_search_in_list(table[0], from[i]);
         if (index >= 0) {table[0][index] = to[i]}
@@ -71,8 +72,11 @@ function SCR_retention_ASD() {
             if (table[r][ind.comment].length) {table[r][ind.comment] += ' | '}              // добавляем звонок в комментарий
             table[r][ind.comment]     += table[0][ind.date] + ': ' + table[r][ind.date];    // добавляем звонок в комментарий
             table[r][ind.source]       = 'Retention ASD';                                   // добавляем источник
-            table[r][ind.lead_name]    = 'Service Retention ASD';                                   // добавляем источник
-            table[r][ind.project_name] = 'Service | Retention ASD';                                   // добавляем источник
+
+            if (type === 'goods') {const vert = 'GE'}
+            else                  {const vert = 'Service'}
+            table[r][ind.lead_name]    =   'VERT Retention ASD'.replace('VERT', vert);      // добавляем название лида
+            table[r][ind.project_name] = 'VERT | Retention ASD'.replace('VERT', vert);      // добавляем наименование проекта
         }
     }
 

@@ -77,7 +77,9 @@ function Gtext() {
     G.MM_title_2    = 'Скрипты по проектам'
     G.MM_items_2    = [['Вечерние базы КЦ (товары) [обновлено 21.08.2023]', 'SCR_evening_СС_goods'],
                        ['Вечерние базы КЦ (услуги) [обновлено 21.08.2023]', 'SCR_evening_СС'],
-                       ['Retention ASD (услуги) [обновлено 21.08.2023]',    'SCR_retention_ASD']]
+                       ['separator'],   // разделительная линия
+                       ['Retention ASD (услуги) [обновлено 21.08.2023]',    'SCR_retention_ASD'],
+                       ['Retention ASD (товары) [обновлено 21.08.2023]',    'SCR_retention_ASD_goods']]
 
     return G;
 }
