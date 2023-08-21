@@ -23,7 +23,7 @@ function SCR_evening_СС(type='common') {
     table = ARR_rm_RC                (table, 'columns',  4,  2);
     table = ARR_rm_RC                (table, 'columns', 10,  1);
     table = ARR_rm_RC                (table, 'columns', 11,  3);
-    table = ARR_crop                 (table, 0, 0, table.length, 13);
+    table = ARR_crop                 (table, 0, 0, table.length, 13);   // сколько столбцов останется, столько и указываем
     table = ARR_move_RC              (table, 'columns',  3,  5);
     table = ARR_move_RC              (table, 'columns',  7,  5);
     table = ARR_move_RC              (table, 'columns',  8,  9);
@@ -36,4 +36,52 @@ function SCR_evening_СС(type='common') {
     cur_sheet.getRange(1, 1, table.length, table[0].length).setWrapStrategy(SpreadsheetApp.WrapStrategy.CLIP);
     cur_sheet.getRange(1, 1,            1, table[0].length).setBackground  (Gcolors().hl_light_orange);
     SH_pin_first_rows(cur_sheet);
+}
+function SCR_retention_ASD() {
+    // get the data
+    const cur_sheet = SpreadsheetApp.getActiveSheet();
+    var       table = SH_get_values(cur_sheet.getName(), SH_get_all_sheets_list());
+
+    // modify the data
+    table           = ARR_rm_RC (table, 'rows',    0, 1);
+    table           = ARR_rm_RC (table, 'columns', 0, 1);
+    table           = ARR_rm_RC (table, 'columns', 5, 2);
+    table           = ARR_add_RC(table, 'columns', 0, 3);
+
+    table[0][0] = 'Источник';
+    table[0][1] = 'Название лида';
+    table[0][2] = 'Наименование проекта';
+
+    const from      = ['Город',          'Phone'];
+    const to        = ['Регион и город', 'Основной телефон'];
+    for (var i=0; i < from.length; i+=1) {
+        const index = ARR_search_in_list(table[0], from[i]);
+        if (index >= 0) {table[0][index] = to[i]}
+    }
+
+    const ind = {
+        date         : ARR_search_in_list(table[0], 'Дата и время последнего звонка'),
+        source       : ARR_search_in_list(table[0], 'Источник'),
+        comment      : ARR_search_in_list(table[0], 'Комментарий'),
+        lead_name    : ARR_search_in_list(table[0], 'Название лида'),
+        project_name : ARR_search_in_list(table[0], 'Наименование проекта')
+    }
+    for (var r=1; r < table.length; r+=1) {
+        if (table[r][ind.date] !== '') {
+            if (table[r][ind.comment].length) {table[r][ind.comment] += ' | '}              // добавляем звонок в комментарий
+            table[r][ind.comment]     += table[0][ind.date] + ': ' + table[r][ind.date];    // добавляем звонок в комментарий
+            table[r][ind.source]       = 'Retention ASD';                                   // добавляем источник
+            table[r][ind.lead_name]    = 'Service Retention ASD';                                   // добавляем источник
+            table[r][ind.project_name] = 'Service | Retention ASD';                                   // добавляем источник
+        }
+    }
+
+    table = ARR_crop (table, 0, 0, table.length, 9);    // сколько столбцов останется, столько и указываем
+
+    // write the final data
+    SH_set_values(table, cur_sheet);
+    cur_sheet.getRange(1, 1, table.length, table[0].length).setBackground(null);
+
+    // launch the basic checker
+    MM_launch_all(false, false);
 }

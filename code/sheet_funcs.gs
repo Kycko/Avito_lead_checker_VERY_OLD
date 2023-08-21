@@ -11,7 +11,6 @@ function SH_get_all_sheets_data() {
                       columns: data.cur_sheet.getMaxColumns()}
     const range    = data.cur_sheet.getRange(1, 1, size.rows, size.columns);
 
-    range.setNumberFormat('@STRING@');
     data.cur       = SH_get_values(data.cur_sheet.getName(), all_sheets_list);
     data.bg_colors = range.getBackgrounds();
     data.notes     = ARR_create_empty_table(size.rows, size.columns);
@@ -30,7 +29,8 @@ function SH_get_values(name, all_sheets_list, rotate=false) {
         const sheet = SpreadsheetApp.getActive().getSheetByName(name);
         const range = sheet.getRange(1, 1, sheet.getMaxRows(), sheet.getMaxColumns());
         range.breakApart();
-        var    data = range.getValues();
+        range.setNumberFormat('@STRING@');
+        var data = range.getValues();
         if (rotate) {data = ARR_rotate(data)}
         return data;
     }

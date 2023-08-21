@@ -1,6 +1,7 @@
-function MM_launch_all_no_man() {MM_launch_all(false)}
-function MM_launch_all(fix_man=true) {
-    const SD = UI_MM_show_dialogues();  // SD = show dialogues
+function MM_launch_all_no_man() {MM_launch_all(false, SD=null)}
+function MM_launch_all(fix_man=true, SD=null) {
+    // SD = show dialogues
+    if (SD === null) {SD = UI_MM_show_dialogues()}
 
     // get all the data
     var data = SH_get_all_sheets_data();
