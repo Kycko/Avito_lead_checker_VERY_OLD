@@ -124,7 +124,7 @@ function SH_hl_bad_titles(data) {
 function SH_hl_cells(data) {
     data.cur_sheet.getRange(1, 1, data.cur.length, data.cur[0].length).setBackgrounds(data.bg_colors);
 }
-function SH_pin_first_rows(sheet, count) {sheet.setFrozenRows(count)}
+function SH_pin_first_rows(sheet, count=1) {sheet.setFrozenRows(count)}
 function SH_add_filter(range) {
     var cur_filter = range.getSheet().getFilter();
     if (cur_filter) {cur_filter.remove()}

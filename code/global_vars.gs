@@ -1,12 +1,13 @@
 // G  = global vars
 function Gcolors() {
     var G = {};
-    G.hl_light_green = '#e4ffed'; // hl = highlight
-    G.hl_green       = '#93dfaf'; // hl = highlight
-    G.hl_red         = '#ea9999'; // hl = highlight
-    G.hl_yellow      = '#ffe599'; // hl = highlight
-    G.black          = '#000000'; // i.e. default font color
-    G.brd_grey       = '#cccccc'; // brd = cell borders
+    G.hl_light_green  = '#e4ffed'; // hl = highlight
+    G.hl_green        = '#93dfaf'; // hl = highlight
+    G.hl_light_orange = '#fce5cd'; // hl = highlight
+    G.hl_red          = '#ea9999'; // hl = highlight
+    G.hl_yellow       = '#ffe599'; // hl = highlight
+    G.black           = '#000000'; // i.e. default font color
+    G.brd_grey        = '#cccccc'; // brd = cell borders
     return G;
 }
 function Gno_sheet_msgs() {
@@ -74,7 +75,8 @@ function Gtext() {
                        ['📆 Проверить формат дат в выделенном диапазоне',                          'MM_check_dates']];
 
     G.MM_title_2    = 'Скрипты по проектам'
-    G.MM_items_2    = [['Вечерние базы КЦ', 'MM_script_evening_call_center']]
+    G.MM_items_2    = [['Вечерние базы КЦ (товары)', 'SCR_evening_СС_goods'],
+                       ['Вечерние базы КЦ (услуги)', 'SCR_evening_СС']]
 
     return G;
 }

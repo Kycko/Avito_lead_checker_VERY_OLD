@@ -499,3 +499,50 @@ function ARR_rm_RC(table, type, num, count=1) {
     }
     return table;
 }
+function ARR_add_RC(table, type, num, count=1, value='') {
+    if (type === 'rows') {
+        for (var i=0; i < count; i+=1) {
+            table.splice(num, 0, table[0])
+            for (var c=0; c < table[num].length; c+=1) {table[num][c] = value}
+        }
+    }
+    else {
+        for (var r=0; r < table.length; r+=1) {
+            for (var i=0; i < count; i+=1) {table[r].splice(num, 0, value)}
+        }
+    }
+    return table;
+}
+
+// from & to are array indexes, e. g. type 'column' from 0 to 1 = from A to B
+function ARR_move_RC(table, type, from, to, count=1) {
+    if (type === 'rows') {
+        const removed = table.splice(from, count);
+        table.splice(to, 0, removed);
+    }
+    else {
+        for (var row=0; row < table.length; row+=1) {
+            const removed = table[row].splice(from, count);
+            table[row].splice(to, 0, removed);
+        }
+    }
+    return table;
+}
+
+// this filters remove all the other rows from table
+function ARR_filter_rows_by_cell(table, column, filter_txt, save_title=true) {
+    var new_table = [];
+    if (save_title) {new_table.push(table[0])}
+    for (var r=1; r < table.length; r+=1) {
+        if (table[r][column] === filter_txt) {new_table.push(table[r])}
+    }
+    return new_table;
+}
+function ARR_rm_cells_by_full_text(table, txt) {
+    for (var r=0; r < table.length; r+=1) {
+        for (var c=0; c < table[r].length; c+=1) {
+            if (table[r][c] == txt) {table[r][c] = ''}
+        }
+    }
+    return table;
+}
