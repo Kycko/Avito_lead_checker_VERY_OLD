@@ -37,18 +37,38 @@ function SCR_evening_СС(type='common') {
     cur_sheet.getRange(1, 1,            1, table[0].length).setBackground  (Gcolors().hl_light_orange);
     SH_pin_first_rows(cur_sheet);
 }
-function SCR_retention_ASD_goods() {SCR_retention_ASD('goods')}
-function SCR_retention_ASD(type='common') {
+
+function SCR_Big_Data_Technology() {
     // get the data
     const cur_sheet = SpreadsheetApp.getActiveSheet();
     var       table = SH_get_values(cur_sheet.getName(), SH_get_all_sheets_list());
 
     // modify the data
-    if (type === 'common') {table = ARR_rm_RC(table, 'rows', 0, 1)}
-    table = ARR_rm_RC (table, 'columns', 0, 1);
-    table = ARR_rm_RC (table, 'columns', 5 + Number(type === 'goods'), 2);
-    table = ARR_add_RC(table, 'columns', 0, 3);
+    for (var c=0; c < table[0].length; c+=1) {
+        table[0][c] = table[0][c].replace(' (подтягивается с базы)', '');   // ИНН и название компании
+    }
 
+    // write the final data
+    SH_set_values(table, cur_sheet);
+    // cur_sheet.getRange(1, 1, table.length, table[0].length).setBackground(null);
+
+    // launch the basic checker
+    // MM_launch_all(false, true);
+
+}
+function SCR_retention_ASD() {
+    // get the data
+    const cur_sheet = SpreadsheetApp.getActiveSheet();
+    var       table = SH_get_values(cur_sheet.getName(), SH_get_all_sheets_list());
+
+    // modify the data
+    while (STR_find_sub(table[0][0], 'Result_ishod', 'bool')) {table = ARR_rm_RC(table, 'rows', 0, 1)}
+    if    (STR_find_sub(table[1][0], 'товары',       'bool')) {var vert = 'GE'}
+    else                                                      {var vert = 'Service'}
+
+    table = ARR_rm_RC (table, 'columns', 0, 1);
+    table = ARR_rm_RC (table, 'columns', ARR_search_in_list(table[0], 'Результат звонка'), 2);
+    table = ARR_add_RC(table, 'columns', 0, 3);
     table[0][0] = 'Источник';
     table[0][1] = 'Название лида';
     table[0][2] = 'Наименование проекта';
@@ -63,6 +83,7 @@ function SCR_retention_ASD(type='common') {
     const ind = {
         date         : ARR_search_in_list(table[0], 'Дата и время последнего звонка'),
         source       : ARR_search_in_list(table[0], 'Источник'),
+        category     : ARR_search_in_list(table[0], 'Категория'),
         comment      : ARR_search_in_list(table[0], 'Комментарий'),
         lead_name    : ARR_search_in_list(table[0], 'Название лида'),
         project_name : ARR_search_in_list(table[0], 'Наименование проекта')
@@ -72,11 +93,11 @@ function SCR_retention_ASD(type='common') {
             if (table[r][ind.comment].length) {table[r][ind.comment] += ' | '}              // добавляем звонок в комментарий
             table[r][ind.comment]     += table[0][ind.date] + ': ' + table[r][ind.date];    // добавляем звонок в комментарий
             table[r][ind.source]       = 'Retention ASD';                                   // добавляем источник
-
-            if (type === 'goods') {const vert = 'GE'}
-            else                  {const vert = 'Service'}
             table[r][ind.lead_name]    =   'VERT Retention ASD'.replace('VERT', vert);      // добавляем название лида
             table[r][ind.project_name] = 'VERT | Retention ASD'.replace('VERT', vert);      // добавляем наименование проекта
+
+            // автоисправление категорий
+            if (table[r][ind.category] == 'Lifestyle') {table[r][ind.category] = 'Личные вещи'}
         }
     }
 
@@ -87,5 +108,5 @@ function SCR_retention_ASD(type='common') {
     cur_sheet.getRange(1, 1, table.length, table[0].length).setBackground(null);
 
     // launch the basic checker
-    MM_launch_all(false, false);
+    MM_launch_all(false, true);
 }
