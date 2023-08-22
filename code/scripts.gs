@@ -56,6 +56,39 @@ function SCR_Big_Data_Technology() {
     // MM_launch_all(false, true);
 
 }
+function SCR_CRMmrkg_WG() {
+    // get the data
+    const all_sheets_list = SH_get_all_sheets_list();
+    var data              = {}
+    data.cur_sheet        = SpreadsheetApp.getActiveSheet()
+    data.cur              = SH_get_values(data.cur_sheet.getName(), all_sheets_list);
+    data.log_cat              = SH_get_values(Greq_sheets().log_cat,    all_sheets_list, true);
+
+    // modify the data
+    var ind = [ARR_search_in_list(data.cur[0], 'email'),
+               ARR_search_in_list(data.cur[0], 'phone')]
+    for (var i=0; i < ind.length; i+=1) {
+        if (ind[i] >= 0) {data.cur = ARR_rm_RC(data.cur, 'columns', ind[i])}
+    }
+
+    ind = {avito_ID : ARR_search_in_list(data.cur[0], 'external_id'),
+           cat      : ARR_search_in_list(data.cur[0], 'logical_category')}
+    if (ind.avito_ID >= 0) {data.cur[0][ind.avito_ID] = 'Авито-аккаунт'}
+
+    if (ind.cat      >= 0 && CRS('check_log_cat', data)) {
+        data.cur[0][ind.cat] = 'Категория';
+        for (var r=1; r < data.cur.length; r+=1) {
+            var index = ARR_search_in_list(data.log_cat[0], data.cur[r][ind.cat]);
+            if (index >= 0) {data.cur[r][ind.cat] = data.log_cat[1][index]}
+        }
+    }
+
+    // write the final data
+    SH_set_values(data.cur, data.cur_sheet);
+
+    // launch the basic checker
+    MM_launch_all(false, true);
+}
 function SCR_retention_ASD() {
     // get the data
     const cur_sheet = SpreadsheetApp.getActiveSheet();

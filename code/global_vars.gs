@@ -20,6 +20,8 @@ function Gno_sheet_msgs() {
                               sheets : ['cities']}
     G.check_categories      = {title : 'Невозможно проверить категории и вертикали',
                               sheets : ['cat']}
+    G.check_log_cat         = {title : 'Невозможно проверить категории',
+                              sheets : ['log_cat']}
     G.check_managers        = {title : 'Невозможно проверить менеджеров',
                               sheets : ['cat', 'man', 'cities']}
     G.check_sources         = {title : 'Невозможно проверить источники',
@@ -37,6 +39,7 @@ function Greq_sheets() {
     G.col_reqs = '[script] столбцы';
     G.cities   = '[script] регионы и города';
     G.cat      = '[script] категории';
+    G.log_cat  = '[script] logical category';
     G.man      = '[script] менеджеры';
     G.sources  = '[script] источники';
     G.sugg     = '[script] предложения исправлений';    // sugg = suggestions
@@ -76,6 +79,7 @@ function Gtext() {
 
     G.MM_title_2    = 'Скрипты по проектам'
     G.MM_items_2    = [['Big Data Technology [пока не работает]',                 'SCR_Big_Data_Technology'],
+                       ['CRMmrkg white/grey [обновлено 22.08.2023]',              'SCR_CRMmrkg_WG'],
                        ['Retention ASD (товары и услуги) [обновлено 21.08.2023]', 'SCR_retention_ASD'],
                        ['separator'],   // разделительная линия
                        ['Вечерние базы КЦ (товары) [обновлено 21.08.2023]',       'SCR_evening_СС_goods'],
