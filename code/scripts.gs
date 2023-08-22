@@ -56,39 +56,6 @@ function SCR_Big_Data_Technology() {
     // MM_launch_all(false, true);
 
 }
-function SCR_CRMmrkg_WG() {
-    // get the data
-    const all_sheets_list = SH_get_all_sheets_list();
-    var data              = {}
-    data.cur_sheet        = SpreadsheetApp.getActiveSheet()
-    data.cur              = SH_get_values(data.cur_sheet.getName(), all_sheets_list);
-    data.log_cat              = SH_get_values(Greq_sheets().log_cat,    all_sheets_list, true);
-
-    // modify the data
-    var ind = [ARR_search_in_list(data.cur[0], 'email'),
-               ARR_search_in_list(data.cur[0], 'phone')]
-    for (var i=0; i < ind.length; i+=1) {
-        if (ind[i] >= 0) {data.cur = ARR_rm_RC(data.cur, 'columns', ind[i])}
-    }
-
-    ind = {avito_ID : ARR_search_in_list(data.cur[0], 'external_id'),
-           cat      : ARR_search_in_list(data.cur[0], 'logical_category')}
-    if (ind.avito_ID >= 0) {data.cur[0][ind.avito_ID] = 'Авито-аккаунт'}
-
-    if (ind.cat      >= 0 && CRS('check_log_cat', data)) {
-        data.cur[0][ind.cat] = 'Категория';
-        for (var r=1; r < data.cur.length; r+=1) {
-            var index = ARR_search_in_list(data.log_cat[0], data.cur[r][ind.cat]);
-            if (index >= 0) {data.cur[r][ind.cat] = data.log_cat[1][index]}
-        }
-    }
-
-    // write the final data
-    SH_set_values(data.cur, data.cur_sheet);
-
-    // launch the basic checker
-    MM_launch_all(false, true);
-}
 function SCR_retention_ASD() {
     // get the data
     const cur_sheet = SpreadsheetApp.getActiveSheet();
@@ -139,6 +106,70 @@ function SCR_retention_ASD() {
     // write the final data
     SH_set_values(table, cur_sheet);
     cur_sheet.getRange(1, 1, table.length, table[0].length).setBackground(null);
+
+    // launch the basic checker
+    MM_launch_all(false, true);
+}
+
+function SCR_CRMmrkg_grey()  {SCR_CRMmrkg_WG('B2C Grey')}
+function SCR_CRMmrkg_white() {SCR_CRMmrkg_WG('NWL')}
+function SCR_CRMmrkg_WG(type) {
+    // get the data
+    const all_sheets_list = SH_get_all_sheets_list();
+    var data              = {}
+    data.cur_sheet        = SpreadsheetApp.getActiveSheet()
+    data.cur              = SH_get_values(data.cur_sheet.getName(), all_sheets_list);
+    data.log_cat              = SH_get_values(Greq_sheets().log_cat,    all_sheets_list, true);
+
+    // modify the data
+    var index  = ARR_search_in_list(data.cur[0], 'email');
+    if (index >= 0) {data.cur = ARR_rm_RC(data.cur, 'columns', index)}
+    index      = ARR_search_in_list(data.cur[0], 'phone');
+    if (index >= 0) {data.cur = ARR_rm_RC(data.cur, 'columns', index)}
+
+    const ind = {avito_ID : ARR_search_in_list(data.cur[0], 'external_id'),
+                 cat      : ARR_search_in_list(data.cur[0], 'logical_category')}
+
+    if (ind.avito_ID >= 0) {data.cur[0][ind.avito_ID] = 'Авито-аккаунт'}
+    if (ind.cat      >= 0 && CRS('check_log_cat', data)) {
+        data.cur[0][ind.cat] = 'Категория';
+        for (var r=1; r < data.cur.length; r+=1) {
+            index = ARR_search_in_list(data.log_cat[0], data.cur[r][ind.cat]);
+            if (index >= 0) {data.cur[r][ind.cat] = data.log_cat[1][index]}
+        }
+    }
+
+    data.cur       = ARR_add_RC(data.cur, 'columns', 0);
+    data.cur[0][0] = 'Комментарий';
+    const exclude = [ARR_search_in_list(data.cur[0], 'Авито-аккаунт'),
+                     ARR_search_in_list(data.cur[0], 'Категория')]
+    for (var r=1; r < data.cur.length; r+=1) {
+        for (var c=1; c < data.cur[r].length; c+=1) {
+            if (data.cur[r][c].length && !ARR_search_in_list(exclude, c, 'bool')) {
+                if (data.cur[r][0].length) {data.cur[r][0] += ', '}
+                data.cur[r][0] += data.cur[0][c] + ' ' + data.cur[r][c];
+            }
+        }
+        if (data.cur[r][0].length) {data.cur[r][0] += '.'}
+    }
+
+    data.cur = ARR_crop (data.cur, 0, 0, data.cur.length, 4);    // сколько столбцов останется, столько и указываем
+    data.cur = ARR_rm_RC(data.cur, 'columns', 1);
+
+    data.cur       = ARR_add_RC(data.cur, 'columns', 0, 3);
+    data.cur[0][0] = 'Источник';
+    data.cur[0][1] = 'Название лида';
+    data.cur[0][2] = 'Наименование проекта';
+    for (var r=1; r < data.cur.length; r+=1) {
+        if (data.cur[r][3] !== '') {
+            data.cur[r][0] = 'CRM маркетинг';
+            data.cur[r][1] = 'GE CRMmrkg '     + type + ' Hunter ' + Utilities.formatDate(new Date(), 'GMT+3', 'dd.MM.yyyy');
+            data.cur[r][2] = 'GE | CRMmrkg | ' + type + ' | Hunter';
+        }
+    }
+
+    // write the final data
+    SH_set_values(data.cur, data.cur_sheet);
 
     // launch the basic checker
     MM_launch_all(false, true);

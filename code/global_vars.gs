@@ -79,8 +79,10 @@ function Gtext() {
 
     G.MM_title_2    = 'Скрипты по проектам'
     G.MM_items_2    = [['Big Data Technology [пока не работает]',                 'SCR_Big_Data_Technology'],
-                       ['CRMmrkg white/grey [обновлено 22.08.2023]',              'SCR_CRMmrkg_WG'],
                        ['Retention ASD (товары и услуги) [обновлено 21.08.2023]', 'SCR_retention_ASD'],
+                       ['separator'],   // разделительная линия
+                       ['CRMmrkg grey [обновлено 22.08.2023]',                    'SCR_CRMmrkg_grey'],
+                       ['CRMmrkg white [обновлено 22.08.2023]',                   'SCR_CRMmrkg_white'],
                        ['separator'],   // разделительная линия
                        ['Вечерние базы КЦ (товары) [обновлено 21.08.2023]',       'SCR_evening_СС_goods'],
                        ['Вечерние базы КЦ (услуги) [обновлено 21.08.2023]',       'SCR_evening_СС']]
