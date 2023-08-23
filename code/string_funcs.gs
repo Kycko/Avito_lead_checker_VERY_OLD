@@ -65,9 +65,9 @@ function STR_format_website(site) {
 function STR_trim_city(city) {
     const search = ['г. ', 'г ', 'г.', 'с. ', 'с ', 'с.'];
     for (i=0; i < search.length; i+=1) {
-        if (STR_find_sub(city, search[i]) === 0) {return city.replace(search[i], '')}
+        if (STR_find_sub(city, search[i]) === 0) {city = city.replace(search[i], '')}
     }
-    return city;
+    return city.toString().trim();
 }
 
 // parts = parts of date (list with 3 numbers)
