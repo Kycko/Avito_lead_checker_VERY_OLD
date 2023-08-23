@@ -63,7 +63,7 @@ function STR_format_website(site) {
     return list.join(',');
 }
 function STR_trim_city(city) {
-    const search = ['г. ', 'г ', 'г.', 'с. ', 'с ', 'с.'];
+    const search = ['г. ', 'г ', 'г.', 'с. ', 'с ', 'с.', 'город '];
     for (i=0; i < search.length; i+=1) {
         if (STR_find_sub(city, search[i]) === 0) {city = city.replace(search[i], '')}
     }
