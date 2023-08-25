@@ -63,9 +63,12 @@ function STR_format_website(site) {
     return list.join(',');
 }
 function STR_trim_city(city) {
-    const search = ['г. ', 'г ', 'г.', 'с. ', 'с ', 'с.', 'город '];
+    const search = ['г. ', 'г ', 'г.', 'д. ', 'д ', 'д.', 'с. ', 'с ', 'с.', 'х. ', 'х ', 'х.', 'рп. ', 'рп ', 'рп.', 'дп. ', 'дп ', 'дп.', 'пос. ', 'пос ', 'пос.', 'пгт ', 'пгт', 'город ', 'ст-ца '];
     for (i=0; i < search.length; i+=1) {
-        if (STR_find_sub(city, search[i]) === 0) {city = city.replace(search[i], '')}
+        if (STR_find_sub(city, search[i]) === 0) {
+            city = city.replace(search[i], '');
+            return city.toString().trim();          // нужно сразу выйти из цикла
+        }
     }
     return city.toString().trim();
 }

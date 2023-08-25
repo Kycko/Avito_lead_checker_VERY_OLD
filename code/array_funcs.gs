@@ -145,8 +145,8 @@ function ARR_check_UD_range(data, range, type, SD, only_verify=false) {
                 else                               {data.bg_colors[r][c] = GC.hl_red}
             }
             else {
-                data = autocorr_UD(data, r, c, type);
                 const init_value = data.cur[r][c];
+                data = autocorr_UD(data, r, c, type);
 
                 var valid = false;
                 while (!valid) {
@@ -154,8 +154,9 @@ function ARR_check_UD_range(data, range, type, SD, only_verify=false) {
                     if (valid) {data.bg_colors[r][c] = GC.hl_light_green}
                     else {
                         if (!SD) {
+                            data.cur      [r][c] = init_value;
                             data.bg_colors[r][c] = GC.hl_red;
-                            valid = true;
+                            valid                = true;
                         }
                         else {
                             const index = ARR_search_in_list(USI.from, data.cur[r][c]);
@@ -169,7 +170,7 @@ function ARR_check_UD_range(data, range, type, SD, only_verify=false) {
                             }
                             else {
                                 const ui   = SpreadsheetApp.getUi();
-                                const resp = UI_show_UD_error(data, r, c, type, ui, range);
+                                const resp = UI_show_UD_error(init_value, data, r, c, type, ui, range);
                                 if (resp.getSelectedButton() == ui.Button.OK) {
                                     data.cur[r][c] = resp.getResponseText();
                                     if (validate_UD(data, r, c, type)) {

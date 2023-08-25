@@ -26,7 +26,7 @@ function UI_show_msg(title, msg, question=false) {
     if     (resp == ui.Button.YES) {return true}
     else if (resp == ui.Button.NO) {return false}
 }
-function UI_show_UD_error(data, r, c, type, ui, range) {
+function UI_show_UD_error(init_value, data, r, c, type, ui, range) {
     // title
     if      (type === 'статус посещения мероприятия клиентом')        {var title = 'Неправильный статус посещения мероприятия'}
     else if (ARR_search_in_list(['дата', 'категория'], type, 'bool')) {var title = 'Неправильная ' + type}
@@ -34,9 +34,9 @@ function UI_show_UD_error(data, r, c, type, ui, range) {
 
     // message
     if (ARR_search_in_list(['e-mail', 'сайт'], type, 'bool')) {
-        var msg   = 'Введите правильное значение, оставьте поле пустым для удаления или нажмите "Отмена", чтобы исправить его потом.\n\nТекущее значение:\n• ' + data.cur[r][c] +'\n\n';
+        var msg   = 'Введите правильное значение, оставьте поле пустым для удаления или нажмите "Отмена", чтобы исправить его потом.\n\nТекущее значение:\n• ' + init_value +'\n\n';
     }
-    else {var msg = ARR_recommend_correction(data.sugg, data.cur[r][c], type)}
+    else {var msg = ARR_recommend_correction(data.sugg, init_value, type)}
 
     // errors counter
     const total   = range.h * range.w;
