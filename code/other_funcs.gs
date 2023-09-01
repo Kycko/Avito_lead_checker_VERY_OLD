@@ -35,6 +35,7 @@ function autocorr_UD(data, r, c, type) {
         data.cur[r][c] = data.cur[r][c].toString().toLowerCase()
             .replace('–', '-')
             .replace('—', '-')
+            .replace('|', ',')
     }
     else if (type === 'сайт')                       {data.cur[r][c] = STR_format_website(data.cur[r][c])}
     else if (STR_find_sub(type, 'телефон', 'bool')) {data.cur[r][c] = STR_format_phone  (data.cur[r][c], type === 'основной телефон')}
