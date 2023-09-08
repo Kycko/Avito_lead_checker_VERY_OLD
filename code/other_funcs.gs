@@ -37,6 +37,7 @@ function autocorr_UD(data, r, c, type) {
             .replace('—',  '-')
             .replace('|',  ',')
             .replace('; ', ',')
+            .replace(', ', ',')
     }
     else if (type === 'сайт')                       {data.cur[r][c] = STR_format_website(data.cur[r][c])}
     else if (STR_find_sub(type, 'телефон', 'bool')) {data.cur[r][c] = STR_format_phone  (data.cur[r][c], type === 'основной телефон')}
@@ -74,6 +75,7 @@ function validate_UD(data, r, c, type) {
     }
     else if (type === 'сайт') {
         if      (!data.cur[r][c].length)                                                   {valid = true}
+        else if ( STR_find_sub(data.cur[r][c], '@', 'bool'))                               {valid = false}
         else if (!STR_find_sub(data.cur[r][c], '.', 'bool'))                               {valid = false}
         else if (STR_find_sub_list(data.cur[r][c], ['http://', 'https://', 'www.']) === 0) {valid = false}
         else if (data.cur[r][c].toString().slice(-1) == '/')                               {valid = false}

@@ -424,7 +424,7 @@ function ARR_last_index(array) {
 // type = return 'index' or 'bool' (just to know if the name is in the array)
 function ARR_search_in_column(table, name, column, type='index') {
     for (var i=0; i < table.length; i+=1) {
-        if (table[i][column].toString().toLowerCase() === name.toString().toLowerCase()) {
+        if (table[i][column].toString().toLowerCase().trim() === name.toString().toLowerCase().trim()) {
             if (type === 'index') {return i}
             else                  {return true}
         }
