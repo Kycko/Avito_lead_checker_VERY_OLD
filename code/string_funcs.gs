@@ -48,8 +48,9 @@ function STR_format_phone(phone, use_unknown) {
 }
 function STR_format_website(site) {
     const start = ['http://', 'https://', 'www.'];
-    site = site.toString().toLowerCase();
-    var list = site.split(',');
+    site        = site.toString().toLowerCase();
+    while (STR_find_sub(site, ' | ', 'bool')) {site = site.replace(' | ', ',')} // почему-то простое .replace() не работает
+    var    list = site.split(',');
 
     for (var l=0; l < list.length; l+=1) {
         list[l] = list[l].toString().trim();

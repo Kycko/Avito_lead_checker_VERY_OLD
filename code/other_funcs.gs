@@ -76,6 +76,7 @@ function validate_UD(data, r, c, type) {
     else if (type === 'сайт') {
         if      (!data.cur[r][c].length)                                                   {valid = true}
         else if ( STR_find_sub(data.cur[r][c], '@', 'bool'))                               {valid = false}
+        else if ( STR_find_sub(data.cur[r][c], ' ', 'bool'))                               {valid = false}
         else if (!STR_find_sub(data.cur[r][c], '.', 'bool'))                               {valid = false}
         else if (STR_find_sub_list(data.cur[r][c], ['http://', 'https://', 'www.']) === 0) {valid = false}
         else if (data.cur[r][c].toString().slice(-1) == '/')                               {valid = false}
