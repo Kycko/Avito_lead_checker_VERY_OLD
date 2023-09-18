@@ -439,7 +439,7 @@ function ARR_search_title_row(table) {
 }
 function ARR_search_in_list(list, txt, type='index') {
     for (var i=0; i < list.length; i+=1) {
-        if (list[i].toString().toLowerCase() === txt.toString().toLowerCase()) {
+        if (list[i].toString().toLowerCase().trim() === txt.toString().toLowerCase().trim()) {
             if (type === 'index') {return i}
             else                  {return true}
         }

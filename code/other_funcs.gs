@@ -32,12 +32,15 @@ function autocorr_UD(data, r, c, type) {
     data.cur[r][c]      = data.cur[r][c].toString().trim(); // trim spaces for all the user data
     const autocorr_list = ['регион/город', 'категория', 'источник', 'название компании', 'имя', 'статус', 'ответственный', 'доступен для всех'];
     if (type === 'e-mail') {
-        data.cur[r][c] = data.cur[r][c].toString().toLowerCase()
-            .replace('–',  '-')
-            .replace('—',  '-')
-            .replace('|',  ',')
-            .replace('; ', ',')
-            .replace(', ', ',')
+        data.cur[r][c] = data.cur[r][c].toLowerCase();
+        // RPL = replace
+        var RPL = {from : ['–', '—', '|', ';', '; ', ', '],
+                   to   : ['-', '-', ',', ',', ',' , ',']}
+        while (STR_find_sub_list(data.cur[r][c], RPL.from, 'bool')) {
+            for (i=0; i < RPL.from.length; i+=1) {
+                data.cur[r][c] = data.cur[r][c].replace(RPL.from[i], RPL.to[i]);
+            }
+        }
     }
     else if (type === 'сайт')                       {data.cur[r][c] = STR_format_website(data.cur[r][c])}
     else if (STR_find_sub(type, 'телефон', 'bool')) {data.cur[r][c] = STR_format_phone  (data.cur[r][c], type === 'основной телефон')}
@@ -184,7 +187,7 @@ function verify_manager(data, r, c, cat_row, city_row, only_verify) {
 // при автоматическом изменении вертикалей и менеджеров уведомляем пользователя
 function change_and_notify_vert_or_man(data, r, c, init_str, new_str, new_color, type) {
     data.cur[r][c] = new_str;
-    if (init_str.length && init_str != new_str) {
+    if (init_str.length && init_str.toString().toLowerCase() != new_str.toString().toLowerCase()) {
         if (new_str.length) {data.bg_colors[r][c] = Gcolors().hl_yellow}
         data.notes[r][c] = 'Предыдущее значение ячейки: ' + init_str;
         if     (type === 'вертикаль') {data.vert_changed    = true}
