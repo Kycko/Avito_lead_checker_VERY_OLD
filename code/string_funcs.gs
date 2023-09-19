@@ -17,9 +17,9 @@ function STR_check_email(string) {
     else if ((string.match(/@/g)||[]).length != 1) {return false}
     else {
         const domain = ARR_last_item(string.split('@'));
-        if      (!STR_find_sub    (domain, '.',                                  'bool')) {return false}
-        else if ( STR_find_sub    (domain, '..',                                 'bool')) {return false}
-        else if (STR_find_sub_list(string, [':', '|', '’', ' ', '<', '>', '.@'], 'bool')) {return false}
+        if      (!STR_find_sub    (domain, '.',                                            'bool')) {return false}
+        else if ( STR_find_sub    (domain, '..',                                           'bool')) {return false}
+        else if (STR_find_sub_list(string, [':', '|', '’', ' ', '<', '>', '[', ']', '.@'], 'bool')) {return false}
     }
     return true;
 }
@@ -63,13 +63,21 @@ function STR_format_website(site) {
     return list.join(',');
 }
 function STR_trim_city(city) {
-    const search = ['г. ', 'г ', 'г.', 'д. ', 'д ', 'д.', 'с. ', 'с ', 'с.', 'х. ', 'х ', 'х.', 'рп. ', 'рп ', 'рп.', 'дп. ', 'дп ', 'дп.', 'пос. ', 'пос ', 'пос.', 'пгт ', 'пгт', 'город ', 'ст-ца '];
+    const search = ['г. ', 'г ', 'г.', 'д. ', 'д ', 'д.', 'с. ', 'с ', 'с.', 'х. ', 'х ', 'х.', 'рп. ', 'рп ', 'рп.', 'дп. ', 'дп ', 'дп.', 'пос. ', 'пос ', 'пос.', 'пгт ', 'пгт', 'город ', 'город', 'ст-ца ', 'ст-ца', 'городской пос. ', 'городской пос ', 'городской пос.'];
     for (i=0; i < search.length; i+=1) {
         if (STR_find_sub(city, search[i]) === 0) {
             city = city.replace(search[i], '');
             return city.toString().trim();          // нужно сразу выйти из цикла
         }
     }
+
+    var list = city.split(' ');
+    if (ARR_search_in_list(search, ARR_last_item(list), 'bool')) {
+        // Logger.log(list);
+        // Logger.log(list.splice(list.length-1, 1).join(' '));
+        return list.splice(list.length-1, 1).join(' ');
+    }
+
     return city.toString().trim();
 }
 
