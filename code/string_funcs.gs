@@ -24,6 +24,7 @@ function STR_check_email(string) {
     return true;
 }
 function STR_format_phone(phone, use_unknown) {
+    while (STR_find_sub(phone, ';', 'bool')) {phone = phone.replace(';', ',')}
     var phones = phone.split(',');
     for (var i=0; i < phones.length; i+=1) {
         phones[i] = phones[i].toString().replace(/\D+/g, '');
