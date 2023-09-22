@@ -37,13 +37,21 @@ function STR_format_phone(phone, use_unknown) {
         }
     }
 
-    for (var i=0; i < phones.length; i+=1) {
+    var i = 0;
+    while (i < phones.length) {
         if (use_unknown) {
-            if (phones.length > 1 && phones[i] === '79999999999') {phones.splice(i,1)}
+            if (phones.length > 1 && phones[i] === '79999999999') {
+                phones.splice(i,1);
+                i -= 1;
+            }
         }
         else {
-            if (phones[i] === '79999999999')                      {phones.splice(i,1)}
+            if (phones[i] === '79999999999') {
+                phones.splice(i,1);
+                i -= 1;
+            }
         }
+        i += 1;
     }
     return phones.join(',');
 }
@@ -63,10 +71,9 @@ function STR_format_website(site) {
     return list.join(',');
 }
 function STR_trim_city(city) {
-    const search = ['г. ', 'г ', 'г.', 'д. ', 'д ', 'д.', 'с. ', 'с ', 'с.', 'х. ', 'х ', 'х.', 'рп. ', 'рп ', 'рп.', 'дп. ', 'дп ', 'дп.', 'пос. ', 'пос ', 'пос.', 'пгт ', 'пгт', 'городской пос. ', 'городской пос ', 'городской пос.', 'город ', 'город', 'ст-ца ', 'ст-ца'];
+    const search = ['г. ', 'г ', 'г.', 'д. ', 'д ', 'д.', 'с. ', 'с ', 'с.', 'х. ', 'х ', 'х.', 'рп. ', 'рп ', 'рп.', 'дп. ', 'дп ', 'дп.', 'посёлок ', 'посёлок', 'поселок ', 'поселок', 'пос. ', 'пос ', 'пос.', 'пгт ', 'пгт', 'городской пос. ', 'городской пос ', 'городской пос.', 'город ', 'город', 'ст-ца ', 'ст-ца'];
     for (i=0; i < search.length; i+=1) {
         if (STR_find_sub(city, search[i]) === 0) {
-            Logger.log(search[i]);
             city = city.replace(search[i], '');
             return city.toString().trim();          // нужно сразу выйти из цикла
         }
