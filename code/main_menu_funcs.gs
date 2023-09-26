@@ -111,7 +111,7 @@ function MM_check_UD(type, CRS_type, only_blank=false) {
         else if (type === 'add_Unknown')                {data = ARR_check_blanks(data, ARrange, 'имя', false, false)}
         else if (type === 'только цифры')               {data = ARR_check_UD_range(data, ARrange, type, false, true)}
         else if (STR_find_sub(type, 'телефон', 'bool')) {data = ARR_check_UD_range(data, ARrange, type, false)}
-        else                                            {data = ARR_check_UD_range(data, ARrange, type, UI_MM_show_dialogues())}
+        else                                            {data = ARR_check_UD_range(data, ARrange, type, 'ask')}
         SH_set_range_values(data.cur, SHrange);
         SH_hl_cells(data);
     }

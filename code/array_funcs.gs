@@ -153,6 +153,10 @@ function ARR_check_UD_range(data, range, type, SD, only_verify=false) {
                     valid = validate_UD(data, r, c, type);
                     if (valid) {data.bg_colors[r][c] = GC.hl_light_green}
                     else {
+                        if (SD === 'ask') {
+                            if (range.h === 1 && range.w === 1) {SD = true}
+                            else                                {SD = UI_MM_show_dialogues()}
+                        }
                         if (!SD) {
                             data.cur      [r][c] = init_value;
                             data.bg_colors[r][c] = GC.hl_red;
