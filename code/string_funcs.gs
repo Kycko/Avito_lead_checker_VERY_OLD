@@ -57,19 +57,24 @@ function STR_format_phone(phone, use_unknown) {
     return phones.join(',');
 }
 function STR_format_website(site) {
-    const start = ['http://', 'https://', 'www.'];
-    site        = site.toString().toLowerCase();
+    const start    = ['http://', 'https://', 'www.'];
+    const rm_sites = ['facebook.', 'instagram.', 'twitter.'];
+    site           = site.toString().toLowerCase();
     while (STR_find_sub(site, ' | ', 'bool')) {site = site.replace(' | ', ',')} // почему-то простое .replace() не работает
-    var    list = site.split(',');
+    var       list = site.split(',');
 
-    for (var l=0; l < list.length; l+=1) {
+    for (var l=list.length-1; l >= 0; l-=1) {
         list[l] = list[l].toString().trim();
         for (var i=0; i < start.length; i+=1) {
             if (STR_find_sub(list[l], start[i]) === 0) {list[l] = list[l].toString().replace(start[i], '')}
         }
         while (list[l].toString().slice(-1) == '/') {list[l] = list[l].toString().slice(0, -1)}
+
+        if (STR_find_sub_list(list[l], rm_sites) === 0) {list.splice(l,1)}
     }
-    return list.join(',');
+
+    if (list === []) {return ''}
+    else             {return list.join(',')}
 }
 function STR_trim_city(city) {
     const search = ['г. ', 'г ', 'г.', 'д. ', 'д ', 'д.', 'с. ', 'с ', 'с.', 'х. ', 'х ', 'х.', 'рп. ', 'рп ', 'рп.', 'дп. ', 'дп ', 'дп.', 'посёлок ', 'посёлок', 'поселок ', 'поселок', 'пос. ', 'пос ', 'пос.', 'пгт ', 'пгт', 'городской пос. ', 'городской пос ', 'городской пос.', 'город ', 'город', 'ст-ца ', 'ст-ца'];
