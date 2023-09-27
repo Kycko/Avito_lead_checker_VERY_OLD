@@ -134,3 +134,10 @@ function STR_join_comments(cur_comment, add_txt, separator, start) {
 
     return {txt : final_txt, separator : separator}
 }
+
+// don't change symbols [1:] if lower_all = false
+function STR_capitalize(string, lower_all) {
+    string = string.toString();
+    if (lower_all) {string = string.toLowerCase()}
+    return string.charAt(0).toUpperCase() + string.substring(1);
+}

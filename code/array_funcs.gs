@@ -286,6 +286,18 @@ function ARR_check_blanks(data, range, type='', only_verify=false, highlight=tru
     }
     return data;
 }
+function ARR_change_fontcase(data, range, type) {
+    for (var r=range.r; r < range.r+range.h; r+=1) {
+        for (var c=range.c; c < range.c+range.w; c+=1) {
+            data.cur[r][c] = data.cur[r][c].toString();
+            if      (type === 'lower')    {data.cur[r][c] = data.cur[r][c].toLowerCase()}
+            else if (type === 'upper')    {data.cur[r][c] = data.cur[r][c].toUpperCase()}
+            else if (type === 'up_first') {data.cur[r][c] = STR_capitalize(data.cur[r][c], false)}
+            else                          {data.cur[r][c] = STR_capitalize(data.cur[r][c], true)}
+        }
+    }
+    return data;
+}
 
 // vert and man = verticals and managers
 function ARR_fix_vert_and_man(data, range, type, only_blank=false, only_verify=false) {
