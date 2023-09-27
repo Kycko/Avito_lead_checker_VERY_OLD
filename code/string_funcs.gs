@@ -54,6 +54,8 @@ function STR_format_phone(phone, use_unknown) {
         }
         i += 1;
     }
+
+    phones = ARR_rm_doubles_in_list(phones);
     return phones.join(',');
 }
 function STR_format_website(site) {
@@ -72,6 +74,8 @@ function STR_format_website(site) {
 
         if (STR_find_sub_list(list[l], rm_sites) === 0) {list.splice(l,1)}
     }
+
+    list = ARR_rm_doubles_in_list(list);
 
     if (list === []) {return ''}
     else             {return list.join(',')}
