@@ -30,7 +30,15 @@ function get_col_letter_from_num(column) {
 // UD = user data
 function autocorr_UD(data, r, c, type) {
     data.cur[r][c]      = data.cur[r][c].toString().trim(); // trim spaces for all the user data
-    const autocorr_list = ['регион/город', 'категория', 'источник', 'название компании', 'имя', 'статус', 'ответственный', 'доступен для всех'];
+    const autocorr_list = ['регион/город',
+                           'категория',
+                           'источник',
+                           'название компании',
+                           'имя',
+                           'статус',
+                           'ответственный',
+                           'доступен для всех',
+                           'должность'];
     if (type === 'e-mail') {
         data.cur[r][c] = data.cur[r][c].toLowerCase();
         // RPL = replace

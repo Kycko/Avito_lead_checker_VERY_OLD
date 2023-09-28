@@ -101,6 +101,7 @@ function MM_check_sources()         {MM_check_UD('источник',         'ch
 function MM_check_dates()           {MM_check_UD('дата',             'empty_req')}
 function MM_check_phones_main()     {MM_check_UD('основной телефон', 'empty_req')}
 function MM_check_phones_sec()      {MM_check_UD('другой телефон',   'empty_req')}
+function MM_check_job_titles()      {MM_check_UD('должность',        'autocorr')}
 function MM_highlight_blanks()      {MM_check_UD('пустые',           'empty_req')}
 function MM_highlight_not_numbers() {MM_check_UD('только цифры',     'empty_req')}
 function MM_add_Unknown()           {MM_check_UD('add_Unknown',      'empty_req')}
