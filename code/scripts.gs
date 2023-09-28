@@ -44,17 +44,73 @@ function SCR_Big_Data_Technology() {
     var       table = SH_get_values(cur_sheet.getName(), SH_get_all_sheets_list());
 
     // modify the data
-    for (var c=0; c < table[0].length; c+=1) {
-        table[0][c] = table[0][c].replace(' (подтягивается с базы)', '');   // ИНН и название компании
+    table                 = ARR_rm_RC (table, 'columns', ARR_search_in_list(table[0], 'Время звонка'),     2);
+    table                 = ARR_rm_RC (table, 'columns', ARR_search_in_list(table[0], 'Регион (из базы)'), 1);
+    table                 = ARR_rm_RC (table, 'columns', ARR_search_in_list(table[0], 'Категория'),        1);
+    table                 = ARR_add_RC(table, 'columns', 0, 5);
+    table[0][0]           = 'Вертикаль';
+    table[0][1]           = 'Источник';
+    table[0][2]           = 'Название лида';
+    table[0][3]           = 'Наименование проекта';
+    table[0][4]           = 'Отчество';
+
+    var columns = {comm : ARR_search_in_list(table[0], 'Комментарий'),
+                   1    : ARR_search_in_list(table[0], 'ФИО (из базы)'),
+                   2    : ARR_search_in_list(table[0], 'Рубрика (из базы)'),
+                   3    : ARR_search_in_list(table[0], 'Подрубрика (из базы)'),
+                   4    : ARR_search_in_list(table[0], 'Категория (из диалога)'),
+                   5    : ARR_search_in_list(table[0], 'Постоянная продажа'),
+                   6    : ARR_search_in_list(table[0], 'Количество в ассортименте (из диалога)'),
+                   7    : ARR_search_in_list(table[0], 'Количество в наличии (из диалога)'),
+                   8    : ARR_search_in_list(table[0], 'Регионы доставки услуг (из диалога)'),
+                   9    : ARR_search_in_list(table[0], 'Время для звонка'),
+                   name : ARR_search_in_list(table[0], 'ФИО (из диалога)')}
+    table[0][columns.name] = 'Имя';
+    for (var r=1; r < table.length; r+=1) {
+        table[r][0] = table[r][columns.comm];
+        table[r][1] = 'Big Data Technolodgy';
+        table[r][2] = 'КЦ Big Data Technolodgy';
+        table[r][3] = 'КЦ Big Data Technolodgy';
+
+        var    temp = table[r][columns.name].split(' ');
+        if (temp.length) {
+            table[r][columns.name] = temp[0];
+            temp.splice(0, 1);
+            if (temp.length) {table[r][4] = temp.join(' ')}
+        }
+
+        for (var i=1; i<10; i+=1) {
+            var title = table[0][columns[i.toString()]];
+            var   txt = table[r][columns[i.toString()]];
+            if (txt.length) {table[r][columns.comm] += ' | ' + title + ': ' + txt}
+        }
+    }
+
+    var rm_list = [];
+    for (var i=1; i<10; i+=1) {rm_list.push(columns[i.toString()])}
+    rm_list.sort(function(a, b){return b-a});   // сортировка чисел по убыванию
+    for (var i=0; i < rm_list.length; i+=1) {table = ARR_rm_RC(table, 'columns', rm_list[i])}
+
+    const from = ['ИНН (подтягивается с базы)',
+                  'Название компании (подтягивается с базы)',
+                  'Контактный телефон (из базы)',
+                  'Город (из базы)',
+                  'Подкатег'];
+    const to   = ['ИНН',
+                  'Название компании',
+                  'Основной телефон',
+                  'Регион и город',
+                  'Категория'];
+    for (var i=0; i < from.length; i+=1) {
+        const index = ARR_search_in_list(table[0], from[i]);
+        if (index >= 0) {table[0][index] = to[i]}
     }
 
     // write the final data
     SH_set_values(table, cur_sheet);
-    // cur_sheet.getRange(1, 1, table.length, table[0].length).setBackground(null);
 
     // launch the basic checker
-    // MM_launch_all(false, true);
-
+    MM_launch_all(false, false);
 }
 function SCR_retention_ASD() {
     // get the data
@@ -66,15 +122,15 @@ function SCR_retention_ASD() {
     if    (STR_find_sub(table[1][0], 'товары',       'bool')) {var vert = 'GE'}
     else                                                      {var vert = 'Service'}
 
-    table = ARR_rm_RC (table, 'columns', 0, 1);
-    table = ARR_rm_RC (table, 'columns', ARR_search_in_list(table[0], 'Результат звонка'), 2);
-    table = ARR_add_RC(table, 'columns', 0, 3);
+    table       = ARR_rm_RC (table, 'columns', 0, 1);
+    table       = ARR_rm_RC (table, 'columns', ARR_search_in_list(table[0], 'Результат звонка'), 2);
+    table       = ARR_add_RC(table, 'columns', 0, 3);
     table[0][0] = 'Источник';
     table[0][1] = 'Название лида';
     table[0][2] = 'Наименование проекта';
 
-    const from      = ['Город',          'Phone',            'Phone1',           'Phone2'];
-    const to        = ['Регион и город', 'Основной телефон', 'Основной телефон', 'Другой телефон'];
+    const  from = ['Город',          'Phone',            'Phone1',           'Phone2'];
+    const  to   = ['Регион и город', 'Основной телефон', 'Основной телефон', 'Другой телефон'];
     for (var i=0; i < from.length; i+=1) {
         const index = ARR_search_in_list(table[0], from[i]);
         if (index >= 0) {table[0][index] = to[i]}

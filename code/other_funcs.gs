@@ -149,7 +149,7 @@ function verify_vertical(data, r, c, cat_row, only_verify) {
         if (index >= 0) {data = change_and_notify_vert_or_man(data, r, c, data.cur[r][c], data.cat[2][index], GC.hl_light_green, 'вертикаль')}
         else {
             data.bg_colors[r][c] = GC.hl_red;
-            data.cur[r][c]       = '';
+            data.cur      [r][c] = '';
         }
     }
     return data;
