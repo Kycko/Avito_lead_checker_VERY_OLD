@@ -46,7 +46,14 @@ function autocorr_UD(data, r, c, type) {
     else if (type === 'сайт')                       {data.cur[r][c] = STR_format_website(data.cur[r][c])}
     else if (STR_find_sub(type, 'телефон', 'bool')) {data.cur[r][c] = STR_format_phone  (data.cur[r][c], type === 'основной телефон')}
     else if (ARR_search_in_list(autocorr_list, type, 'bool')) {
-        if (type === 'регион/город') {data.cur[r][c] = STR_trim_city(data.cur[r][c])}
+        if (type === 'регион/город') {
+            data.cur[r][c] = STR_trim_city(data.cur[r][c]);
+            var       temp = data.cur[r][c].split(' ');
+            if (ARR_search_in_list(['обл.', 'обл'], ARR_last_item(temp), 'bool')) {
+                temp[ARR_last_index(temp)] = 'область';
+            }
+            data.cur[r][c] = temp.join(' ');
+        }
         for (var i=0; i < data.autocorr[1].length; i+=1) {
             var check1 = data.autocorr[0][i].toString().toLowerCase() == type;
             var check2 = data.autocorr[1][i].toString().toLowerCase() == data.cur[r][c].toString().toLowerCase();
