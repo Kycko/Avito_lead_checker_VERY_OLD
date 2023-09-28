@@ -71,11 +71,12 @@ function MM_add_comment(start) {
         SH_add_filter(obj.data.cur_sheet.getRange(obj.data.title+1, 1, obj.data.cur.length-data.title, obj.data.cur[data.title].length));
     }
 }
-function MM_fontcase_default () {MM_fontcase('default')}
-function MM_fontcase_up_first() {MM_fontcase('up_first')}
-function MM_fontcase_upper   () {MM_fontcase('upper')}
-function MM_fontcase_lower   () {MM_fontcase('lower')}
-function MM_fontcase     (type) {
+function MM_fontcase_default_each () {MM_fontcase('default_each')}
+function MM_fontcase_default      () {MM_fontcase('default')}
+function MM_fontcase_up_first     () {MM_fontcase('up_first')}
+function MM_fontcase_upper        () {MM_fontcase('upper')}
+function MM_fontcase_lower        () {MM_fontcase('lower')}
+function MM_fontcase          (type) {
     var data    = SH_get_all_sheets_data();
     var SHrange = data.cur_sheet.getActiveRange();
     var ARrange = {r : SHrange.getRow()-1,

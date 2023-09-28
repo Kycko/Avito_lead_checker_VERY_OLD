@@ -51,7 +51,8 @@ function ARR_check_user_data(data, fix_man, SD, only_verify=false) {
 
     for (var i=0; i < data.cur.length; i+=1) {
         const just_check_blanks = ['Название лида', 'Наименование проекта', 'Название компании', 'Имя'];
-        const autofill          = ['Статус',        'Ответственный', 'Доступен для всех'];
+        const autofill          = ['Статус',        'Ответственный',        'Доступен для всех'];
+        const capitalize_each   = ['Фамилия',       'Имя',                  'Отчество'];
         const only_numbers      = ['Авито-аккаунт', 'ИНН'];
         var range = {r:i, c:tit+1, h:1, w:data.cur[i].length-tit-1};
 
@@ -93,6 +94,11 @@ function ARR_check_user_data(data, fix_man, SD, only_verify=false) {
         }
         else if (ARR_search_in_list(just_check_blanks, data.cur[i][tit], 'bool')) {
             data = ARR_check_blanks(data, range, data.cur[i][tit].toString().toLowerCase(), only_verify);
+        }
+
+        // без else: для имени сперва выполняем ARR_check_blanks(), затем ARR_change_fontcase()
+        if (ARR_search_in_list(capitalize_each, data.cur[i][tit], 'bool')) {
+            data = ARR_change_fontcase(data, range, 'default_each');
         }
     }
 
@@ -301,10 +307,11 @@ function ARR_change_fontcase(data, range, type) {
     for (var r=range.r; r < range.r+range.h; r+=1) {
         for (var c=range.c; c < range.c+range.w; c+=1) {
             data.cur[r][c] = data.cur[r][c].toString();
-            if      (type === 'lower')    {data.cur[r][c] = data.cur[r][c].toLowerCase()}
-            else if (type === 'upper')    {data.cur[r][c] = data.cur[r][c].toUpperCase()}
-            else if (type === 'up_first') {data.cur[r][c] = STR_capitalize(data.cur[r][c], false)}
-            else                          {data.cur[r][c] = STR_capitalize(data.cur[r][c], true)}
+            if      (type === 'lower')        {data.cur[r][c] = data.cur[r][c].toLowerCase()}
+            else if (type === 'upper')        {data.cur[r][c] = data.cur[r][c].toUpperCase()}
+            else if (type === 'up_first')     {data.cur[r][c] = STR_capitalize(data.cur[r][c], false)}
+            else if (type === 'default')      {data.cur[r][c] = STR_capitalize(data.cur[r][c], true)}
+            else if (type === 'default_each') {data.cur[r][c] = STR_capitalize(data.cur[r][c], true, true)}
         }
     }
     return data;

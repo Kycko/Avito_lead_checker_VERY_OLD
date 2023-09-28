@@ -136,8 +136,14 @@ function STR_join_comments(cur_comment, add_txt, separator, start) {
 }
 
 // don't change symbols [1:] if lower_all = false
-function STR_capitalize(string, lower_all) {
+// capitalize_each means each word (separated by space)
+function STR_capitalize(string, lower_all, capitalize_each=false) {
     string = string.toString();
     if (lower_all) {string = string.toLowerCase()}
+    if (capitalize_each) {
+        var list = string.split(' ');
+        for (var i=0; i < list.length; i+=1) {list[i] = list[i].charAt(0).toUpperCase() + list[i].substring(1)}
+        string = list.join(' ');
+    }
     return string.charAt(0).toUpperCase() + string.substring(1);
 }
