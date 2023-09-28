@@ -200,11 +200,15 @@ function ARR_check_UD_range(data, range, type, SD, only_verify=false) {
     return data;
 }
 function ARR_join_comments(data, range, start) {
-    var tit = data.title;
+    const ui = SpreadsheetApp.getUi();
+    var  tit = data.title;
     if (range.r > tit) {
         var   separator   = null;
         const add_title   = UI_add_title_in_comments();
-        if (add_title) {var add_empty = UI_add_empty_in_comments()}
+        if (add_title) {
+            var add_empty = UI_add_empty_in_comments();
+            if (add_empty) {empty_replacement = UI_replace_empty_in_comments(ui)}
+        }
 
         var   comm_column = ARR_search_in_list(data.cur[tit], 'комментарий');
         if (comm_column  == null) {
@@ -222,21 +226,28 @@ function ARR_join_comments(data, range, start) {
                 data.cur[r][c] = data.cur[r][c].toString().trim();
                 var add_or_not = data.cur[r][c].length || (add_title && add_empty);
                 if (add_or_not) {
-                    if (add_txt.length && add_or_not) {                 // separator
+                    // separator
+                    if (add_txt.length && add_or_not) {
                         if (separator === null) {
-                            const ui   = SpreadsheetApp.getUi();
                             const resp = UI_ask_separator(ui);
                             if (resp.getSelectedButton() == ui.Button.OK) {separator = resp.getResponseText()}
                             else                                          {return 'break'}
                         }
                         add_txt += separator;
                     }
-                    if (add_title) {                                    // title
+
+                    // title
+                    if (add_title) {
                         add_txt += data.cur[tit][c].toString().trim();
                         if (add_txt.at(-1) == '?') {add_txt += ' '}
                         else                       {add_txt += ': '}
                     }
-                    add_txt += data.cur[r][c];                          // user data
+
+                    // user data
+                    if (!data.cur[r][c].length && empty_replacement.getSelectedButton() == ui.Button.OK) {
+                        add_txt   += empty_replacement.getResponseText();
+                    }
+                    else {add_txt += data.cur[r][c]}
                 }
             }
             const obj = STR_join_comments(cur_comment, add_txt, separator, start);
