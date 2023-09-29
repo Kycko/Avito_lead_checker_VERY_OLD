@@ -62,9 +62,10 @@ function autocorr_UD(data, r, c, type) {
             }
             data.cur[r][c] = temp.join(' ');
         }
+        else if (type === 'должность') {data.cur[r][c] = data.cur[r][c].toLowerCase()}
         for (var i=0; i < data.autocorr[1].length; i+=1) {
             var check1 = data.autocorr[0][i].toString().toLowerCase() == type;
-            var check2 = data.autocorr[1][i].toString().toLowerCase() == data.cur[r][c].toString().toLowerCase();
+            var check2 = data.autocorr[1][i].toString().toLowerCase() == data.cur[r][c].toLowerCase();
             if (check1 && check2) {
                 data.cur[r][c] = data.autocorr[2][i];
                 return data;
@@ -110,6 +111,7 @@ function validate_UD(data, r, c, type) {
     else if (type === 'источник') {
         var valid = ARR_search_in_list(data.sources[0], data.cur[r][c], 'bool');
     }
+    else if (type === 'должность')         {var valid = true}
     else if (type === 'дата')              {var valid = validate_date(data.cur[r][c].toString().split('.'))}
     else if (type === 'статус')            {var valid = data.cur[r][c].toString().toLowerCase() === 'новый'}
     else if (type === 'ответственный')     {var valid = data.cur[r][c].toString().toLowerCase() === 'квалификаторы'}

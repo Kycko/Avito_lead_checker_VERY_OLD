@@ -84,18 +84,15 @@ function STR_trim_city(city) {
     const search = ['г. ', 'г ', 'г.', 'д. ', 'д ', 'д.', 'с. ', 'с ', 'с.', 'х. ', 'х ', 'х.', 'рп. ', 'рп ', 'рп.', 'дп. ', 'дп ', 'дп.', 'посёлок ', 'посёлок', 'поселок ', 'поселок', 'пос. ', 'пос ', 'пос.', 'пгт ', 'пгт', 'городской пос. ', 'городской пос ', 'городской пос.', 'город ', 'город', 'ст-ца ', 'ст-ца'];
     for (i=0; i < search.length; i+=1) {
         if (STR_find_sub(city, search[i]) === 0) {
-            city = city.replace(search[i], '');
-            return city.toString().trim();          // нужно сразу выйти из цикла
+            // отрезаем по длине найденного
+            return city.substring(search[i].length).trim(); // нужно сразу выйти из цикла
         }
     }
 
     var list = city.split(' ');
     if (ARR_search_in_list(search, ARR_last_item(list), 'bool')) {
-        // Logger.log(list);
-        // Logger.log(list.splice(list.length-1, 1).join(' '));
         return list.splice(list.length-1, 1).join(' ');
     }
-
     return city.toString().trim();
 }
 
