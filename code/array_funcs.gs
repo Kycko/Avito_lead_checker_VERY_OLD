@@ -53,7 +53,7 @@ function ARR_check_user_data(data, fix_man, SD, only_verify=false) {
         const just_check_blanks = ['Название лида', 'Наименование проекта', 'Название компании', 'Имя'];
         const autofill          = ['Статус',        'Ответственный',        'Доступен для всех'];
         const capitalize_each   = ['Фамилия',       'Имя',                  'Отчество'];
-        const only_numbers      = ['Авито-аккаунт', 'ИНН'];
+        const only_numbers      = ['Авито-аккаунт', 'Добавочный телефон',   'ИНН'];
         var range = {r:i, c:tit+1, h:1, w:data.cur[i].length-tit-1};
 
         if (STR_find_sub(data.cur[i][tit], 'e-mail', 'bool')) {
@@ -61,9 +61,6 @@ function ARR_check_user_data(data, fix_man, SD, only_verify=false) {
         }
         else if (STR_find_sub(data.cur[i][tit], 'сайт', 'bool')) {
             data = ARR_check_UD_range(data, range, 'сайт', SD, only_verify);
-        }
-        else if (STR_find_sub(data.cur[i][tit], 'телефон', 'bool')) {
-            data = ARR_check_UD_range(data, range, data.cur[i][tit].toString().toLowerCase(), false, only_verify);
         }
         else if (data.cur[i][tit] == 'Регион и город' && CRS('check_cities', data, show_msg=false)) {
             data = ARR_check_UD_range(data, range, 'регион/город', SD, only_verify);
@@ -91,6 +88,9 @@ function ARR_check_user_data(data, fix_man, SD, only_verify=false) {
         }
         else if (ARR_search_in_list(only_numbers, data.cur[i][tit], 'bool')) {
             data = ARR_check_UD_range(data, range, 'только цифры', false, true);
+        }
+        else if (STR_find_sub(data.cur[i][tit], 'телефон', 'bool')) {
+            data = ARR_check_UD_range(data, range, data.cur[i][tit].toString().toLowerCase(), false, only_verify);
         }
         else if (ARR_search_in_list(autofill, data.cur[i][tit], 'bool')) {
             data = ARR_check_UD_range(data, range, data.cur[i][tit].toString().toLowerCase(), SD, only_verify);
