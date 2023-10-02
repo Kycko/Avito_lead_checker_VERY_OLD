@@ -76,5 +76,6 @@ function UI_show_vert_man_toast(data) {
     else if (!data.vert_changed &&  data.manager_changed) {var title = 'Менеджеры изменены!'}
     else if ( data.vert_changed &&  data.manager_changed) {var title = 'Вертикали и менеджеры изменены!'}
     const msg = 'Все автоматически изменённые ячейки будут подсвечены жёлтым цветом.';
-    SpreadsheetApp.getActive().toast(msg, title, 12);
+    UI_show_toast(title, msg, 12);
 }
+function UI_show_toast(title, msg='', time=6) {SpreadsheetApp.getActive().toast(msg, title, time)}

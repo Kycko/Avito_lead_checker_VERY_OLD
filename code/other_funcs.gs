@@ -32,6 +32,7 @@ function autocorr_UD(data, r, c, type) {
     data.cur[r][c]      = data.cur[r][c].toString().trim(); // trim spaces for all the user data
     const autocorr_list = ['регион/город',
                            'категория',
+                           'вертикаль',
                            'источник',
                            'название компании',
                            'имя',
@@ -156,7 +157,10 @@ function verify_vertical(data, r, c, cat_row, only_verify) {
         else                                                    {data.bg_colors[r][c] = GC.hl_red}
     }
     else {
-        if (index >= 0) {data = change_and_notify_vert_or_man(data, r, c, data.cur[r][c], data.cat[2][index], GC.hl_light_green, 'вертикаль')}
+        if (index >= 0) {
+            data = autocorr_UD(data, r, c, 'вертикаль');
+            data = change_and_notify_vert_or_man(data, r, c, data.cur[r][c], data.cat[2][index], GC.hl_light_green, 'вертикаль');
+        }
         else {
             data.bg_colors[r][c] = GC.hl_red;
             data.cur      [r][c] = '';

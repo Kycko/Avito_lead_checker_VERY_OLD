@@ -206,6 +206,7 @@ function ARR_check_UD_range(data, range, type, SD, only_verify=false) {
             }
         }
     }
+    if (SD === 'ask') {UI_show_toast('Ошибок не найдено')}
     return data;
 }
 function ARR_join_comments(data, range, start) {
