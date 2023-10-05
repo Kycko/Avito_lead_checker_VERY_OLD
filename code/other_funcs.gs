@@ -83,13 +83,16 @@ function validate_UD(data, r, c, type) {
             if (type === 'e-mail') {
                 if (!STR_check_email(list[i])) {valid = false}
             }
-            else if (type === 'основной телефон') {
-                if (list[i].length !== 11 || list[i].toString().charAt(0) != '7') {valid = false}
-            }
-            else if (type === 'другой телефон') {
-                if (list[i] === '79999999999') {valid = false}
-                else if (list[i].length !== 0 && (list[i].length !== 11 || list[i].toString().charAt(0) != '7')) {
-                    valid = false;
+            else {
+                var kazakh = STR_find_sub('67', list[i].charAt(1), 'bool');
+                if (type === 'основной телефон') {
+                    if (list[i].length !== 11 || list[i].charAt(0) != '7' || kazakh) {valid = false}
+                }
+                else if (type === 'другой телефон') {
+                    if (list[i] === '79999999999') {valid = false}
+                    else if (list[i].length !== 0 && (list[i].length !== 11 || list[i].charAt(0) != '7' || kazakh)) {
+                        valid = false;
+                    }
                 }
             }
         }
