@@ -175,7 +175,8 @@ function SCR_CRMmrkg_WG(type) {
     var data              = {}
     data.cur_sheet        = SpreadsheetApp.getActiveSheet()
     data.cur              = SH_get_values(data.cur_sheet.getName(), all_sheets_list);
-    data.log_cat              = SH_get_values(Greq_sheets().log_cat,    all_sheets_list, true);
+    data.log_cat          = SH_get_values(Greq_sheets().log_cat,    all_sheets_list, true);
+    data.autocorr         = SH_get_values(Greq_sheets().autocorr,   all_sheets_list, true);
 
     // modify the data
     var index  = ARR_search_in_list(data.cur[0], 'email');
