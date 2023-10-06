@@ -33,7 +33,7 @@ function UI_show_UD_error(init_value, data, r, c, type, ui, range) {
     else                                                              {var title = 'Неправильный ' + type}
 
     // message
-    if (ARR_search_in_list(['e-mail', 'сайт'], type, 'bool')) {
+    if (type === 'сайт') {
         var msg   = 'Введите правильное значение, оставьте поле пустым для удаления или нажмите "Отмена", чтобы исправить его потом.\n\nТекущее значение:\n• ' + init_value +'\n\n';
     }
     else {var msg = ARR_recommend_correction(data.sugg, init_value, type)}

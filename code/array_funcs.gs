@@ -419,12 +419,16 @@ function ARR_check_double_titles(titles) {
 function ARR_recommend_correction(sugg, cur, type) {
     var final_msg = 'Введите правильный вариант$$$ или нажмите "Отмена", чтобы исправить его потом.\n\nТекущее значение:\n• ' + cur +'\n\n';
 
-    const temp = ['дата', 'статус посещения мероприятия клиентом'];
+    const temp = ['e-mail', 'дата', 'статус посещения мероприятия клиентом'];
     if (ARR_search_in_list(temp, type, 'bool')) {var string = ', оставьте поле пустым для удаления'}
     else                                        {var string = ''}
     final_msg  = final_msg.replace('$$$', string);
 
-    if (type === 'дата') {var vars = STR_recommend_dates(cur.toString().split('/'))}
+    if      (type === 'дата')   {var vars = STR_recommend_dates(cur.toString().split('/'))}
+    else if (type === 'e-mail') {
+        var vars = [cur.toString().toLowerCase().replace(' ', '')];
+        while (STR_find_sub(vars[0], ' ', 'bool')) {vars[0] = vars[0].replace(' ', '')}
+    }
     else {
         var vars = [];
         for (var i=0; i < sugg[0].length; i+=1) {
