@@ -35,7 +35,9 @@ function autocorr_UD(data, r, c, type) {
                            'вертикаль',
                            'источник',
                            'название компании',
+                           'фамилия',
                            'имя',
+                           'отчество',
                            'статус',
                            'ответственный',
                            'доступен для всех',
@@ -76,7 +78,7 @@ function autocorr_UD(data, r, c, type) {
     return data;
 }
 function validate_UD(data, r, c, type) {
-    if (STR_find_sub_list(type, ['телефон', 'e-mail'], 'bool')) {
+    if      (STR_find_sub_list(type, ['телефон', 'e-mail'], 'bool')) {
         var valid = true;
         var list  = data.cur[r][c].toString().split(',');
         for (i=0; i < list.length; i+=1) {
@@ -115,7 +117,7 @@ function validate_UD(data, r, c, type) {
     else if (type === 'источник') {
         var valid = ARR_search_in_list(data.sources[0], data.cur[r][c], 'bool');
     }
-    else if (type === 'должность')         {var valid = true}
+    else if (ARR_search_in_list(['фамилия', 'отчество', 'должность'], type, 'bool')) {var valid = true}
     else if (type === 'дата')              {var valid = validate_date(data.cur[r][c].toString().split('.'))}
     else if (type === 'статус')            {var valid = data.cur[r][c].toString().toLowerCase() === 'новый'}
     else if (type === 'ответственный')     {var valid = data.cur[r][c].toString().toLowerCase() === 'квалификаторы'}

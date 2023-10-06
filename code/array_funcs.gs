@@ -56,7 +56,7 @@ function ARR_check_user_data(data, fix_man, SD, only_verify=false) {
         const only_numbers      = ['Авито-аккаунт', 'Добавочный телефон',   'ИНН'];
         var range = {r:i, c:tit+1, h:1, w:data.cur[i].length-tit-1};
 
-        if (STR_find_sub(data.cur[i][tit], 'e-mail', 'bool')) {
+        if      (STR_find_sub(data.cur[i][tit], 'e-mail', 'bool')) {
             data = ARR_check_UD_range(data, range, 'e-mail', SD, only_verify);
         }
         else if (STR_find_sub(data.cur[i][tit], 'сайт', 'bool')) {
@@ -94,6 +94,9 @@ function ARR_check_user_data(data, fix_man, SD, only_verify=false) {
         }
         else if (ARR_search_in_list(autofill, data.cur[i][tit], 'bool')) {
             data = ARR_check_UD_range(data, range, data.cur[i][tit].toString().toLowerCase(), SD, only_verify);
+        }
+        else if (ARR_search_in_list(['Фамилия', 'Отчество'], data.cur[i][tit], 'bool')) {
+            data = ARR_check_UD_range(data, range, data.cur[i][tit].toString().toLowerCase(), false, only_verify);
         }
         else if (ARR_search_in_list(just_check_blanks, data.cur[i][tit], 'bool')) {
             data = ARR_check_blanks(data, range, data.cur[i][tit].toString().toLowerCase(), only_verify);
@@ -428,6 +431,7 @@ function ARR_recommend_correction(sugg, cur, type) {
     else if (type === 'e-mail') {
         var vars = [cur.toString().toLowerCase().replace(' ', '')];
         while (STR_find_sub(vars[0], ' ', 'bool')) {vars[0] = vars[0].replace(' ', '')}
+        if (vars[0] === cur) {vars = []}
     }
     else {
         var vars = [];
