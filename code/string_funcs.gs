@@ -13,13 +13,16 @@ function STR_find_sub(string, sub, type='index') {
     }
 }
 function STR_check_email(string) {
-    if      (string == '')                         {return true}
-    else if ((string.match(/@/g)||[]).length != 1) {return false}
+    if      (string == '')                                     {return true}
+    else if ((string.match(/@/g)||[]).length != 1)             {return false}
+    else if (STR_find_sub_list(string, Gru_symbols(), 'bool')) {return false}
     else {
-        const domain = ARR_last_item(string.split('@'));
-        if      (!STR_find_sub    (domain, '.',                                                  'bool')) {return false}
-        else if ( STR_find_sub    (domain, '..',                                                 'bool')) {return false}
-        else if (STR_find_sub_list(string, [':', '|', '’', ' ', '<', '>', '[', ']', '.@', '@.'], 'bool')) {return false}
+        const splitted = string.split('@');
+        const domain   = ARR_last_item(splitted);
+        if      (!STR_find_sub(domain, '.',  'bool')) {return false}
+        else if ( STR_find_sub(domain, '..', 'bool')) {return false}
+        else if (splitted[0] === '-')                 {return false}
+        else if (STR_find_sub_list(string, [':', '|', '’', ' ', '<', '>', '[', ']', '.@', '@.', '@-.'], 'bool')) {return false}
     }
     return true;
 }

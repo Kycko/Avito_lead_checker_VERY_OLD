@@ -65,7 +65,17 @@ function autocorr_UD(data, r, c, type) {
             }
             data.cur[r][c] = temp.join(' ');
         }
-        else if (type === 'должность') {data.cur[r][c] = data.cur[r][c].toLowerCase()}
+        else if (type === 'должность') {
+            data.cur[r][c] = data.cur[r][c].toLowerCase();
+            // RPL = replace
+            var RPL = {from : ['директор ', 'руководитель ', 'специалист '],
+                       to   : ['дир. ',     'рук. ',         'спец. ']}
+            for (i=0; i < RPL.from.length; i+=1) {
+                if (data.cur[r][c].length > 17 && STR_find_sub(data.cur[r][c], RPL.from[i]) === 0) {
+                    data.cur[r][c] = data.cur[r][c].replace(RPL.from[i], RPL.to[i]);
+                }
+            }
+        }
         for (var i=0; i < data.autocorr[1].length; i+=1) {
             var check1 = data.autocorr[0][i].toString().toLowerCase() == type;
             var check2 = data.autocorr[1][i].toString().toLowerCase() == data.cur[r][c].toLowerCase();
@@ -82,9 +92,7 @@ function validate_UD(data, r, c, type) {
         var valid = true;
         var list  = data.cur[r][c].toString().split(',');
         for (i=0; i < list.length; i+=1) {
-            if (type === 'e-mail') {
-                if (!STR_check_email(list[i])) {valid = false}
-            }
+            if (type === 'e-mail') {valid = STR_check_email(list[i])}
             else {
                 var kazakh = STR_find_sub('67', list[i].charAt(1), 'bool');
                 if (type === 'основной телефон') {

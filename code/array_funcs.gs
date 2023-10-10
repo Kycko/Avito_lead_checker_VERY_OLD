@@ -59,7 +59,7 @@ function ARR_check_user_data(data, fix_man, SD, only_verify=false) {
         if      (STR_find_sub(data.cur[i][tit], 'e-mail', 'bool')) {
             data = ARR_check_UD_range(data, range, 'e-mail', SD, only_verify);
         }
-        else if (STR_find_sub(data.cur[i][tit], 'сайт', 'bool')) {
+        else if (STR_find_sub(data.cur[i][tit], 'сайт', 'bool') || data.cur[i][tit].toString().toLowerCase() === 'страница вконтакте') {
             data = ARR_check_UD_range(data, range, 'сайт', SD, only_verify);
         }
         else if (data.cur[i][tit] == 'Регион и город' && CRS('check_cities', data, show_msg=false)) {
@@ -431,7 +431,7 @@ function ARR_recommend_correction(sugg, cur, type) {
     else if (type === 'e-mail') {
         var vars = [cur.toString().toLowerCase().replace(' ', '')];
         while (STR_find_sub(vars[0], ' ', 'bool')) {vars[0] = vars[0].replace(' ', '')}
-        if (vars[0] === cur) {vars = []}
+        if (vars[0] === cur || !STR_check_email(vars[0])) {vars = []}
     }
     else {
         var vars = [];
