@@ -45,8 +45,8 @@ function autocorr_UD(data, r, c, type) {
     if (type === 'e-mail') {
         data.cur[r][c] = data.cur[r][c].toLowerCase();
         // RPL = replace
-        var RPL = {from : ['–', '—', '|', ';', '; ', ', '],
-                   to   : ['-', '-', ',', ',', ',' , ',']}
+        var RPL = {from : ['​', '–', '—', '|', ';', '; ', ', '],   // первое – это мягкий пробел (u200b)
+                   to   : ['', '-', '-', ',', ',', ',' , ',']}
         while (STR_find_sub_list(data.cur[r][c], RPL.from, 'bool')) {
             for (i=0; i < RPL.from.length; i+=1) {
                 data.cur[r][c] = data.cur[r][c].replace(RPL.from[i], RPL.to[i]);
