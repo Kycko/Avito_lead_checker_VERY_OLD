@@ -44,28 +44,36 @@ function SCR_Big_Data_Technology() {
     var       table = SH_get_values(cur_sheet.getName(), SH_get_all_sheets_list());
 
     // modify the data
-    table                 = ARR_rm_RC (table, 'columns', ARR_search_in_list(table[0], 'Время звонка'),     2);
-    table                 = ARR_rm_RC (table, 'columns', ARR_search_in_list(table[0], 'Регион (из базы)'), 1);
-    table                 = ARR_rm_RC (table, 'columns', ARR_search_in_list(table[0], 'Категория'),        1);
-    table                 = ARR_add_RC(table, 'columns', 0, 5);
-    table[0][0]           = 'Вертикаль';
-    table[0][1]           = 'Источник';
-    table[0][2]           = 'Название лида';
-    table[0][3]           = 'Наименование проекта';
-    table[0][4]           = 'Отчество';
+    var rm_lists = ARR_find_empty_RC(table, true);
+    if (rm_lists.rows) {
+        for (var i = rm_lists.rows.length-1; i >= 0; i-=1) {table = ARR_rm_RC(table, 'rows', rm_lists.rows[i])}
+    }
+
+    table        = ARR_rm_RC        (table, 'columns', ARR_search_in_list(table[0], 'Время звонка'));
+    table        = ARR_rm_RC        (table, 'columns', ARR_search_in_list(table[0], 'Продолжительность звонка (sec)'));
+    table        = ARR_rm_RC        (table, 'columns', ARR_search_in_list(table[0], 'Регион (из базы)'), 1);
+    table        = ARR_rm_RC        (table, 'columns', ARR_search_in_list(table[0], 'Категория'),        1);
+    table        = ARR_add_RC       (table, 'columns', 0, 5);
+    table[0][0]  = 'Вертикаль';
+    table[0][1]  = 'Источник';
+    table[0][2]  = 'Название лида';
+    table[0][3]  = 'Наименование проекта';
+    table[0][4]  = 'Отчество';
 
     var columns = {comm : ARR_search_in_list(table[0], 'Комментарий'),
                    1    : ARR_search_in_list(table[0], 'ФИО (из базы)'),
-                   2    : ARR_search_in_list(table[0], 'Рубрика (из базы)'),
-                   3    : ARR_search_in_list(table[0], 'Подрубрика (из базы)'),
+                   2    : ARR_search_in_list(table[0], 'Категория (из базы)'),
+                   3    : ARR_search_in_list(table[0], 'Количество в ассортименте (из базы)'),
                    4    : ARR_search_in_list(table[0], 'Категория (из диалога)'),
-                   5    : ARR_search_in_list(table[0], 'Постоянная продажа'),
-                   6    : ARR_search_in_list(table[0], 'Количество в ассортименте (из диалога)'),
-                   7    : ARR_search_in_list(table[0], 'Количество в наличии (из диалога)'),
+                   5    : ARR_search_in_list(table[0], 'Количество в ассортименте (из диалога)'),
+                   6    : ARR_search_in_list(table[0], 'Количество в наличии (из диалога)'),
+                   7    : ARR_search_in_list(table[0], 'Постоянная продажа'),
                    8    : ARR_search_in_list(table[0], 'Регионы доставки услуг (из диалога)'),
                    9    : ARR_search_in_list(table[0], 'Время для звонка'),
-                   name : ARR_search_in_list(table[0], 'ФИО (из диалога)')}
+                   name : ARR_search_in_list(table[0], 'ФИО (из диалога)'),
+                   cat  : ARR_search_in_list(table[0], 'Подкатегория ')}
     table[0][columns.name] = 'Имя';
+    table[0][columns.cat ] = 'Категория';
     for (var r=1; r < table.length; r+=1) {
         table[r][0] = table[r][columns.comm];
         table[r][1] = 'Big Data Technolodgy';
@@ -91,14 +99,10 @@ function SCR_Big_Data_Technology() {
     rm_list.sort(function(a, b){return b-a});   // сортировка чисел по убыванию
     for (var i=0; i < rm_list.length; i+=1) {table = ARR_rm_RC(table, 'columns', rm_list[i])}
 
-    const from = ['ИНН (подтягивается с базы)',
-                  'Название компании (подтягивается с базы)',
-                  'Контактный телефон (из базы)',
+    const from = ['Контактный телефон (из базы)',
                   'Город (из базы)',
                   'Подкатег'];
-    const to   = ['ИНН',
-                  'Название компании',
-                  'Основной телефон',
+    const to   = ['Основной телефон',
                   'Регион и город',
                   'Категория'];
     for (var i=0; i < from.length; i+=1) {

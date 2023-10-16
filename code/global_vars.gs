@@ -84,7 +84,7 @@ function Gtext() {
                        ['📆 Проверить формат дат в выделенном диапазоне',                          'MM_check_dates']];
 
     G.MM_title_2    = 'Скрипты по проектам'
-    G.MM_items_2    = [['Big Data Technology [обновлено 28.09.2023]',             'SCR_Big_Data_Technology'],
+    G.MM_items_2    = [['Big Data Technology [обновлено 16.10.2023]',             'SCR_Big_Data_Technology'],
                        ['Retention ASD (товары и услуги) [обновлено 21.08.2023]', 'SCR_retention_ASD'],
                        ['separator'],   // разделительная линия
                        ['CRMmrkg grey [обновлено 16.10.2023]',                    'SCR_CRMmrkg_grey'],
