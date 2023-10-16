@@ -179,15 +179,24 @@ function SCR_CRMmrkg_WG(type) {
     data.autocorr         = SH_get_values(Greq_sheets().autocorr,   all_sheets_list, true);
 
     // modify the data
-    var index  = ARR_search_in_list(data.cur[0], 'email');
-    if (index >= 0) {data.cur = ARR_rm_RC(data.cur, 'columns', index)}
-    index      = ARR_search_in_list(data.cur[0], 'phone');
-    if (index >= 0) {data.cur = ARR_rm_RC(data.cur, 'columns', index)}
+    // old code to delete e-mail & phone hashes
+    // var index  = ARR_search_in_list(data.cur[0], 'email');
+    // if (index >= 0) {data.cur = ARR_rm_RC(data.cur, 'columns', index)}
+    // index      = ARR_search_in_list(data.cur[0], 'phone');
+    // if (index >= 0) {data.cur = ARR_rm_RC(data.cur, 'columns', index)}
 
-    const ind = {avito_ID : ARR_search_in_list(data.cur[0], 'external_id'),
-                 cat      : ARR_search_in_list(data.cur[0], 'logical_category')}
+    const ind = {avito_ID : ARR_search_in_list(data.cur[0], 'external_user_id'),
+                 cat      : ARR_search_in_list(data.cur[0], 'logical_category'),
+                 email    : ARR_search_in_list(data.cur[0], 'email'),
+                 company  : ARR_search_in_list(data.cur[0], 'name'),
+                 phone    : ARR_search_in_list(data.cur[0], 'phone'),
+                 region   : ARR_search_in_list(data.cur[0], 'region')}
 
     if (ind.avito_ID >= 0) {data.cur[0][ind.avito_ID] = 'Авито-аккаунт'}
+    if (ind.email    >= 0) {data.cur[0][ind.email]    = 'Рабочий e-mail'}
+    if (ind.company  >= 0) {data.cur[0][ind.company]  = 'Название компании'}
+    if (ind.phone    >= 0) {data.cur[0][ind.phone]    = 'Основной телефон'}
+    if (ind.region   >= 0) {data.cur[0][ind.region]   = 'Регион и город'}
     if (ind.cat      >= 0 && CRS('check_log_cat', data)) {
         data.cur[0][ind.cat] = 'Категория';
         for (var r=1; r < data.cur.length; r+=1) {
@@ -198,20 +207,38 @@ function SCR_CRMmrkg_WG(type) {
 
     data.cur       = ARR_add_RC(data.cur, 'columns', 0);
     data.cur[0][0] = 'Комментарий';
-    const exclude = [ARR_search_in_list(data.cur[0], 'Авито-аккаунт'),
-                     ARR_search_in_list(data.cur[0], 'Категория')]
+    var exclude = [ARR_search_in_list(data.cur[0], 'Авито-аккаунт'),
+                   ARR_search_in_list(data.cur[0], 'Категория'),
+                   ARR_search_in_list(data.cur[0], 'Комментарий'),  // чтобы потом этот столбец не удалялся
+                   ARR_search_in_list(data.cur[0], 'Название компании'),
+                   ARR_search_in_list(data.cur[0], 'Основной телефон'),
+                   ARR_search_in_list(data.cur[0], 'Рабочий e-mail'),
+                   ARR_search_in_list(data.cur[0], 'Регион и город')]
+    for (var i = exclude.length-1; i>=0; i-=1) {
+        if (exclude[i] >= 0) {Logger.log('exclude OK')}
+        else                 {exclude.splice(i, 1)}
+    }
     for (var r=1; r < data.cur.length; r+=1) {
         for (var c=1; c < data.cur[r].length; c+=1) {
-            if (data.cur[r][c].length && !ARR_search_in_list(exclude, c, 'bool')) {
+            if (data.cur[r][c].toString() === 'None') {
+                if      (data.cur[0][c] === 'Основной телефон') {data.cur[r][c] = '79999999999'}
+                else if (data.cur[0][c] === 'Рабочий e-mail')   {data.cur[r][c] = ''}
+            }
+            else if (data.cur[0][c] === 'Регион и город' && data.cur[r][c].toString() === 'другой регион') {
+                data.cur[r][c] = 'Другие регионы России';
+            }
+
+            if (data.cur[r][c].toString().length && !ARR_search_in_list(exclude, c, 'bool')) {
                 if (data.cur[r][0].length) {data.cur[r][0] += ', '}
-                data.cur[r][0] += data.cur[0][c] + ' ' + data.cur[r][c];
+                data.cur[r][0] += data.cur[0][c] + ' ' + data.cur[r][c].toString();
             }
         }
         if (data.cur[r][0].length) {data.cur[r][0] += '.'}
     }
 
-    data.cur = ARR_crop (data.cur, 0, 0, data.cur.length, 4);    // сколько столбцов останется, столько и указываем
-    data.cur = ARR_rm_RC(data.cur, 'columns', 1);
+    for (var c = data.cur[0].length-1; c >= 0; c-=1) {
+        if (!ARR_search_in_list(exclude, c, 'bool')) {data.cur = ARR_rm_RC(data.cur, 'columns', c)}
+    }
 
     data.cur       = ARR_add_RC(data.cur, 'columns', 0, 3);
     data.cur[0][0] = 'Источник';
