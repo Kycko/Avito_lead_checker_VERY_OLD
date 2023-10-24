@@ -1,29 +1,41 @@
-function SCR_evening_СС_goods() {SCR_evening_СС('goods')}
 function SCR_evening_СС(type='common') {
     // get the data
     const cur_sheet = SpreadsheetApp.getActiveSheet();
     var       table = SH_get_values(cur_sheet.getName(), SH_get_all_sheets_list());
 
     // modify the data
-    table = ARR_filter_rows_by_cell  (table, ARR_search_in_list(table[0], 'Конечная категория'), 'Согласие')
+    table = ARR_filter_rows_by_cell(table, ARR_search_in_list(table[0], 'Конечная категория'), 'Согласие');
 
-    if (type === 'goods') {
+    // only for goods, not for services
+    var indx_autosrv = ARR_search_in_list(table[0], 'Автосервис. Как я могу к вам обращаться?');
+    if (indx_autosrv >= 0) {
         for (var r=0; r < table.length; r+=1) {
-            if (table[r][21].length) {
-                for (var i=22; i < table[r].length-2; i+=1) {
-                    table[r][21] += ' | ' + table[r][i];
+            if (table[r][indx_autosrv].length) {
+                for (var i=indx_autosrv+1; i < table[r].length; i+=1) {
+                    if (table[r][i].length) {table[r][indx_autosrv] += ' | ' + table[r][i]}
                 }
             }
         }
-        table        = ARR_move_RC(table, 'columns', 21, 12);
-        table[0][12] = 'Автосервис';
+        var indx_srv         = ARR_search_in_list(table[0], 'Услуги');
+        table                = ARR_move_RC       (table,    'columns', indx_autosrv, indx_srv+1);
+        table[0][indx_srv+1] = 'Автосервис';
+    }
+    // -----------------------------
+
+    var rm_list = ['TAM id',
+                   'Статус звонка',
+                   'Статус телефона',
+                   'Сколько позиций в ассортименте',
+                   'Конечная категория',
+                   'ЗФ',
+                   'Проект',
+                   'Предполагаемая часовая зона'];
+    for (var i=0; i < rm_list.length; i+=1) {
+        index = ARR_search_in_list(table[0], rm_list[i]);
+        if (index >= 0) {table = ARR_rm_RC(table, 'columns', index)}
     }
 
-    table = ARR_rm_RC                (table, 'columns',  0,  1);
-    table = ARR_rm_RC                (table, 'columns',  4,  2);
-    table = ARR_rm_RC                (table, 'columns', 10,  1);
-    table = ARR_rm_RC                (table, 'columns', 11,  3);
-    table = ARR_crop                 (table, 0, 0, table.length, 13);   // сколько столбцов останется, столько и указываем
+    table = ARR_crop                 (table, 0, 0, table.length, 13); // сколько столбцов останется, столько и указываем
     table = ARR_move_RC              (table, 'columns',  3,  5);
     table = ARR_move_RC              (table, 'columns',  7,  5);
     table = ARR_move_RC              (table, 'columns',  8,  9);
