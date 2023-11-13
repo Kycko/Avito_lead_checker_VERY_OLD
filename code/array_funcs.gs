@@ -216,10 +216,11 @@ function ARR_join_comments(data, range, start) {
     const ui = SpreadsheetApp.getUi();
     var  tit = data.title;
     if (range.r > tit) {
-        var   separator   = null;
-        const add_title   = UI_add_title_in_comments();
-        if (add_title) {
-            var add_empty = UI_add_empty_in_comments();
+        var   separator = null;
+        var   add_empty = false;
+        const add_title = UI_add_title_in_comments();
+        if (add_title && ARR_check_for_empty_cells(data.cur, range)) {
+            add_empty = UI_add_empty_in_comments();
             if (add_empty) {empty_replacement = UI_replace_empty_in_comments(ui)}
         }
 
@@ -510,6 +511,22 @@ function ARR_rotate(old) {
         }
     }
     return rotated;
+}
+
+// функция возвращает false, если количество пустых ячеек > max_allowed
+// т. е. при max_allowed=0 возвращается false как только будет найдена хоть одна пустая ячейка
+// range = {r, c, h, w} (first row, first col, height, width)
+function ARR_check_for_empty_cells(table, range, max_allowed=0) {
+    var empty_counter = 0;
+    for (var r=range.r; r < range.r+range.h; r+=1) {
+        for (var c=range.c; c < range.c+range.w; c+=1) {
+            if (!table[r][c].length) {
+                empty_counter += 1;
+                if (empty_counter > max_allowed) {return true}
+            }
+        }
+    }
+    return false;
 }
 
 // FC = first cell, must be array indexes (not sheet indexes)
