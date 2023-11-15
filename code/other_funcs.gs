@@ -41,7 +41,8 @@ function autocorr_UD(data, r, c, type) {
                            'статус',
                            'ответственный',
                            'доступен для всех',
-                           'должность'];
+                           'должность',
+                           'e-mail'];
     if (type === 'e-mail') {
         data.cur[r][c] = data.cur[r][c].toLowerCase();
         // RPL = replace
@@ -56,7 +57,7 @@ function autocorr_UD(data, r, c, type) {
     }
     else if (type === 'сайт')                       {data.cur[r][c] = STR_format_website(data.cur[r][c])}
     else if (STR_find_sub(type, 'телефон', 'bool')) {data.cur[r][c] = STR_format_phone  (data.cur[r][c], type === 'основной телефон')}
-    else if (ARR_search_in_list(autocorr_list, type, 'bool')) {
+    if (ARR_search_in_list(autocorr_list, type, 'bool')) {
         if (type === 'регион/город') {
             data.cur[r][c] = STR_trim_city(data.cur[r][c]);
             var       temp = data.cur[r][c].split(' ');
