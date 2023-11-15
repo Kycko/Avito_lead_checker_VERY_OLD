@@ -90,7 +90,7 @@ function Gtext() {
                        ['CRMmrkg grey [обновлено 16.10.2023]',                    'SCR_CRMmrkg_grey'],
                        ['CRMmrkg white [обновлено 16.10.2023]',                   'SCR_CRMmrkg_white'],
                        ['separator'],   // разделительная линия
-                       ['Вечерние базы КЦ (товары и услуги) [обновлено 24.10.2023]', 'SCR_evening_СС']]
+                       ['Вечерние базы КЦ (товары и услуги) [обновлено 15.11.2023]', 'SCR_evening_СС']]
 
     return G;
 }

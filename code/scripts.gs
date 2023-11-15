@@ -10,9 +10,16 @@ function SCR_evening_СС(type='common') {
     var indx_autosrv = ARR_search_in_list(table[0], 'Автосервис. Как я могу к вам обращаться?');
     if (indx_autosrv >= 0) {
         for (var r=0; r < table.length; r+=1) {
+            table[r][indx_autosrv] = table[r][indx_autosrv].toString();
             if (table[r][indx_autosrv].length) {
+                table[r][indx_autosrv] = table[r][indx_autosrv].replace('Поле ввода не заполнено', '');
                 for (var i=indx_autosrv+1; i < table[r].length; i+=1) {
-                    if (table[r][i].length) {table[r][indx_autosrv] += ' | ' + table[r][i]}
+                    var dont_add = ['Поле ввода не заполнено',
+                                    'Ответ не сохранен'];
+                    if (table[r][i].length && !ARR_search_in_list(dont_add, table[r][i], type='bool')) {
+                        if (table[r][indx_autosrv].length) {table[r][indx_autosrv] += ' | '}
+                        table[r][indx_autosrv] += table[r][i];
+                    }
                 }
             }
         }
