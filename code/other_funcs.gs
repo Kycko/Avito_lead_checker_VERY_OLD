@@ -46,14 +46,27 @@ function autocorr_UD(data, r, c, type) {
     if (type === 'e-mail') {
         data.cur[r][c] = data.cur[r][c].toLowerCase();
         // RPL = replace
-        var RPL = {from : ['​', '–', '—', '|', ';', '; ', ', '],   // первое – это мягкий пробел (u200b)
-                   to   : ['', '-', '-', ',', ',', ',' , ',']}
+        var RPL = {from : ['​', '–', '—', '|', ';', '; ', ', ', ',,'],   // первое – это мягкий пробел (u200b)
+                   to   : ['', '-', '-', ',', ',', ',' , ',',  ',']}
         while (STR_find_sub_list(data.cur[r][c], RPL.from, 'bool')) {
             for (i=0; i < RPL.from.length; i+=1) {
                 data.cur[r][c] = data.cur[r][c].replace(RPL.from[i], RPL.to[i]);
             }
         }
-        data.cur[r][c] = ARR_rm_doubles_in_list(data.cur[r][c].split(',')).join(',');
+
+        var list = data.cur[r][c].split(',');
+        if (list.length) {
+            for (i=0; i < list.length; i+=1) {
+                var dog_counter = (list[i].match(/@/g)||[]).length;
+                list[i]         =  list[i].split('@');
+                var         num = ARR_last_index(list[i]);
+                var       gmail = STR_find_sub(list[i][num], 'gmail', 'bool');
+                if (dog_counter === 1 && gmail) {list[i][num] = 'gmail.com'}
+                list[i] = list[i].join('@');
+            }
+        }
+
+        data.cur[r][c] = ARR_rm_doubles_in_list(list).join(',');
     }
     else if (type === 'сайт')                       {data.cur[r][c] = STR_format_website(data.cur[r][c])}
     else if (STR_find_sub(type, 'телефон', 'bool')) {data.cur[r][c] = STR_format_phone  (data.cur[r][c], type === 'основной телефон')}
