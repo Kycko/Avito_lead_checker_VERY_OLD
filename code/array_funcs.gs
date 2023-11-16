@@ -484,9 +484,16 @@ function ARR_search_title_row(table) {
     }
     return 0;
 }
-function ARR_search_in_list(list, txt, type='index') {
+
+// если full_text=false, возвращает первую ячейку, в которой только часть текста = txt
+function ARR_search_in_list(list, txt, type='index', full_text=true) {
+    txt = txt.toString().toLowerCase().trim();
     for (var i=0; i < list.length; i+=1) {
-        if (list[i].toString().toLowerCase().trim() === txt.toString().toLowerCase().trim()) {
+        list[i] = list[i].toString().toLowerCase().trim();
+
+        if (full_text) {var check = list[i] === txt}
+        else           {var check = STR_find_sub(list[i], txt, 'bool')}
+        if (check) {
             if (type === 'index') {return i}
             else                  {return true}
         }
@@ -579,6 +586,13 @@ function ARR_add_RC(table, type, num, count=1, value='') {
         for (var r=0; r < table.length; r+=1) {
             for (var i=0; i < count; i+=1) {table[r].splice(num, 0, value)}
         }
+    }
+    return table;
+}
+function ARR_rm_table_columns_by_titles(table, title_list) {
+    for (var i=0; i < title_list.length; i+=1) {
+        index = ARR_search_in_list(table[0], title_list[i]);
+        if (index >= 0) {table = ARR_rm_RC(table, 'columns', index)}
     }
     return table;
 }

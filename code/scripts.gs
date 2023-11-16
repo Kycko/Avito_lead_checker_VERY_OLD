@@ -37,10 +37,7 @@ function SCR_evening_СС(type='common') {
                    'ЗФ',
                    'Проект',
                    'Предполагаемая часовая зона'];
-    for (var i=0; i < rm_list.length; i+=1) {
-        index = ARR_search_in_list(table[0], rm_list[i]);
-        if (index >= 0) {table = ARR_rm_RC(table, 'columns', index)}
-    }
+    table = ARR_rm_table_columns_by_titles(table, rm_list);
 
     table = ARR_crop                 (table, 0, 0, table.length, 13); // сколько столбцов останется, столько и указываем
     table = ARR_move_RC              (table, 'columns',  3,  5);
@@ -55,6 +52,30 @@ function SCR_evening_СС(type='common') {
     cur_sheet.getRange(1, 1, table.length, table[0].length).setWrapStrategy(SpreadsheetApp.WrapStrategy.CLIP);
     cur_sheet.getRange(1, 1,            1, table[0].length).setBackground  (Gcolors().hl_light_orange);
     SH_pin_first_rows(cur_sheet);
+}
+function SCR_redash_TAM() {
+    // get the data
+    const cur_sheet = SpreadsheetApp.getActiveSheet();
+    var       table = SH_get_values(cur_sheet.getName(), SH_get_all_sheets_list());
+
+    // modify the data
+    var columns = {city    : ARR_search_in_list(table[0], 'city',    'index', false),
+                   company : ARR_search_in_list(table[0], 'company', 'index', false),
+                   region  : ARR_search_in_list(table[0], 'region',  'index', false)}
+    table[0][columns.company] = 'Название компании';
+    for (var r=1; r < table.length; r+=1) {
+        if (!table[r][columns.city].length) {table[r][columns.city] = table[r][columns.region]}
+    }
+
+    var rm_list = ['lead_source',
+                   'Region__c'];
+    table = ARR_rm_table_columns_by_titles(table, rm_list);
+
+    // write the final data
+    SH_set_values(table, cur_sheet);
+
+    // launch the basic checker
+    // MM_launch_all(false, false);
 }
 
 function SCR_Big_Data_Technology() {

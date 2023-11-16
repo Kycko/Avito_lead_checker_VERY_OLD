@@ -90,6 +90,7 @@ function Gtext() {
                        ['CRMmrkg grey [обновлено 16.10.2023]',                    'SCR_CRMmrkg_grey'],
                        ['CRMmrkg white [обновлено 16.10.2023]',                   'SCR_CRMmrkg_white'],
                        ['separator'],   // разделительная линия
+                       ['Выгрузки TAM из Redash для КЦ (любой отчёт), ПЕРЕД ЗАПУСКОМ СКОПИРОВАТЬ СТОЛБЦЫ В REDASH [пока не работает]', 'SCR_redash_TAM'],
                        ['Вечерние базы КЦ (товары и услуги) [обновлено 15.11.2023]', 'SCR_evening_СС']]
 
     return G;
