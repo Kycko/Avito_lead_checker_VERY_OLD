@@ -61,15 +61,31 @@ function SCR_redash_TAM() {
     // modify the data
     var columns = {city    : ARR_search_in_list(table[0], 'city',    'index', false),
                    company : ARR_search_in_list(table[0], 'company', 'index', false),
-                   region  : ARR_search_in_list(table[0], 'region',  'index', false)}
+                   region  : ARR_search_in_list(table[0], 'region',  'index', false),
+                   site1   : ARR_search_in_list(table[0], 'website', 'index', false)}
+    columns.site2 = ARR_search_in_list(table[0].slice(columns.site1+1), 'website', 'index', false);
+    if (columns.site2 >= 0) {columns.site2 += columns.site1+1}
+
     table[0][columns.company] = 'Название компании';
+    table[0][columns.site1]   = 'Корпоративный сайт';
     for (var r=1; r < table.length; r+=1) {
         if (!table[r][columns.city].length) {table[r][columns.city] = table[r][columns.region]}
+        if (columns.site2 >= 0 && table[r][columns.site2].length) {
+            table[r][columns.site1]  = table[r][columns.site1].toString();
+            table[r][columns.site1] += ','+table[r][columns.site2];
+        }
     }
 
-    var rm_list = ['lead_source',
-                   'Region__c'];
-    table = ARR_rm_table_columns_by_titles(table, rm_list);
+    var rm_list = [ARR_search_in_list(table[0], 'lead_source'),
+                   columns.region,
+                   columns.site2];
+    Logger.log(table[0][columns.company] + ' | ' + table[0][columns.site1]);
+    rm_list     = ARR_sort_numeric_list(rm_list);
+    Logger.log(table[0][columns.company] + ' | ' + table[0][columns.site1]);
+    for (var  i = rm_list.length-1; i >= 0; i-=1) {
+        if (rm_list[i] >= 0) {table = ARR_rm_RC(table, 'columns', rm_list[i])}
+    }
+    Logger.log(table[0][columns.company] + ' | ' + table[0][columns.site1]);
 
     // write the final data
     SH_set_values(table, cur_sheet);

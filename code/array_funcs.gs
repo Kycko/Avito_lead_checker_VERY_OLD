@@ -489,10 +489,10 @@ function ARR_search_title_row(table) {
 function ARR_search_in_list(list, txt, type='index', full_text=true) {
     txt = txt.toString().toLowerCase().trim();
     for (var i=0; i < list.length; i+=1) {
-        list[i] = list[i].toString().toLowerCase().trim();
+        var temp = list[i].toString().toLowerCase().trim();
 
-        if (full_text) {var check = list[i] === txt}
-        else           {var check = STR_find_sub(list[i], txt, 'bool')}
+        if (full_text) {var check = temp === txt}
+        else           {var check = STR_find_sub(temp, txt, 'bool')}
         if (check) {
             if (type === 'index') {return i}
             else                  {return true}
@@ -507,6 +507,12 @@ function ARR_check_doubles_in_list(list) {
         }
     }
     return doubles;
+}
+
+// ascending – это 'по возрастанию'; если оно = false, будет сортировка по убыванию
+function ARR_sort_numeric_list(list, ascending=true) {
+    if (ascending) {return list.toSorted((a, b) => a - b)}
+    else           {return list.toSorted((a, b) => b - a)}
 }
 function ARR_rotate(old) {
     var rotated = [];
