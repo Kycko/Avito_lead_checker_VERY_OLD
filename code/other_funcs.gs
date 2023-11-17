@@ -245,3 +245,10 @@ function change_and_notify_vert_or_man(data, r, c, init_str, new_str, new_color,
     else if (new_str.length) {data.bg_colors[r][c] = new_color}
     return data;
 }
+
+// создаёт список (одномерный массив) ЗНАЧЕНИЙ (не ключей) словаря
+function list_dict_values(dict) {
+    final_list = [];
+    Object.values(dict).forEach(val => final_list.push(val));
+    return final_list;
+}

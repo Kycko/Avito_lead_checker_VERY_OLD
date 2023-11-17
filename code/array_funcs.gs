@@ -1,5 +1,5 @@
-// if ignore_title, it'll remove the column even if it has some data in the first title cell
 function ARR_rm_empty_RC(data, ignore_title=false, title_rows=1) {
+    // if ignore_title, it'll remove the column even if it has some data in the first title cell
     var rm_lists = ARR_find_empty_RC(data.cur, ignore_title, title_rows);
     data = ARR_rm_RC_list(data, rm_lists.rows, 'rows');
     data = ARR_rm_RC_list(data, rm_lists.columns, 'columns');
@@ -145,8 +145,8 @@ function ARR_final_errors_list(data) {
     return data;
 }
 
-// range = {r, c, h, w} (first row, first col, height, width)
 function ARR_check_UD_range(data, range, type, SD, only_verify=false) {
+    // range = {r, c, h, w} (first row, first col, height, width)
     var  USI = {from: [], to: []};  // USI = user input, just to autocorrect doubled strings
     const GC = Gcolors();
 
@@ -450,8 +450,8 @@ function ARR_recommend_correction(sugg, cur, type) {
     return final_msg;
 }
 
-// type = 'rows' or 'columns'
 function ARR_rm_RC_list(data, rm_list, type) {
+    // type = 'rows' or 'columns'
     if (rm_list) {
         for (var i = rm_list.length-1; i >= 0; i-=1) {
             data.cur       = ARR_rm_RC(data.cur,       type, rm_list[i]);
@@ -469,8 +469,8 @@ function ARR_last_index(array) {
     if (array) {return array.length-1}
 }
 
-// type = return 'index' or 'bool' (just to know if the name is in the array)
 function ARR_search_in_column(table, name, column, type='index') {
+    // type = return 'index' or 'bool' (just to know if the name is in the array)
     for (var i=0; i < table.length; i+=1) {
         if (table[i][column].toString().toLowerCase().trim() === name.toString().toLowerCase().trim()) {
             if (type === 'index') {return i}
@@ -485,8 +485,8 @@ function ARR_search_title_row(table) {
     return 0;
 }
 
-// если full_text=false, возвращает первую ячейку, в которой только часть текста = txt
 function ARR_search_in_list(list, txt, type='index', full_text=true) {
+    // если full_text=false, возвращает первую ячейку, в которой только часть текста = txt
     txt = txt.toString().toLowerCase().trim();
     for (var i=0; i < list.length; i+=1) {
         var temp = list[i].toString().toLowerCase().trim();
@@ -499,6 +499,14 @@ function ARR_search_in_list(list, txt, type='index', full_text=true) {
         }
     }
 }
+// ищет в списке любой элемент второго списка
+function ARR_search_any_in_list(list_to_search_in, list_of_search_variants, type='index', full_text=true) {
+    for (var i=0; i < list_of_search_variants.length; i+=1) {
+        var result = ARR_search_in_list(list_to_search_in, list_of_search_variants[i], type, full_text);
+        if (Number(result) >= 0) {return result}
+    }
+}
+
 function ARR_check_doubles_in_list(list) {
     var doubles = [];
     for (var i=0; i < list.length; i+=1) {
@@ -509,8 +517,8 @@ function ARR_check_doubles_in_list(list) {
     return doubles;
 }
 
-// ascending – это 'по возрастанию'; если оно = false, будет сортировка по убыванию
 function ARR_sort_numeric_list(list, ascending=true) {
+    // ascending – это 'по возрастанию'; если оно = false, будет сортировка по убыванию
     if (ascending) {return list.toSorted((a, b) => a - b)}
     else           {return list.toSorted((a, b) => b - a)}
 }
@@ -526,10 +534,10 @@ function ARR_rotate(old) {
     return rotated;
 }
 
-// функция возвращает false, если количество пустых ячеек > max_allowed
-// т. е. при max_allowed=0 возвращается false как только будет найдена хоть одна пустая ячейка
-// range = {r, c, h, w} (first row, first col, height, width)
 function ARR_check_for_empty_cells(table, range, max_allowed=0) {
+    // функция возвращает false, если количество пустых ячеек > max_allowed
+    // т. е. при max_allowed=0 возвращается false как только будет найдена хоть одна пустая ячейка
+    // range = {r, c, h, w} (first row, first col, height, width)
     var empty_counter = 0;
     for (var r=range.r; r < range.r+range.h; r+=1) {
         for (var c=range.c; c < range.c+range.w; c+=1) {
@@ -542,8 +550,8 @@ function ARR_check_for_empty_cells(table, range, max_allowed=0) {
     return false;
 }
 
-// FC = first cell, must be array indexes (not sheet indexes)
 function ARR_crop(old_data, FC_row, FC_col, rows_count, cols_count) {
+    // FC = first cell, must be array indexes (not sheet indexes)
     var new_data = [];
     for (r=FC_row; r < FC_row+rows_count; r+=1) {
         new_data.push([]);
@@ -571,8 +579,8 @@ function ARR_create_empty_table(rows, columns, data=null) {
     return final;
 }
 
-// type = 'rows' or 'columns'
 function ARR_rm_RC(table, type, num, count=1) {
+    // type = 'rows' or 'columns'
     if (type === 'rows') {table.splice(num, count)}
     else {
         for (var row=0; row < table.length; row+=1) {
@@ -603,8 +611,8 @@ function ARR_rm_table_columns_by_titles(table, title_list) {
     return table;
 }
 
-// from & to are array indexes, e. g. type 'column' from 0 to 1 = from A to B
 function ARR_move_RC(table, type, from, to, count=1) {
+    // from & to are array indexes, e. g. type 'column' from 0 to 1 = from A to B
     if (type === 'rows') {
         const removed = table.splice(from, count);
         table.splice(to, 0, removed);
@@ -613,6 +621,24 @@ function ARR_move_RC(table, type, from, to, count=1) {
         for (var row=0; row < table.length; row+=1) {
             const removed = table[row].splice(from, count);
             table[row].splice(to, 0, removed);
+        }
+    }
+    return table;
+}
+
+// проходит по всем строкам таблицы и добавляет текст из одного столбца в другой, добавляя separator
+function ARR_join_two_columns(table, c_from, c_to, r_first=0, r_last=null, separator='') {
+    // c_from и c_to – это номера столбцов 'из' и 'в'
+    // r_first=1 означает, что в первой строке ничего не объединяем
+    // r_last=null означает, что объединяем во всех строках, начиная с r_first и до самого конца
+    // r_first=0 + r_last=3 означает, что объединяем в строках 0, 1, 2 и 3 ВКЛЮЧИТЕЛЬНО
+    if  (r_last === null || r_last >= table.length) {r_last = table.length-1}
+    for (var r=r_first; r < r_last+1; r+=1) {
+        table[r][c_from] = table[r][c_from].toString();
+        table[r][c_to]   = table[r][c_to]  .toString();
+        if (table[r][c_from].length) {
+            if (table[r][c_to].length) {table[r][c_to] += separator}
+            table[r][c_to] += table[r][c_from];
         }
     }
     return table;
