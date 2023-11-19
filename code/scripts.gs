@@ -68,9 +68,9 @@ function SCR_redash_TAM() {
                        company  : ARR_search_in_list    (table[0], 'company',   'index',   false),
                        inn      : ARR_search_in_list    (table[0], 'INN',       'index',   false),
                        region   : ARR_search_in_list    (table[0], 'region',    'index',   false),
-                       site1    : ARR_search_in_list    (table[0], 'website',   'index',   false)}
-        columns.site2 = ARR_search_in_list(table[0].slice(columns.site1+1), 'website', 'index', false);
-        if (columns.site2 >= 0) {columns.site2 += columns.site1+1}
+                       site_1   : ARR_search_in_list    (table[0], 'website',   'index',   false)}
+        columns.site_2 = ARR_search_in_list(table[0].slice(columns.site_1+1), 'website', 'index', false);
+        if (columns.site_2 >= 0) {columns.site_2 += columns.site_1+1}
 
         var phones_list = ['Phone', 'Phone2__c', 'tam_lead_phone', 'tam_lead_phone2'];
         for (var i=1; i < 7; i+=1) {phones_list.splice(2, 0, 'phone'+String(i))}       // добавляем в список phone1-phone6
@@ -78,31 +78,31 @@ function SCR_redash_TAM() {
         for (var i=0; i < phones_list.length; i+=1) {
             var index = ARR_search_in_list(table[0], phones_list[i]);
             if (index >= 0) {
-                columns['phone'+String(temp)] = index;
+                columns['phone_'+String(temp)] = index;
                 temp += 1;
             }
         }
 
         // --- change the titles
         table[0][columns.company] = 'Название компании';
-        table[0][columns.phone1]  = 'Основной телефон';
-        table[0][columns.site1]   = 'Корпоративный сайт';
+        table[0][columns.phone_1]  = 'Основной телефон';
+        table[0][columns.site_1]   = 'Корпоративный сайт';
 
         // --- join user data from different columns
         for (var r=1; r < table.length; r+=1) {
             if (!table[r][columns.city].length) {table[r][columns.city] = table[r][columns.region]}
         }
         for (var i=2; i<21; i+=1) {
-            if ('phone'+String(i) in columns) {
-                table = ARR_join_two_columns(table, columns['phone'+String(i)], columns.phone1, 1, null, ',');
+            if ('phone_'+String(i) in columns) {
+                table = ARR_join_two_columns(table, columns['phone_'+String(i)], columns.phone_1, 1, null, ',');
             }
         }
-        if (columns.site2 >= 0) {table = ARR_join_two_columns(table, columns.site2, columns.site1, 1, null, ',')}
+        if (columns.site_2 >= 0) {table = ARR_join_two_columns(table, columns.site_2, columns.site_1, 1, null, ',')}
 
         // --- rm unnecessary columns (only columns from "var columns" will be in the final table)
         delete columns.region;
-        delete columns.site2;
-        for (var i=2; i<21; i+=1) {delete columns['phone'+String(i)]}
+        delete columns.site_2;
+        for (var i=2; i<21; i+=1) {delete columns['phone_'+String(i)]}
 
         // --- make the final table from the columns list
         var col_numbers = list_dict_values(columns);
