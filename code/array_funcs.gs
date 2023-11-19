@@ -488,7 +488,7 @@ function ARR_search_title_row(table) {
 function ARR_search_in_list(list, txt, type='index', full_text=true) {
     // если full_text=false, возвращает первую ячейку, в которой только часть текста = txt
     txt = txt.toString().toLowerCase().trim();
-    for (var i=0; i < list.length; i+=1) {
+    for (var i=0; i < list.length; i++) {
         var temp = list[i].toString().toLowerCase().trim();
 
         if (full_text) {var check = temp === txt}
@@ -498,6 +498,23 @@ function ARR_search_in_list(list, txt, type='index', full_text=true) {
             else                  {return true}
         }
     }
+}
+// ищет во всех элементах списка и возвращает список индексов всех найденных
+function ARR_list_all_found_indexes(list, txt, full_text=true) {
+    // если full_text=false, добавит индекс при совпадении только части строки
+    txt            = txt.toString().toLowerCase().trim();
+    var final_list = [];
+    for (var i=0; i < list.length; i++) {
+        var temp = list[i].toString().toLowerCase().trim();
+
+        if (full_text) {
+            if (temp === txt) {final_list.push(i)}
+        }
+        else {
+            if (STR_find_sub(temp, txt, 'bool')) {final_list.push(i)}
+        }
+    }
+    return final_list;
 }
 // ищет в списке любой элемент второго списка
 function ARR_search_any_in_list(list_to_search_in, list_of_search_variants, type='index', full_text=true) {

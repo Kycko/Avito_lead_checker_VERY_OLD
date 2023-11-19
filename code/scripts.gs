@@ -61,52 +61,60 @@ function SCR_redash_TAM() {
         var       table = SH_get_values(cur_sheet.getName(), SH_get_all_sheets_list());
 
         // modify the data
-        // --- search the columns
-        var columns = {id_tam   : ARR_search_any_in_list(table[0], ['IDTAM_c',  'lead_id', 'tam_lead_id']),
-                       category : ARR_search_in_list    (table[0], 'Категория', 'index',   false),
-                       city     : ARR_search_in_list    (table[0], 'city',      'index',   false),
-                       company  : ARR_search_in_list    (table[0], 'company',   'index',   false),
-                       inn      : ARR_search_in_list    (table[0], 'INN',       'index',   false),
-                       region   : ARR_search_in_list    (table[0], 'region',    'index',   false),
-                       site_1   : ARR_search_in_list    (table[0], 'website',   'index',   false)}
-        columns.site_2 = ARR_search_in_list(table[0].slice(columns.site_1+1), 'website', 'index', false);
-        if (columns.site_2 >= 0) {columns.site_2 += columns.site_1+1}
+        // --- search the columns & change the titles
+        var        exclude = ['has_phone', 'tam_lead_phone_source'];
+        var id_tam_options = ['IDTAM_c',   'lead_id', 'tam_lead_id'];
+        var columns = {category: {search: 'Категория',    index: null, final: true,  multiple: false, title: null},
+                      {city:     {search: 'city',         index: null, final: true,  multiple: false, title: null},
+                      {company:  {search: 'company',      index: null, final: true,  multiple: false, title: 'Название компании'},
+                      {email:    {search: 'email',        index: null, final: true,  multiple: true,  title: null},
+                      {id_tam:   {search: id_tam_options, index: null, final: true,  multiple: false, title: null},
+                      {inn:      {search: 'INN',          index: null, final: true,  multiple: false, title: null},
+                      {phone:    {search: 'phone',        index: null, final: true,  multiple: true,  title: 'Основной телефон'},
+                      {region:   {search: 'region',       index: null, final: false, multiple: false, title: null},
+                      {site:     {search: 'website',      index: null, final: true,  multiple: true,  title: 'Корпоративный сайт'}}
 
-        var phones_list = ['Phone', 'Phone2__c', 'tam_lead_phone', 'tam_lead_phone2'];
-        for (var i=1; i < 7; i+=1) {phones_list.splice(2, 0, 'phone'+String(i))}       // добавляем в список phone1-phone6
-        var temp = 1;
-        for (var i=0; i < phones_list.length; i+=1) {
-            var index = ARR_search_in_list(table[0], phones_list[i]);
-            if (index >= 0) {
-                columns['phone_'+String(temp)] = index;
-                temp += 1;
-            }
+        for (var i=0; i < table[0].length; i++) {
+            if      (ARR_search_in_list(columns.id_tam.search,  table[0][i], 'bool', true)) {columns.id_tam.index = i}
+            else if (ARR_search_in_list(exclude, table[0][i], 'bool', true))     {table[0][i] = 'exclude_this_column'}
         }
 
-        // --- change the titles
-        table[0][columns.company] = 'Название компании';
-        table[0][columns.phone_1]  = 'Основной телефон';
-        table[0][columns.site_1]   = 'Корпоративный сайт';
+        for (var i=0; i < list.length; i++) {
+            if (list[i].multiple) {
+                var for_title = '_0';
+                var  ind_list = ARR_list_all_found_indexes(table[0], list[i].search, false);
+                for (var k=0; k < ind_list.length; k++) {
+                    var     id  = list[i].id + '_' + String(k);
+                    columns[id] = ind_list[k];
+                }
+            }
+            else {
+                var       for_title = '';
+                columns[list[i].id] = ARR_search_in_list(table[0], list[i].search, 'index', false);
+            }
+
+            var col_num = columns[list[i].id + for_title];
+            if (list[i].title) {table[0][col_num] = list[i].title}
+        }
 
         // --- join user data from different columns
-        for (var r=1; r < table.length; r+=1) {
+        for (var r=1; r < table.length; r++) {
             if (!table[r][columns.city].length) {table[r][columns.city] = table[r][columns.region]}
         }
-        for (var i=2; i<21; i+=1) {
+        for (var i=1; i<21; i++) {
             if ('phone_'+String(i) in columns) {
-                table = ARR_join_two_columns(table, columns['phone_'+String(i)], columns.phone_1, 1, null, ',');
+                table = ARR_join_two_columns(table, columns['phone_'+String(i)], columns.phone_0, 1, null, ',');
             }
         }
-        if (columns.site_2 >= 0) {table = ARR_join_two_columns(table, columns.site_2, columns.site_1, 1, null, ',')}
+        if (columns.site_1 >= 0) {table = ARR_join_two_columns(table, columns.site_1, columns.site_0, 1, null, ',')}
 
         // --- rm unnecessary columns (only columns from "var columns" will be in the final table)
         delete columns.region;
-        delete columns.site_2;
-        for (var i=2; i<21; i+=1) {delete columns['phone_'+String(i)]}
+        for (var i=1; i<21; i++) {delete columns['phone_'+String(i)]}
 
         // --- make the final table from the columns list
         var col_numbers = list_dict_values(columns);
-        for (var c = table[0].length-1; c >= 0 ; c-=1) {
+        for (var c = table[0].length-1; c >= 0 ; c--) {
             if (!col_numbers.includes(c)) {table = ARR_rm_RC(table, 'columns', c)}
         }
 
@@ -298,12 +306,12 @@ function SCR_CRMmrkg_WG(type) {
                    ARR_search_in_list(data.cur[0], 'Основной телефон'),
                    ARR_search_in_list(data.cur[0], 'Рабочий e-mail'),
                    ARR_search_in_list(data.cur[0], 'Регион и город')]
-    for (var i = exclude.length-1; i>=0; i-=1) {
+    for (var i = exclude.length-1; i>=0; i--) {
         if (exclude[i] >= 0) {Logger.log('exclude OK')}
         else                 {exclude.splice(i, 1)}
     }
-    for (var r=1; r < data.cur.length; r+=1) {
-        for (var c=1; c < data.cur[r].length; c+=1) {
+    for (var r=1; r < data.cur.length; r++) {
+        for (var c=1; c < data.cur[r].length; c++) {
             if (data.cur[r][c].toString() === 'None') {
                 if      (data.cur[0][c] === 'Основной телефон') {data.cur[r][c] = '79999999999'}
                 else if (data.cur[0][c] === 'Рабочий e-mail')   {data.cur[r][c] = ''}
