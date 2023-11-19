@@ -82,7 +82,6 @@ function SCR_redash_TAM() {
         var final_columns = []; // список номеров столбцов, которые останутся в самом конце
         Object.keys(columns).forEach((key) => {
             var ind_list = ARR_list_all_found_indexes(table[0], columns[key].search, false);
-            Logger.log(key + ': ' + ind_list + '. BOOLEAN: ' + Boolean(ind_list) + '. LENGTH: ' + String(ind_list.length) + '. BOOLEAN LENGTH: ' + Boolean(ind_list.length));
             if (ind_list.length) {
                 if (columns[key].final) {final_columns.push(ind_list[0])}
                 columns[key].index = ind_list[0];
