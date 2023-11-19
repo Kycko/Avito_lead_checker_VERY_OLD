@@ -65,57 +65,46 @@ function SCR_redash_TAM() {
         var        exclude = ['has_phone', 'tam_lead_phone_source'];
         var id_tam_options = ['IDTAM_c',   'lead_id', 'tam_lead_id'];
         var columns = {category: {search: 'Категория',    index: null, final: true,  multiple: false, title: null},
-                      {city:     {search: 'city',         index: null, final: true,  multiple: false, title: null},
-                      {company:  {search: 'company',      index: null, final: true,  multiple: false, title: 'Название компании'},
-                      {email:    {search: 'email',        index: null, final: true,  multiple: true,  title: null},
-                      {id_tam:   {search: id_tam_options, index: null, final: true,  multiple: false, title: null},
-                      {inn:      {search: 'INN',          index: null, final: true,  multiple: false, title: null},
-                      {phone:    {search: 'phone',        index: null, final: true,  multiple: true,  title: 'Основной телефон'},
-                      {region:   {search: 'region',       index: null, final: false, multiple: false, title: null},
-                      {site:     {search: 'website',      index: null, final: true,  multiple: true,  title: 'Корпоративный сайт'}}
+                       city:     {search: 'city',         index: null, final: true,  multiple: false, title: null},
+                       company:  {search: 'company',      index: null, final: true,  multiple: false, title: 'Название компании'},
+                       email:    {search: 'email',        index: null, final: true,  multiple: true,  title: null},
+                       id_tam:   {search: id_tam_options, index: null, final: true,  multiple: false, title: null},
+                       inn:      {search: 'INN',          index: null, final: true,  multiple: false, title: null},
+                       phone:    {search: 'phone',        index: null, final: true,  multiple: true,  title: 'Основной телефон'},
+                       region:   {search: 'region',       index: null, final: false, multiple: false, title: null},
+                       site:     {search: 'website',      index: null, final: true,  multiple: true,  title: 'Корпоративный сайт'}}
+        table[0].forEach((item, column) => {
+            var index = ARR_search_in_list(columns.id_tam.search, item);
+            if      (index >= 0) {columns.id_tam.search = columns.id_tam.search[index]}
+            else if (ARR_search_in_list(exclude, item, 'bool', true)) {table[0][column] = 'exclude_this_column'}
+        });
 
-        for (var i=0; i < table[0].length; i++) {
-            if      (ARR_search_in_list(columns.id_tam.search,  table[0][i], 'bool', true)) {columns.id_tam.index = i}
-            else if (ARR_search_in_list(exclude, table[0][i], 'bool', true))     {table[0][i] = 'exclude_this_column'}
-        }
-
-        for (var i=0; i < list.length; i++) {
-            if (list[i].multiple) {
-                var for_title = '_0';
-                var  ind_list = ARR_list_all_found_indexes(table[0], list[i].search, false);
-                for (var k=0; k < ind_list.length; k++) {
-                    var     id  = list[i].id + '_' + String(k);
-                    columns[id] = ind_list[k];
+        var final_columns = []; // список номеров столбцов, которые останутся в самом конце
+        Object.keys(columns).forEach((key) => {
+            var ind_list = ARR_list_all_found_indexes(table[0], columns[key].search, false);
+            Logger.log(key + ': ' + ind_list + '. BOOLEAN: ' + Boolean(ind_list) + '. LENGTH: ' + String(ind_list.length) + '. BOOLEAN LENGTH: ' + Boolean(ind_list.length));
+            if (ind_list.length) {
+                if (columns[key].final) {final_columns.push(ind_list[0])}
+                columns[key].index = ind_list[0];
+                if (columns[key].multiple) {
+                    ind_list.slice(1).forEach((item) => {
+                        table = ARR_join_two_columns(table, item, columns[key].index, 1, null, ',');
+                    });
                 }
+                if (columns[key].title && columns[key].index >= 0) {table[0][columns[key].index] = columns[key].title}
             }
-            else {
-                var       for_title = '';
-                columns[list[i].id] = ARR_search_in_list(table[0], list[i].search, 'index', false);
+        });
+
+        // --- join user data for blank cities
+        table.forEach((row, index) => {
+            if (index > 0) {
+                if (!row[columns.city.index].length) {table[index][columns.city.index] = row[columns.region.index]}
             }
-
-            var col_num = columns[list[i].id + for_title];
-            if (list[i].title) {table[0][col_num] = list[i].title}
-        }
-
-        // --- join user data from different columns
-        for (var r=1; r < table.length; r++) {
-            if (!table[r][columns.city].length) {table[r][columns.city] = table[r][columns.region]}
-        }
-        for (var i=1; i<21; i++) {
-            if ('phone_'+String(i) in columns) {
-                table = ARR_join_two_columns(table, columns['phone_'+String(i)], columns.phone_0, 1, null, ',');
-            }
-        }
-        if (columns.site_1 >= 0) {table = ARR_join_two_columns(table, columns.site_1, columns.site_0, 1, null, ',')}
-
-        // --- rm unnecessary columns (only columns from "var columns" will be in the final table)
-        delete columns.region;
-        for (var i=1; i<21; i++) {delete columns['phone_'+String(i)]}
+        });
 
         // --- make the final table from the columns list
-        var col_numbers = list_dict_values(columns);
         for (var c = table[0].length-1; c >= 0 ; c--) {
-            if (!col_numbers.includes(c)) {table = ARR_rm_RC(table, 'columns', c)}
+            if (!final_columns.includes(c)) {table = ARR_rm_RC(table, 'columns', c)}
         }
 
         // write the final data
