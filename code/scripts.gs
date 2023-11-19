@@ -65,7 +65,9 @@ function SCR_redash_TAM() {
         var options = {comment  : ['Comment__c', 'tags',    'comment'],
                        id_tam   : ['IDTAM_c',    'lead_id', 'tam_lead_id'],
                        exclude  : ['has_phone',  'tam_lead_phone_source']}
-        var columns = {category : {search: 'Категория',     index: null, final: true,  multiple: false, title: null},
+        var columns = {address  : {search: 'address',       index: null, final: true,  multiple: false, title: null},
+                       avito_id : {search: 'avito_id',      index: null, final: true,  multiple: false, title: null},
+                       category : {search: 'Категория',     index: null, final: true,  multiple: false, title: null},
                        city     : {search: 'city',          index: null, final: true,  multiple: false, title: null},
                        comment  : {search: options.comment, index: null, final: true,  multiple: false, title: 'Комментарий'},
                        company  : {search: 'company',       index: null, final: true,  multiple: false, title: 'Название компании'},
