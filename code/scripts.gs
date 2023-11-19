@@ -62,25 +62,29 @@ function SCR_redash_TAM() {
 
         // modify the data
         // --- search the columns & change the titles
-        var        exclude = ['has_phone', 'tam_lead_phone_source'];
-        var id_tam_options = ['IDTAM_c',   'lead_id', 'tam_lead_id'];
-        var columns = {category: {search: 'Категория',    index: null, final: true,  multiple: false, title: null},
-                       city:     {search: 'city',         index: null, final: true,  multiple: false, title: null},
-                       company:  {search: 'company',      index: null, final: true,  multiple: false, title: 'Название компании'},
-                       email:    {search: 'email',        index: null, final: true,  multiple: true,  title: null},
-                       id_tam:   {search: id_tam_options, index: null, final: true,  multiple: false, title: null},
-                       inn:      {search: 'INN',          index: null, final: true,  multiple: false, title: null},
-                       phone:    {search: 'phone',        index: null, final: true,  multiple: true,  title: 'Основной телефон'},
-                       region:   {search: 'region',       index: null, final: false, multiple: false, title: null},
-                       site:     {search: 'website',      index: null, final: true,  multiple: true,  title: 'Корпоративный сайт'}}
-        table[0].forEach((item, column) => {
-            var index = ARR_search_in_list(columns.id_tam.search, item);
-            if      (index >= 0) {columns.id_tam.search = columns.id_tam.search[index]}
-            else if (ARR_search_in_list(exclude, item, 'bool', true)) {table[0][column] = 'exclude_this_column'}
+        var options = {comment  : ['Comment__c', 'tags',    'comment'],
+                       id_tam   : ['IDTAM_c',    'lead_id', 'tam_lead_id'],
+                       exclude  : ['has_phone',  'tam_lead_phone_source']}
+        var columns = {category : {search: 'Категория',     index: null, final: true,  multiple: false, title: null},
+                       city     : {search: 'city',          index: null, final: true,  multiple: false, title: null},
+                       comment  : {search: options.comment, index: null, final: true,  multiple: false, title: 'Комментарий'},
+                       company  : {search: 'company',       index: null, final: true,  multiple: false, title: 'Название компании'},
+                       email    : {search: 'email',         index: null, final: true,  multiple: true,  title: null},
+                       id_tam   : {search: options.id_tam,  index: null, final: true,  multiple: false, title: null},
+                       inn      : {search: 'INN',           index: null, final: true,  multiple: false, title: null},
+                       phone    : {search: 'phone',         index: null, final: true,  multiple: true,  title: 'Основной телефон'},
+                       region   : {search: 'region',        index: null, final: false, multiple: false, title: null},
+                       site     : {search: 'website',       index: null, final: true,  multiple: true,  title: 'Корпоративный сайт'}}
+        Object.keys(options).forEach(key => {
+            var index = ARR_search_any_in_list(table[0], options[key]);
+            if (index >= 0) {
+                if (key === 'exclude') {table[0][index]     = 'exclude_this_column'}
+                else                   {columns[key].search = table[0][index]}
+            }
         });
 
         var final_columns = []; // список номеров столбцов, которые останутся в самом конце
-        Object.keys(columns).forEach((key) => {
+        Object.keys(columns).forEach(key => {
             var ind_list = ARR_list_all_found_indexes(table[0], columns[key].search, false);
             if (ind_list.length) {
                 if (columns[key].final) {final_columns.push(ind_list[0])}
