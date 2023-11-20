@@ -61,22 +61,33 @@ function SCR_redash_TAM() {
         var       table = SH_get_values(cur_sheet.getName(), SH_get_all_sheets_list());
 
         // modify the data
+        // --- add mandatory columns (AC = add columns)
+        var AC = {source       : 'Источник',
+                  lead_name    : 'Название лида',
+                  project_name : 'Наименование проекта'}
+        Object.values(AC).forEach(item => {
+            table = ARR_add_RC(table, 'columns', table[0].length, 1, item);
+        });
+
         // --- search the columns & change the titles
-        var options = {comment  : ['Comment__c', 'tags',    'comment'],
-                       id_tam   : ['IDTAM_c',    'lead_id', 'tam_lead_id'],
-                       exclude  : ['has_phone',  'tam_lead_phone_source']}
-        var columns = {address  : {search: 'address',       index: null, final: true,  multiple: false, title: null},
-                       avito_id : {search: 'avito_id',      index: null, final: true,  multiple: false, title: null},
-                       category : {search: 'Категория',     index: null, final: true,  multiple: false, title: null},
-                       city     : {search: 'city',          index: null, final: true,  multiple: false, title: null},
-                       comment  : {search: options.comment, index: null, final: true,  multiple: false, title: 'Комментарий'},
-                       company  : {search: 'company',       index: null, final: true,  multiple: false, title: 'Название компании'},
-                       email    : {search: 'email',         index: null, final: true,  multiple: true,  title: null},
-                       id_tam   : {search: options.id_tam,  index: null, final: true,  multiple: false, title: null},
-                       inn      : {search: 'INN',           index: null, final: true,  multiple: false, title: null},
-                       phone    : {search: 'phone',         index: null, final: true,  multiple: true,  title: 'Основной телефон'},
-                       region   : {search: 'region',        index: null, final: false, multiple: false, title: null},
-                       site     : {search: 'website',       index: null, final: true,  multiple: true,  title: 'Корпоративный сайт'}}
+        var options = {comment      : ['Comment__c', 'tags',    'comment'],
+                       id_tam       : ['IDTAM_c',    'lead_id', 'tam_lead_id'],
+                       exclude      : ['has_phone',  'tam_lead_phone_source']}
+        var columns = {address      : {search: 'address',       index: null, final: true,  multiple: false, title: null},
+                       avito_id     : {search: 'avito_id',      index: null, final: true,  multiple: false, title: null},
+                       category     : {search: 'Категория',     index: null, final: true,  multiple: false, title: null},
+                       city         : {search: 'city',          index: null, final: true,  multiple: false, title: null},
+                       comment      : {search: options.comment, index: null, final: true,  multiple: false, title: 'Комментарий'},
+                       company      : {search: 'company',       index: null, final: true,  multiple: false, title: 'Название компании'},
+                       email        : {search: 'email',         index: null, final: true,  multiple: true,  title: null},
+                       id_tam       : {search: options.id_tam,  index: null, final: true,  multiple: false, title: null},
+                       inn          : {search: 'INN',           index: null, final: true,  multiple: false, title: null},
+                       lead_name    : {search: AC.lead_name,    index: null, final: true,  multiple: false, title: null},
+                       phone        : {search: 'phone',         index: null, final: true,  multiple: true,  title: 'Основной телефон'},
+                       project_name : {search: AC.project_name, index: null, final: true,  multiple: false, title: null},
+                       region       : {search: 'region',        index: null, final: false, multiple: false, title: null},
+                       site         : {search: 'website',       index: null, final: true,  multiple: true,  title: 'Корпоративный сайт'},
+                       source       : {search: AC.source,       index: null, final: true,  multiple: false, title: null}}
         Object.keys(options).forEach(key => {
             var index = ARR_search_any_in_list(table[0], options[key]);
             if (index >= 0) {
