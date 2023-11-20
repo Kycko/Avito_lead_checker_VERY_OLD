@@ -556,10 +556,10 @@ function ARR_check_for_empty_cells(table, range, max_allowed=0) {
     // т. е. при max_allowed=0 возвращается false как только будет найдена хоть одна пустая ячейка
     // range = {r, c, h, w} (first row, first col, height, width)
     var empty_counter = 0;
-    for (var r=range.r; r < range.r+range.h; r+=1) {
-        for (var c=range.c; c < range.c+range.w; c+=1) {
+    for (var r=range.r; r < range.r+range.h; r++) {
+        for (var c=range.c; c < range.c+range.w; c++) {
             if (!table[r][c].length) {
-                empty_counter += 1;
+                empty_counter++;
                 if (empty_counter > max_allowed) {return true}
             }
         }
@@ -600,7 +600,7 @@ function ARR_rm_RC(table, type, num, count=1) {
     // type = 'rows' or 'columns'
     if (type === 'rows') {table.splice(num, count)}
     else {
-        for (var row=0; row < table.length; row+=1) {
+        for (var row=0; row < table.length; row++) {
             table[row].splice(num, count);
         }
     }
@@ -624,6 +624,17 @@ function ARR_rm_table_columns_by_titles(table, title_list) {
     for (var i=0; i < title_list.length; i+=1) {
         index = ARR_search_in_list(table[0], title_list[i]);
         if (index >= 0) {table = ARR_rm_RC(table, 'columns', index)}
+    }
+    return table;
+}
+
+// меняет текст всех ячеек диапазона на value
+function ARR_fill_cells(table, range, value) {
+    // range = {r, c, h, w} (first row, first col, height, width)
+    for (var r=range.r; r < range.r+range.h; r++) {
+        for (var c=range.c; c < range.c+range.w; c++) {
+            table[r][c] = value;
+        }
     }
     return table;
 }

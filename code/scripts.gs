@@ -118,6 +118,13 @@ function SCR_redash_TAM() {
                 });
             }
             if (columns[key].title && columns[key].index >= 0) {table[0][columns[key].index] = columns[key].title}
+            if (key === 'source') {
+                var range = {r : 1,
+                             c : columns[key].index,
+                             h : table       .length-1,
+                             w : 1}
+                table = ARR_fill_cells(table, range, 'TAM');
+            }
         }
     });
 
