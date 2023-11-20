@@ -6,16 +6,17 @@ function ARR_rm_empty_RC(data, ignore_title=false, title_rows=1) {
     return data;
 }
 function ARR_find_empty_RC(table, ignore_title, title_rows=1) {
+    // В НОВОЙ ВЕРСИИ ДОБАВИТЬ АРГУМЕНТ ДЛЯ ПРОВЕРКИ ТОЛЬКО СТРОКИ/СТОЛБЦА ИЛИ ОБОИХ ('r', 'c', 'rc')
     var rows    = [];   // будем добавлять, если найдём пустую строку
     var columns = [];   // сначала в списке все столбцы, потом будем убирать из списка, если найдём НЕ пустой
-    for (var i=0; i < table[0].length; i+=1) {columns.push(i)}
+    for (var i=0; i < table[0].length; i++) {columns.push(i)}
 
     var temp = Number(ignore_title) * title_rows;
     if (table.length > temp) {
-        for (var row=temp; row < table.length; row+=1) {
+        for (var row=temp; row < table.length; row++) {
             var empty_row      = true;
             var non_empty_cols = [];
-            for (var col=0; col < table[row].length; col+=1) {
+            for (var col=0; col < table[row].length; col++) {
                 if (table[row][col] !== '') {
                     empty_row = false;
                     non_empty_cols.push(col);
@@ -24,7 +25,7 @@ function ARR_find_empty_RC(table, ignore_title, title_rows=1) {
 
             if (empty_row) {rows.push(row)}
             if (columns) {
-                for (var i=0; i < non_empty_cols.length; i+=1) {
+                for (var i=0; i < non_empty_cols.length; i++) {
                     var index = columns.indexOf(non_empty_cols[i]);
                     if (index >= 0) {columns.splice(index, 1)}
                 }
@@ -282,13 +283,12 @@ function ARR_join_comments(data, range, start) {
 function ARR_check_req_cols(data, req_cols, type) {
     var txt     = '';
     var indexes = [];
-    for (var i=0; i < req_cols.length; i+=1) {
-        const ind = ARR_search_in_column(data.cur, req_cols[i], data.title);
-        if (ind >= 0) {
-            indexes.push(ind);
-        }
-        else {txt += '• ' + req_cols[i] + '\n'}
-    }
+    req_cols.forEach(item => {
+        const ind = ARR_search_in_column(data.cur, item, data.title);
+        if (ind >= 0) {indexes.push(ind)}
+        else          {txt += '• ' + item + '\n'}
+    });
+
     if (txt) {
         if                   (type === 'вертикаль') {var title = 'Невозможно проверить вертикали'}
         else if               (type === 'менеджер') {var title = 'Невозможно проверить менеджеров'}

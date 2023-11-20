@@ -66,12 +66,17 @@ function SCR_redash_TAM() {
     }
 
     // modify the data
+    // --- rm empty rows to avoid some cells filling
+    var empty = ARR_find_empty_RC(table, true);
+    ARR_sort_numeric_list(empty.rows, false).forEach(item => {table = ARR_rm_RC(table, 'rows', item)});
+
     // --- add mandatory columns (AC = add columns)
     var AC = {source       : 'Источник',
               lead_name    : 'Название лида',
               project_name : 'Наименование проекта'}
     Object.values(AC).forEach(item => {
-        table = ARR_add_RC(table, 'columns', table[0].length, 1, item);
+        table = ARR_add_RC(table, 'columns', table[0].length);
+        table[0][table[0].length-1] = item;
     });
 
     // --- search the columns & change the titles
