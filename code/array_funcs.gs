@@ -467,14 +467,32 @@ function ARR_last_index(array) {
     if (array) {return array.length-1}
 }
 
-function ARR_search_in_column(table, name, column, type='index') {
+function ARR_search_in_column(table, name, column, type='index', full_text=true) {
+    // name can be just a string or a list of strings
     // type = return 'index' or 'bool' (just to know if the name is in the array)
-    for (var i=0; i < table.length; i+=1) {
-        if (table[i][column].toString().toLowerCase().trim() === name.toString().toLowerCase().trim()) {
+    name = name.toString().toLowerCase().trim();
+    table.forEach((row, i) => {
+        if (typeof name === 'string') {
+            var    string = row[column].toString().toLowerCase().trim();
+            if (full_text) {var check = string === name}
+            else           {var check = STR_find_sub(string, name, 'bool')}
+        }
+        else if (typeof name === 'array') {
+            var check = false;
+            name.forEach(item => {
+                if (!check) {
+                    var    string = item.toString().toLowerCase().trim();
+                    var subcheck1 =  full_text && string === name;
+                    var subcheck2 = !full_text && STR_find_sub(string, name, 'bool');
+                    if (subcheck1 || subcheck2) {check = true}
+                }
+            });
+        }
+        if (check) {
             if (type === 'index') {return i}
             else                  {return true}
         }
-    }
+    });
 }
 function ARR_search_title_row(table) {
     for (var r=0; r < table.length; r+=1) {

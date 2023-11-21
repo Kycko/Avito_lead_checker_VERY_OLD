@@ -56,7 +56,7 @@ function SCR_evening_СС(type='common') {
 function SCR_redash_TAM() {
     // confirmation dialog
     if (!UI_show_msg('Перед запуском этого скрипта необходимо:', Gtext().SCR_redash_TAM_confirm, true)) {return}
-
+    
     // get the data
     const cur_sheet = SpreadsheetApp.getActiveSheet();
     var       table = SH_get_values(cur_sheet.getName(), SH_get_all_sheets_list());
@@ -80,24 +80,27 @@ function SCR_redash_TAM() {
     });
 
     // --- search the columns & change the titles
-    var options = {comment      : ['Comment__c', 'tags',    'comment'],
-                   id_tam       : ['IDTAM_c',    'lead_id', 'tam_lead_id'],
-                   exclude      : ['has_phone',  'tam_lead_phone_source']}
-    var columns = {address      : {search: 'address',       index: null, final: true,  multiple: false, title: null},
-                   avito_id     : {search: 'avito_id',      index: null, final: true,  multiple: false, title: null},
-                   category     : {search: 'Категория',     index: null, final: true,  multiple: false, title: null},
-                   city         : {search: 'city',          index: null, final: true,  multiple: false, title: null},
-                   comment      : {search: options.comment, index: null, final: true,  multiple: false, title: 'Комментарий'},
-                   company      : {search: 'company',       index: null, final: true,  multiple: false, title: 'Название компании'},
-                   email        : {search: 'email',         index: null, final: true,  multiple: true,  title: null},
-                   id_tam       : {search: options.id_tam,  index: null, final: true,  multiple: false, title: null},
-                   inn          : {search: 'INN',           index: null, final: true,  multiple: false, title: null},
-                   lead_name    : {search: AC.lead_name,    index: null, final: true,  multiple: false, title: null},
-                   phone        : {search: 'phone',         index: null, final: true,  multiple: true,  title: 'Основной телефон'},
-                   project_name : {search: AC.project_name, index: null, final: true,  multiple: false, title: null},
-                   region       : {search: 'region',        index: null, final: false, multiple: false, title: null},
-                   site         : {search: 'website',       index: null, final: true,  multiple: true,  title: 'Корпоративный сайт'},
-                   source       : {search: AC.source,       index: null, final: true,  multiple: false, title: null}}
+    var options = {comment      : ['Comment__c',  'tags',        'comment'],
+                   id_tam       : ['IDTAM_c',     'lead_id',     'tam_lead_id'],
+                   source_tam   : ['lead_source', 'base_source'],
+                   exclude      : ['has_phone',   'tam_lead_phone_source']}
+    var columns = {address      : {search: 'address',          index: null, final: true,  multiple: false, title: null},
+                   avito_id     : {search: 'avito_id',         index: null, final: true,  multiple: false, title: null},
+                   category     : {search: 'Категория',        index: null, final: true,  multiple: false, title: null},
+                   city         : {search: 'city',             index: null, final: true,  multiple: false, title: null},
+                   comment      : {search: options.comment,    index: null, final: true,  multiple: false, title: 'Комментарий'},
+                   company      : {search: 'company',          index: null, final: true,  multiple: false, title: 'Название компании'},
+                   email        : {search: 'email',            index: null, final: true,  multiple: true,  title: null},
+                   id_tam       : {search: options.id_tam,     index: null, final: true,  multiple: false, title: null},
+                   inn          : {search: 'INN',              index: null, final: true,  multiple: false, title: null},
+                   lead_name    : {search: AC.lead_name,       index: null, final: true,  multiple: false, title: null},
+                   phone        : {search: 'phone',            index: null, final: true,  multiple: true,  title: 'Основной телефон'},
+                   population   : {search: 'population',       index: null, final: false, multiple: false, title: null},    // для определения GE/Service + ставить метку Big city
+                   project_name : {search: AC.project_name,    index: null, final: true,  multiple: false, title: null},
+                   region       : {search: 'region',           index: null, final: false, multiple: false, title: null},
+                   site         : {search: 'website',          index: null, final: true,  multiple: true,  title: 'Корпоративный сайт'},
+                   source       : {search: AC.source,          index: null, final: true,  multiple: false, title: null},
+                   source_tam   : {search: options.source_tam, index: null, final: false, multiple: false, title: null}}    // для правильного названия проекта
     Object.keys(options).forEach(key => {
         var index = ARR_search_any_in_list(table[0], options[key]);
         if (index >= 0) {
@@ -118,20 +121,53 @@ function SCR_redash_TAM() {
                 });
             }
             if (columns[key].title && columns[key].index >= 0) {table[0][columns[key].index] = columns[key].title}
-            if (key === 'source') {
-                var range = {r : 1,
-                             c : columns[key].index,
-                             h : table       .length-1,
-                             w : 1}
-                table = ARR_fill_cells(table, range, 'TAM');
-            }
         }
+        else {columns[key].index = undefined}
     });
 
     // --- join user data for blank cities
     table.forEach((row, index) => {
         if (index > 0) {
             if (!row[columns.city.index].length) {table[index][columns.city.index] = row[columns.region.index]}
+        }
+    });
+
+    // --- fill source + project & lead names (we should know here some column index)
+    var    title = 'Это выгрузка Call Center?';
+    var      msg = 'Нажмите "Да", чтобы указать "Call Center" в названии проекта.\nИначе будет указано "Hunter".';
+    if (UI_show_msg(title, msg, true)) {var CC_or_hunter = 'Call Center'}
+    else                               {var CC_or_hunter = 'Hunter'}
+
+    Object.keys(AC).forEach(key => {
+        var range = {r : 1,
+                     c : columns[key].index,
+                     h : table.length-1,
+                     w : 1}
+        if (key === 'source') {table = ARR_fill_cells(table, range, 'TAM')}
+        else if (ARR_search_in_list(['lead_name', 'project_name'], key, 'bool')) {
+            var big_city = '';
+            var     date = ' ' + new Date().toLocaleDateString('ru-RU');
+            if (columns.population.index >= 0) {
+                var vert = 'Service';
+                if (!ARR_search_in_column(table, ['100k', '250k', 'not matched'], columns.population.index, 'bool', false)) {
+                    big_city = ' Big city';
+                }
+            }
+            else {var vert = 'GE'}
+
+            if (key === 'project_name') {
+                var txt = vert+' | TAM | '+CC_or_hunter;
+                if (big_city.length) {txt += ' |'+big_city}
+                table = ARR_fill_cells(table, range, txt);
+            }
+            else {
+                var txt = vert+' TAM '+CC_or_hunter+' base_source'+big_city+date;
+                for (var r=range.r; r < range.r+range.h; r++) {
+                    if (columns.source_tam.index >= 0) {var temp = table[r][columns.source_tam.index]}
+                    else                               {var temp = '2gis'}
+                    table[r][columns.lead_name.index] = txt.replace('base_source', temp);
+                }
+            }
         }
     });
 
@@ -142,9 +178,11 @@ function SCR_redash_TAM() {
 
     // write the final data
     SH_set_values(table, cur_sheet);
-
+    
     // launch the basic checker
-    // MM_launch_all(false, false);
+    MM_launch_all(false, false);
+
+    UI_show_msg('Спецслово', 'Не забудьте добавить спец. слово в названия лидов и проекта, если это необходимо.');
 }
 
 function SCR_Big_Data_Technology() {
