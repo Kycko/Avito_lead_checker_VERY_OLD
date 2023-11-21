@@ -366,15 +366,15 @@ function ARR_check_loaded_columns(data, SD) {
     return data;
 }
 function ARR_add_mandatory_columns(data) {
-    var old_data      = ARR_rotate(data.cur);
+    var      old_data = ARR_rotate(data.cur);
     var old_bg_colors = ARR_rotate(data.bg_colors);
-    var old_notes     = ARR_rotate(data.notes);
-    const old_len     = old_data[0].length;
-    var new_data      = [];
+    var     old_notes = ARR_rotate(data.notes);
+    const     old_len = old_data[0].length;
+    var      new_data = [];
     var new_bg_colors = [];
-    var new_notes     = [];
+    var     new_notes = [];
 
-    for (var i=1; i < data.col_reqs[0].length; i+=1) {
+    for (var i=1; i < data.col_reqs[0].length; i++) {
         const index = ARR_search_in_column(old_data, data.col_reqs[0][i], data.title);
         if (index >= 0) {
             new_data     .push  (old_data     [index]);
@@ -385,10 +385,10 @@ function ARR_add_mandatory_columns(data) {
             old_notes    .splice(index,       1);
         }
         else if (data.col_reqs[1][i] === 'да') {
-            var temp_data   = [];
+            var   temp_data = [];
             var temp_colors = [];
-            var temp_notes  = [];
-            for (var count=0; count < old_len; count+=1) {
+            var  temp_notes = [];
+            for (var count=0; count < old_len; count++) {
                 temp_data  .push('');
                 temp_colors.push(null);
                 temp_notes .push(null);
@@ -399,13 +399,11 @@ function ARR_add_mandatory_columns(data) {
             new_notes    .push(temp_notes);
         }
     }
-    if (old_data !== []) {
-        for (var i=0; i < old_data.length; i+=1) {
-            new_data     .push(old_data     [i]);
-            new_bg_colors.push(old_bg_colors[i]);
-            new_notes    .push(old_notes    [i]);
-        }
-    }
+    old_data.forEach((item, i) => {
+        new_data     .push(old_data     [i]);
+        new_bg_colors.push(old_bg_colors[i]);
+        new_notes    .push(old_notes    [i]);
+    });
 
     data.cur       = ARR_rotate(new_data);
     data.bg_colors = ARR_rotate(new_bg_colors);

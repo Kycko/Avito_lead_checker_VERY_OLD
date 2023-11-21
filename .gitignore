@@ -26,3 +26,4 @@ replay_pid*
 # I've added
 credentials.json
 token.json
+.vscode
