@@ -4,7 +4,7 @@ function MM_launch_all(fix_man=true, SD=null) {
     if (SD === null) {SD = UI_MM_show_dialogues()}
 
     // get all the data
-    var data = SH_get_all_sheets_data();
+    let data = SH_get_all_sheets_data();
     CRS('launch_all', data);
 
     // change the data (only in memory, not in the sheets)
@@ -26,7 +26,7 @@ function MM_launch_all(fix_man=true, SD=null) {
 }
 function MM_check_column_names() {
     const SD = UI_MM_show_dialogues();
-    var data = SH_get_all_sheets_data();
+    let data = SH_get_all_sheets_data();
     if (CRS('check_column_names', data)) {
         data = ARR_check_column_names(data, SD);
         SH_set_values(data.cur, data.cur_sheet);

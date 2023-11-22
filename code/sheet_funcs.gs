@@ -1,7 +1,7 @@
 // get & set the sheets data
 function SH_get_all_sheets_data() {
     // 2 'changed' properties to show the notification about this changes
-    var              data = {vert_changed   : false,
+    let              data = {vert_changed   : false,
                             manager_changed : false}
     const             GRS = Greq_sheets();
     const all_sheets_list = SH_get_all_sheets_list();
@@ -16,7 +16,7 @@ function SH_get_all_sheets_data() {
     data.notes     = ARR_create_empty_table(size.rows, size.columns);
     data.title     = ARR_search_title_row  (data.cur);    // number of title row
 
-    for (var key in GRS) {
+    for (let key in GRS) {
         // all the data from '[script]' sheets will be ROTATED!
         data[key] = SH_get_values(GRS[String(key)], all_sheets_list, true);
     }

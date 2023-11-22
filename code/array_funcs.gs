@@ -348,33 +348,33 @@ function ARR_fix_vert_and_man(data, range, type, only_blank=false, only_verify=f
 function ARR_check_loaded_columns(data, SD) {
     const tit = data.title;
     const  ui = SpreadsheetApp.getUi();
-    data.cur[tit].forEach((item, i) => {
-        data.cur[tit][i] = item.toString().trim();
-        var        index = ARR_search_in_list(data.autocorr[1], item);
+    for (let i=0; i < data.cur[tit].length; i++) {
+        data.cur[tit][i] = data.cur[tit][i].toString().trim();
+        var        index = ARR_search_in_list(data.autocorr[1], data.cur[tit][i]);
         if (index >= 0 && data.autocorr[0][index] === 'название столбца') {
             data.cur[tit][i] = data.autocorr[2][index];
         }
 
-        index = ARR_search_in_list(data.col_reqs[0], item, 'bool');
-        if (SD && item && !index) {
+        index = ARR_search_in_list(data.col_reqs[0], data.cur[tit][i], 'bool');
+        if (SD && data.cur[tit][i] && !index) {
             const resp = ui.prompt('Неправильное название столбца',
-                                   ARR_recommend_correction(data.sugg, item, 'название столбца'),
+                                   ARR_recommend_correction(data.sugg, data.cur[tit][i], 'название столбца'),
                                    ui.ButtonSet.OK_CANCEL);
             if (resp.getSelectedButton() == ui.Button.OK) {data.cur[tit][i] = resp.getResponseText()}
         }
-    })
+    }
     return data;
 }
 function ARR_add_mandatory_columns(data) {
-    var      old_data = ARR_rotate(data.cur);
-    var old_bg_colors = ARR_rotate(data.bg_colors);
-    var     old_notes = ARR_rotate(data.notes);
+    let      old_data = ARR_rotate(data.cur);
+    let old_bg_colors = ARR_rotate(data.bg_colors);
+    let     old_notes = ARR_rotate(data.notes);
     const     old_len = old_data[0].length;
-    var      new_data = [];
-    var new_bg_colors = [];
-    var     new_notes = [];
+    let      new_data = [];
+    let new_bg_colors = [];
+    let     new_notes = [];
 
-    for (var i=1; i < data.col_reqs[0].length; i++) {
+    for (let i=1; i < data.col_reqs[0].length; i++) {
         const index = ARR_search_in_column(old_data, data.col_reqs[0][i], data.title);
         if (index >= 0) {
             new_data     .push  (old_data     [index]);
@@ -385,10 +385,10 @@ function ARR_add_mandatory_columns(data) {
             old_notes    .splice(index,       1);
         }
         else if (data.col_reqs[1][i] === 'да') {
-            var   temp_data = [];
-            var temp_colors = [];
-            var  temp_notes = [];
-            for (var count=0; count < old_len; count++) {
+            let   temp_data = [];
+            let temp_colors = [];
+            let  temp_notes = [];
+            for (let count=0; count < old_len; count++) {
                 temp_data  .push('');
                 temp_colors.push(null);
                 temp_notes .push(null);
@@ -399,12 +399,18 @@ function ARR_add_mandatory_columns(data) {
             new_notes    .push(temp_notes);
         }
     }
-    old_data.forEach((item, i) => {
+    Logger.log(new_data);
+    Logger.log(new_bg_colors);
+    Logger.log(new_notes.notes);
+    for (let i=0; i < old_data.length; i++) {
         new_data     .push(old_data     [i]);
         new_bg_colors.push(old_bg_colors[i]);
         new_notes    .push(old_notes    [i]);
-    });
+    }
 
+    Logger.log(new_data);
+    Logger.log(new_bg_colors);
+    Logger.log(new_notes.notes);
     data.cur       = ARR_rotate(new_data);
     data.bg_colors = ARR_rotate(new_bg_colors);
     data.notes     = ARR_rotate(new_notes);
@@ -470,34 +476,34 @@ function ARR_last_index(array) {
 function ARR_search_in_column(table, name, column, type='index', full_text=true) {
     // name can be just a string or a list of strings
     // type = return 'index' or 'bool' (just to know if the name is in the array)
-    name = name.toString().toLowerCase().trim();
-    table.forEach((row, i) => {
+    let check = false;
+    for (let row of table) {
+        let string = row[column].toString().toLowerCase().trim();
         if (typeof name === 'string') {
-            var    string = row[column].toString().toLowerCase().trim();
-            if (full_text) {var check = string === name}
-            else           {var check = STR_find_sub(string, name, 'bool')}
+            name = name.toString().toLowerCase().trim();
+            if (full_text) {check = string === name}
+            else           {check = STR_find_sub(string, name, 'bool')}
         }
         else if (typeof name === 'array') {
-            var check = false;
-            name.forEach(item => {
+            for (let item of name) {
                 if (!check) {
-                    var    string = item.toString().toLowerCase().trim();
-                    var subcheck1 =  full_text && string === name;
-                    var subcheck2 = !full_text && STR_find_sub(string, name, 'bool');
+                    let      temp = item.toString().toLowerCase().trim();
+                    let subcheck1 =  full_text && string === temp;
+                    let subcheck2 = !full_text && STR_find_sub(string, name, 'bool');
                     if (subcheck1 || subcheck2) {check = true}
                 }
-            });
+            }
         }
         if (check) {
             if (type === 'index') {return i}
             else                  {return true}
         }
-    });
+    }
 }
 function ARR_search_title_row(table) {
-    table.forEach(row => {
-        if (STR_find_sub_list(row[0], ['Уникальных: ', 'Ошибок: ']) !== 0) {return r}
-    });
+    for (let i=0; i < table.length; i++) {
+        if (STR_find_sub_list(table[i][0], ['Уникальных: ', 'Ошибок: ']) !== 0) {return i}
+    }
     return 0;
 }
 
@@ -556,11 +562,10 @@ function ARR_sort_numeric_list(list, ascending=true) {
     else           {return list.toSorted((a, b) => b - a)}
 }
 function ARR_rotate(old) {
-    var rotated = [];
-    for (var i=0; i < old[0].length; i+=1) {rotated.push([])}
-
-    for (var r=0; r < old.length; r+=1) {
-        for (var c=0; c < old[r].length; c+=1) {
+    let rotated = [];
+    for (let cell of old[0]) {rotated.push([])}
+    for (let r=0; r < old.length; r++) {
+        for (let c=0; c < old[r].length; c++) {
             rotated[c].push(old[r][c]);
         }
     }
