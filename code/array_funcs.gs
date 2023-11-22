@@ -374,6 +374,10 @@ function ARR_add_mandatory_columns(data) {
     let new_bg_colors = [];
     let     new_notes = [];
 
+    Logger.log(old_data);
+    Logger.log(old_bg_colors);
+    Logger.log(old_notes);
+
     for (let i=1; i < data.col_reqs[0].length; i++) {
         const index = ARR_search_in_column(old_data, data.col_reqs[0][i], data.title);
         if (index >= 0) {
@@ -399,19 +403,13 @@ function ARR_add_mandatory_columns(data) {
             new_notes    .push(temp_notes);
         }
     }
-    Logger.log(new_data);
-    Logger.log(new_bg_colors);
-    Logger.log(new_notes.notes);
     for (let i=0; i < old_data.length; i++) {
         new_data     .push(old_data     [i]);
         new_bg_colors.push(old_bg_colors[i]);
         new_notes    .push(old_notes    [i]);
     }
 
-    Logger.log(new_data);
-    Logger.log(new_bg_colors);
-    Logger.log(new_notes.notes);
-    data.cur       = ARR_rotate(new_data);
+   data.cur       = ARR_rotate(new_data);
     data.bg_colors = ARR_rotate(new_bg_colors);
     data.notes     = ARR_rotate(new_notes);
     return data;
@@ -477,8 +475,8 @@ function ARR_search_in_column(table, name, column, type='index', full_text=true)
     // name can be just a string or a list of strings
     // type = return 'index' or 'bool' (just to know if the name is in the array)
     let check = false;
-    for (let row of table) {
-        let string = row[column].toString().toLowerCase().trim();
+    for (let r=0; r < table.length; r++) {
+        let string = table[r][column].toString().toLowerCase().trim();
         if (typeof name === 'string') {
             name = name.toString().toLowerCase().trim();
             if (full_text) {check = string === name}
@@ -495,7 +493,7 @@ function ARR_search_in_column(table, name, column, type='index', full_text=true)
             }
         }
         if (check) {
-            if (type === 'index') {return i}
+            if (type === 'index') {return r}
             else                  {return true}
         }
     }
