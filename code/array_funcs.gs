@@ -347,22 +347,22 @@ function ARR_fix_vert_and_man(data, range, type, only_blank=false, only_verify=f
 
 function ARR_check_loaded_columns(data, SD) {
     const tit = data.title;
-    const ui  = SpreadsheetApp.getUi();
-    for (var i=0; i < data.cur[tit].length; i+=1) {
-        data.cur[tit][i] = data.cur[tit][i].toString().trim();
-        var index = ARR_search_in_list(data.autocorr[1], data.cur[tit][i]);
+    const  ui = SpreadsheetApp.getUi();
+    data.cur[tit].forEach((item, i) => {
+        data.cur[tit][i] = item.toString().trim();
+        var        index = ARR_search_in_list(data.autocorr[1], item);
         if (index >= 0 && data.autocorr[0][index] === 'название столбца') {
             data.cur[tit][i] = data.autocorr[2][index];
         }
 
-        index = ARR_search_in_list(data.col_reqs[0], data.cur[tit][i]);
-        if (SD && data.cur[tit][i] && index == null) {
+        index = ARR_search_in_list(data.col_reqs[0], item, 'bool');
+        if (SD && item && !index) {
             const resp = ui.prompt('Неправильное название столбца',
-                                   ARR_recommend_correction(data.sugg, data.cur[tit][i], 'название столбца'),
+                                   ARR_recommend_correction(data.sugg, item, 'название столбца'),
                                    ui.ButtonSet.OK_CANCEL);
             if (resp.getSelectedButton() == ui.Button.OK) {data.cur[tit][i] = resp.getResponseText()}
         }
-    }
+    })
     return data;
 }
 function ARR_add_mandatory_columns(data) {
@@ -495,9 +495,9 @@ function ARR_search_in_column(table, name, column, type='index', full_text=true)
     });
 }
 function ARR_search_title_row(table) {
-    for (var r=0; r < table.length; r+=1) {
-        if (STR_find_sub_list(table[r][0], ['Уникальных: ', 'Ошибок: ']) !== 0) {return r}
-    }
+    table.forEach(row => {
+        if (STR_find_sub_list(row[0], ['Уникальных: ', 'Ошибок: ']) !== 0) {return r}
+    });
     return 0;
 }
 

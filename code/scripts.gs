@@ -180,9 +180,8 @@ function SCR_redash_TAM() {
     SH_set_values(table, cur_sheet);
     
     // launch the basic checker
-    MM_launch_all(false, false);
-
-    UI_show_msg('Спецслово', 'Не забудьте добавить спец. слово в названия лидов и проекта, если это необходимо.');
+    // MM_launch_all(false, false);
+    // UI_show_msg('Спецслово', 'Не забудьте добавить спец. слово в названия лидов и проекта, если это необходимо.');
 }
 
 function SCR_Big_Data_Technology() {

@@ -1,9 +1,9 @@
 // ищет в строке каждый элемент списка
 function STR_find_sub_list(string, list, type='index') {
-    for (var i=0; i < list.length; i+=1) {
-        const result = STR_find_sub(string, list[i], type);
+    list.forEach(item => {
+        const result = STR_find_sub(string, item, type);
         if (result === true || result >= 0) {return result}
-    }
+    });
 }
 function STR_find_sub(string, sub, type='index') {
     const index = string.toString().toLowerCase().indexOf(sub.toString().toLowerCase());
