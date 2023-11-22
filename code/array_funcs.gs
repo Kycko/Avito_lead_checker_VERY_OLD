@@ -599,8 +599,8 @@ function ARR_crop(old_data, FC_row, FC_col, rows_count, cols_count) {
 }
 function ARR_rm_doubles_in_list(old_list) {
     var new_list = [];
-    for (i=0; i < old_list.length; i+=1) {
-        if (!ARR_search_in_list(new_list, old_list[i], 'bool')) {new_list.push(old_list[i])}
+    for (let item of old_list) {
+        if (!ARR_search_in_list(new_list, item, 'bool')) {new_list.push(item)}
     }
     return new_list;
 }

@@ -1,6 +1,6 @@
 // ищет в строке каждый элемент списка
 function STR_find_sub_list(string, list, type='index') {
-    for (let item in list) {
+    for (let item of list) {
         const result = STR_find_sub(string, item, type);
         if (result === true || result >= 0) {return result}
     }
@@ -62,26 +62,24 @@ function STR_format_phone(phone, use_unknown) {
     return phones.join(',');
 }
 function STR_format_website(site) {
-    const start    = ['http://', 'https://', 'www.'];
+    const    start = ['http://',   'https://',   'www.'];
     const rm_sites = ['facebook.', 'instagram.', 'twitter.'];
     site           = site.toString().toLowerCase();
     while (STR_find_sub(site, ' | ', 'bool')) {site = site.replace(' | ', ',')} // почему-то простое .replace() не работает
-    var       list = site.split(',');
+    let       list = site.split(',');
 
-    for (var l=list.length-1; l >= 0; l-=1) {
+    for (let l = list.length-1; l >= 0; l--) {
         list[l] = list[l].toString().trim();
-        for (var i=0; i < start.length; i+=1) {
-            if (STR_find_sub(list[l], start[i]) === 0) {list[l] = list[l].toString().replace(start[i], '')}
+        for (let string of start) {
+            if (STR_find_sub(list[l], string) === 0) {list[l] = list[l].replace(string, '')}
         }
-        while (list[l].toString().slice(-1) == '/') {list[l] = list[l].toString().slice(0, -1)}
+        while (list[l].slice(-1) == '/') {list[l] = list[l].slice(0, -1)}
 
         if (STR_find_sub_list(list[l], rm_sites) === 0) {list.splice(l,1)}
     }
 
     list = ARR_rm_doubles_in_list(list);
-
-    if (list === []) {return ''}
-    else             {return list.join(',')}
+    return list.join(',');
 }
 function STR_trim_city(city) {
     const search = ['г. ', 'г ', 'г.', 'д. ', 'д ', 'д.', 'с. ', 'с ', 'с.', 'х. ', 'х ', 'х.', 'рп. ', 'рп ', 'рп.', 'дп. ', 'дп ', 'дп.', 'посёлок ', 'посёлок', 'поселок ', 'поселок', 'пос. ', 'пос ', 'пос.', 'пгт ', 'пгт', 'городской пос. ', 'городской пос ', 'городской пос.', 'город ', 'город', 'ст-ца ', 'ст-ца'];
