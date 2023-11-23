@@ -77,7 +77,7 @@ function MM_fontcase_up_first     () {MM_fontcase('up_first')}
 function MM_fontcase_upper        () {MM_fontcase('upper')}
 function MM_fontcase_lower        () {MM_fontcase('lower')}
 function MM_fontcase          (type) {
-    var data    = SH_get_all_sheets_data();
+    var    data = SH_get_all_sheets_data();
     var SHrange = data.cur_sheet.getActiveRange();
     var ARrange = {r : SHrange.getRow()-1,
                    c : SHrange.getColumn()-1,
@@ -109,10 +109,10 @@ function MM_add_Unknown()           {MM_check_UD('add_Unknown',      'empty_req'
 // secondary function just to keep the code simple
 // UD = user data
 function MM_check_UD(type, CRS_type, only_blank=false) {
-    var data = SH_get_all_sheets_data();
+    let data = SH_get_all_sheets_data();
     if (CRS(CRS_type, data)) {
-        var SHrange = data.cur_sheet.getActiveRange();
-        var ARrange = {r : SHrange.getRow()-1,
+        let SHrange = data.cur_sheet.getActiveRange();
+        let ARrange = {r : SHrange.getRow()-1,
                        c : SHrange.getColumn()-1,
                        h : SHrange.getHeight(),
                        w : SHrange.getWidth()}

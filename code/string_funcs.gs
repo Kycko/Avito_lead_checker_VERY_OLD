@@ -28,8 +28,8 @@ function STR_check_email(string) {
 }
 function STR_format_phone(phone, use_unknown) {
     while (STR_find_sub(phone, ';', 'bool')) {phone = phone.replace(';', ',')}
-    var phones = phone.split(',');
-    for (var i=0; i < phones.length; i+=1) {
+    let phones = phone.split(',');
+    for (let i=0; i < phones.length; i++) {
         phones[i] = phones[i].toString().replace(/\D+/g, '');
         if      (phones[i].toString().length === 10) {phones[i] = '7' + phones[i].toString()}
         else if (phones[i].toString().length === 11) {
@@ -41,22 +41,8 @@ function STR_format_phone(phone, use_unknown) {
         }
     }
 
-    var i = 0;
-    while (i < phones.length) {
-        if (use_unknown) {
-            if (phones.length > 1 && phones[i] === '79999999999') {
-                phones.splice(i,1);
-                i -= 1;
-            }
-        }
-        else {
-            if (phones[i] === '79999999999') {
-                phones.splice(i,1);
-                i -= 1;
-            }
-        }
-        i += 1;
-    }
+    phones = ARR_rm_list_items_by_text(phones, '79999999999');
+    if (use_unknown && !phones.length) {phones.push('79999999999')}
 
     phones = ARR_rm_doubles_in_list(phones);
     return phones.join(',');

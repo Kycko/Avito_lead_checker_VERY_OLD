@@ -48,14 +48,14 @@ function ARR_check_user_data(data, fix_man, SD, only_verify=false) {
     data.cur       = ARR_rotate(data.cur);
     data.bg_colors = ARR_rotate(data.bg_colors);
     data.notes     = ARR_rotate(data.notes);
-    var  tit       = data.title;
+    let  tit       = data.title;
 
-    for (var i=0; i < data.cur.length; i+=1) {
+    for (let i=0; i < data.cur.length; i++) {
         const just_check_blanks = ['Название лида', 'Наименование проекта', 'Название компании', 'Имя'];
         const autofill          = ['Статус',        'Ответственный',        'Доступен для всех'];
         const capitalize_each   = ['Фамилия',       'Имя',                  'Отчество'];
         const only_numbers      = ['Авито-аккаунт', 'Добавочный телефон',   'ИНН'];
-        var range = {r:i, c:tit+1, h:1, w:data.cur[i].length-tit-1};
+        let range = {r:i, c:tit+1, h:1, w:data.cur[i].length-tit-1};
 
         if      (STR_find_sub(data.cur[i][tit], 'e-mail', 'bool')) {
             data = ARR_check_UD_range(data, range, 'e-mail', SD, only_verify);
@@ -148,11 +148,11 @@ function ARR_final_errors_list(data) {
 
 function ARR_check_UD_range(data, range, type, SD, only_verify=false) {
     // range = {r, c, h, w} (first row, first col, height, width)
-    var  USI = {from: [], to: []};  // USI = user input, just to autocorrect doubled strings
+    let  USI = {from: [], to: []};  // USI = user input, just to autocorrect doubled strings
     const GC = Gcolors();
 
-    for (var r=range.r; r < range.r+range.h; r+=1) {
-        for (var c=range.c; c < range.c+range.w; c+=1) {
+    for (let r=range.r; r < range.r+range.h; r++) {
+        for (let c=range.c; c < range.c+range.w; c++) {
             if (only_verify) {
                 if (validate_UD(data, r, c, type)) {data.bg_colors[r][c] = GC.hl_light_green}
                 else                               {data.bg_colors[r][c] = GC.hl_red}
@@ -161,7 +161,7 @@ function ARR_check_UD_range(data, range, type, SD, only_verify=false) {
                 const init_value = data.cur[r][c];
                 data = autocorr_UD(data, r, c, type);
 
-                var valid = false;
+                let valid = false;
                 while (!valid) {
                     valid = validate_UD(data, r, c, type);
                     if (valid) {data.bg_colors[r][c] = GC.hl_light_green}
@@ -374,10 +374,6 @@ function ARR_add_mandatory_columns(data) {
     let new_bg_colors = [];
     let     new_notes = [];
 
-    Logger.log(old_data);
-    Logger.log(old_bg_colors);
-    Logger.log(old_notes);
-
     for (let i=1; i < data.col_reqs[0].length; i++) {
         const index = ARR_search_in_column(old_data, data.col_reqs[0][i], data.title);
         if (index >= 0) {
@@ -523,9 +519,9 @@ function ARR_search_in_list(list, txt, type='index', full_text=true) {
 function ARR_list_all_found_indexes(list, txt, full_text=true) {
     // если full_text=false, добавит индекс при совпадении только части строки
     txt            = txt.toString().toLowerCase().trim();
-    var final_list = [];
-    for (var i=0; i < list.length; i++) {
-        var temp = list[i].toString().toLowerCase().trim();
+    let final_list = [];
+    for (let i=0; i < list.length; i++) {
+        let temp = list[i].toString().toLowerCase().trim();
 
         if (full_text) {
             if (temp === txt) {final_list.push(i)}
@@ -701,10 +697,16 @@ function ARR_filter_rows_by_cell(table, column, filter_txt, save_title=true) {
     return new_table;
 }
 function ARR_rm_cells_by_full_text(table, txt) {
-    for (var r=0; r < table.length; r+=1) {
-        for (var c=0; c < table[r].length; c+=1) {
+    for (let r=0; r < table.length; r++) {
+        for (let c=0; c < table[r].length; c++) {
             if (table[r][c] == txt) {table[r][c] = ''}
         }
     }
     return table;
+}
+function ARR_rm_list_items_by_text(list, txt, full_text=true) {
+    let indexes = ARR_list_all_found_indexes(list, txt, full_text);
+    indexes     = ARR_sort_numeric_list     (indexes, false);
+    for (let num of indexes) {list.splice(num, 1)}
+    return list;
 }

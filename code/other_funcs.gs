@@ -101,13 +101,13 @@ function autocorr_UD(data, r, c, type) {
     return data;
 }
 function validate_UD(data, r, c, type) {
-    if      (STR_find_sub_list(type, ['телефон', 'e-mail'], 'bool')) {
+    if (STR_find_sub_list(type, ['телефон', 'e-mail'], 'bool')) {
         var valid = true;
-        var list  = data.cur[r][c].toString().split(',');
-        for (i=0; i < list.length; i+=1) {
+        let  list = data.cur[r][c].toString().split(',');
+        for (let i=0; i < list.length; i++) {
             if (type === 'e-mail') {valid = STR_check_email(list[i])}
             else {
-                var kazakh = STR_find_sub('67', list[i].charAt(1), 'bool');
+                let kazakh = STR_find_sub('67', list[i].charAt(1), 'bool');
                 if (type === 'основной телефон') {
                     if (list[i].length !== 11 || list[i].charAt(0) != '7' || kazakh) {valid = false}
                 }
