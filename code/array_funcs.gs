@@ -478,12 +478,12 @@ function ARR_search_in_column(table, name, column, type='index', full_text=true)
             if (full_text) {check = string === name}
             else           {check = STR_find_sub(string, name, 'bool')}
         }
-        else if (typeof name === 'array') {
+        else {
             for (let item of name) {
                 if (!check) {
                     let      temp = item.toString().toLowerCase().trim();
                     let subcheck1 =  full_text && string === temp;
-                    let subcheck2 = !full_text && STR_find_sub(string, name, 'bool');
+                    let subcheck2 = !full_text && STR_find_sub(string, temp, 'bool');
                     if (subcheck1 || subcheck2) {check = true}
                 }
             }
