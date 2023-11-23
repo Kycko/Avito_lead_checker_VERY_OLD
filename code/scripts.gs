@@ -59,7 +59,7 @@ function SCR_redash_TAM() {
     
     // get the data
     const cur_sheet = SpreadsheetApp.getActiveSheet();
-    var       table = SH_get_values(cur_sheet.getName(), SH_get_all_sheets_list());
+    let       table = SH_get_values(cur_sheet.getName(), SH_get_all_sheets_list());
     if (!ARR_search_in_list(table[0], 'Категория', 'bool', true)) {
         UI_show_msg('Выполнение отменено', 'В таблице отсутствует столбец "Категория".');
         return;
@@ -67,30 +67,31 @@ function SCR_redash_TAM() {
 
     // modify the data
     // --- rm empty rows to avoid some cells filling
-    var empty = ARR_find_empty_RC(table, true);
-    ARR_sort_numeric_list(empty.rows, false).forEach(item => {table = ARR_rm_RC(table, 'rows', item)});
+    let  empty = ARR_find_empty_RC    (table,      true);
+    empty.rows = ARR_sort_numeric_list(empty.rows, false);
+    for (let row of empty.rows) {table = ARR_rm_RC(table, 'rows', row)}
 
     // --- add mandatory columns (AC = add columns)
-    var AC = {source       : 'Источник',
+    let AC = {source       : 'Источник',
               lead_name    : 'Название лида',
               project_name : 'Наименование проекта'}
-    Object.values(AC).forEach(item => {
+    for (let title of Object.values(AC)) {
         table = ARR_add_RC(table, 'columns', table[0].length);
-        table[0][table[0].length-1] = item;
-    });
+        table[0][table[0].length-1] = title;
+    }
 
     // --- search the columns & change the titles
-    var options = {comment      : ['Comment__c',  'tags',        'comment'],
+    let options = {comment      : ['Comment__c',  'tags',        'comment'],
                    id_tam       : ['IDTAM_c',     'lead_id',     'tam_lead_id'],
                    source_tam   : ['lead_source', 'base_source'],
                    exclude      : ['has_phone',   'tam_lead_phone_source']}
-    var columns = {address      : {search: 'address',          index: null, final: true,  multiple: false, title: null},
+    let columns = {address      : {search: 'address',          index: null, final: true,  multiple: false, title: null},
                    avito_id     : {search: 'avito_id',         index: null, final: true,  multiple: false, title: null},
                    category     : {search: 'Категория',        index: null, final: true,  multiple: false, title: null},
-                   city         : {search: 'city',             index: null, final: true,  multiple: false, title: null},
+                   city         : {search: 'city',             index: null, final: true,  multiple: false, title: 'Регион и город'},
                    comment      : {search: options.comment,    index: null, final: true,  multiple: false, title: 'Комментарий'},
                    company      : {search: 'company',          index: null, final: true,  multiple: false, title: 'Название компании'},
-                   email        : {search: 'email',            index: null, final: true,  multiple: true,  title: null},
+                   email        : {search: 'email',            index: null, final: true,  multiple: true,  title: 'Рабочий e-mail'},
                    id_tam       : {search: options.id_tam,     index: null, final: true,  multiple: false, title: null},
                    inn          : {search: 'INN',              index: null, final: true,  multiple: false, title: null},
                    lead_name    : {search: AC.lead_name,       index: null, final: true,  multiple: false, title: null},
@@ -101,17 +102,17 @@ function SCR_redash_TAM() {
                    site         : {search: 'website',          index: null, final: true,  multiple: true,  title: 'Корпоративный сайт'},
                    source       : {search: AC.source,          index: null, final: true,  multiple: false, title: null},
                    source_tam   : {search: options.source_tam, index: null, final: false, multiple: false, title: null}}    // для правильного названия проекта
-    Object.keys(options).forEach(key => {
-        var index = ARR_search_any_in_list(table[0], options[key]);
+    for (let key of Object.keys(options)) {
+        let index = ARR_search_any_in_list(table[0], options[key]);
         if (index >= 0) {
-            if (key === 'exclude') {table[0][index]     = 'exclude_this_column'}
+            if (key === 'exclude') {table  [0][index]   = 'exclude_this_column'}
             else                   {columns[key].search = table[0][index]}
         }
-    });
+    }
 
-    var final_columns = []; // список номеров столбцов, которые останутся в самом конце
-    Object.keys(columns).forEach(key => {
-        var ind_list = ARR_list_all_found_indexes(table[0], columns[key].search, false);
+    let final_columns = []; // список номеров столбцов, которые останутся в самом конце
+    for (let key of Object.keys(columns)) {
+        let ind_list = ARR_list_all_found_indexes(table[0], columns[key].search, false);
         if (ind_list.length) {
             if (columns[key].final) {final_columns.push(ind_list[0])}
             columns[key].index = ind_list[0];
@@ -123,30 +124,29 @@ function SCR_redash_TAM() {
             if (columns[key].title && columns[key].index >= 0) {table[0][columns[key].index] = columns[key].title}
         }
         else {columns[key].index = undefined}
-    });
+    }
 
     // --- join user data for blank cities
-    table.forEach((row, index) => {
-        if (index > 0) {
-            if (!row[columns.city.index].length) {table[index][columns.city.index] = row[columns.region.index]}
-        }
-    });
+    for (let r=1; r < table.length; r++) {
+        let c_city = columns.city.index;
+        if (!table[r][c_city].length) {table[r][c_city] = table[r][columns.region.index]}
+    }
 
     // --- fill source + project & lead names (we should know here some column index)
-    var    title = 'Это выгрузка Call Center?';
-    var      msg = 'Нажмите "Да", чтобы указать "Call Center" в названии проекта.\nИначе будет указано "Hunter".';
+    let    title = 'Это выгрузка Call Center?';
+    let      msg = 'Нажмите "Да", чтобы указать "Call Center" в названии проекта.\nИначе будет указано "Hunter".';
     if (UI_show_msg(title, msg, true)) {var CC_or_hunter = 'Call Center'}
     else                               {var CC_or_hunter = 'Hunter'}
 
-    Object.keys(AC).forEach(key => {
-        var range = {r : 1,
+    for (let key of Object.keys(AC)) {
+        let range = {r : 1,
                      c : columns[key].index,
                      h : table.length-1,
                      w : 1}
-        if (key === 'source') {table = ARR_fill_cells(table, range, 'TAM')}
+        if (key === 'source') {table = ARR_fill_cells(table, range, 'ТАМ с подогревом')}
         else if (ARR_search_in_list(['lead_name', 'project_name'], key, 'bool')) {
-            var big_city = '';
-            var     date = ' ' + new Date().toLocaleDateString('ru-RU');
+            let big_city = '';
+            let     date = ' ' + new Date().toLocaleDateString('ru-RU');
             if (columns.population.index >= 0) {
                 var vert = 'Service';
                 if (!ARR_search_in_column(table, ['100k', '250k', 'not matched'], columns.population.index, 'bool', false)) {
@@ -154,25 +154,25 @@ function SCR_redash_TAM() {
                 }
             }
             else {var vert = 'GE'}
-
+    
             if (key === 'project_name') {
-                var txt = vert+' | TAM | '+CC_or_hunter;
+                let txt = vert+' | TAM | '+CC_or_hunter;
                 if (big_city.length) {txt += ' |'+big_city}
                 table = ARR_fill_cells(table, range, txt);
             }
             else {
-                var txt = vert+' TAM '+CC_or_hunter+' base_source'+big_city+date;
-                for (var r=range.r; r < range.r+range.h; r++) {
+                let txt = vert+' TAM '+CC_or_hunter+' base_source'+big_city+date;
+                for (let r=range.r; r < range.r+range.h; r++) {
                     if (columns.source_tam.index >= 0) {var temp = table[r][columns.source_tam.index]}
                     else                               {var temp = '2gis'}
                     table[r][columns.lead_name.index] = txt.replace('base_source', temp);
                 }
             }
         }
-    });
+    }
 
     // --- make the final table from the columns list
-    for (var c = table[0].length-1; c >= 0 ; c--) {
+    for (let c = table[0].length-1; c >= 0 ; c--) {
         if (!final_columns.includes(c)) {table = ARR_rm_RC(table, 'columns', c)}
     }
 
