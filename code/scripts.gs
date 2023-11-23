@@ -92,7 +92,7 @@ function SCR_redash_TAM() {
                    comment      : {search: options.comment,    index: null, final: true,  multiple: false, title: 'Комментарий'},
                    company      : {search: 'company',          index: null, final: true,  multiple: false, title: 'Название компании'},
                    email        : {search: 'email',            index: null, final: true,  multiple: true,  title: 'Рабочий e-mail'},
-                   id_tam       : {search: options.id_tam,     index: null, final: true,  multiple: false, title: null},
+                   id_tam       : {search: options.id_tam,     index: null, final: true,  multiple: false, title: 'ID TAM'},
                    inn          : {search: 'INN',              index: null, final: true,  multiple: false, title: null},
                    lead_name    : {search: AC.lead_name,       index: null, final: true,  multiple: false, title: null},
                    phone        : {search: 'phone',            index: null, final: true,  multiple: true,  title: 'Основной телефон'},
