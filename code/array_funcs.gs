@@ -186,7 +186,7 @@ function ARR_check_UD_range(data, range, type, SD, only_verify=false) {
                                 else {data.cur[r][c] = USI.to[index]}
                             }
                             else {
-                                const ui   = SpreadsheetApp.getUi();
+                                const   ui = SpreadsheetApp.getUi();
                                 const resp = UI_show_UD_error(init_value, data, r, c, type, ui, range);
                                 if (resp.getSelectedButton() == ui.Button.OK) {
                                     data.cur[r][c] = resp.getResponseText();
@@ -196,7 +196,7 @@ function ARR_check_UD_range(data, range, type, SD, only_verify=false) {
                                     }
                                 }
                                 else {
-                                    data.cur[r][c] = init_value;
+                                    data.cur      [r][c] = init_value;
                                     data.bg_colors[r][c] = GC.hl_red;
                                     valid = true;
 
@@ -419,7 +419,7 @@ function ARR_check_double_titles(titles) {
     }
 }
 function ARR_recommend_correction(sugg, cur, type) {
-    var final_msg = 'Введите правильный вариант$$$ или нажмите "Отмена", чтобы исправить его потом.\n\nТекущее значение:\n• ' + cur +'\n\n';
+    let final_msg = 'Введите правильный вариант$$$ или нажмите "Отмена", чтобы исправить его потом.\n\nТекущее значение:\n• ' + cur +'\n\n';
 
     const temp = ['e-mail', 'дата', 'статус посещения мероприятия клиентом'];
     if (ARR_search_in_list(temp, type, 'bool')) {var string = ', оставьте поле пустым для удаления'}
@@ -434,15 +434,15 @@ function ARR_recommend_correction(sugg, cur, type) {
     }
     else {
         var vars = [];
-        for (var i=0; i < sugg[0].length; i+=1) {
+        for (let i=0; i < sugg[0].length; i++) {
             if (sugg[0][i] === type && STR_find_sub(cur, sugg[1][i], 'bool')) {vars.push(sugg[2][i])}
         }
     }
 
     if (vars.length) {
         final_msg += 'Возможные варианты:\n';
-        vars = ARR_rm_doubles_in_list(vars);
-        for (i=0; i < vars.length; i+=1) {final_msg += '• ' + vars[i] + '\n'}
+        vars       = ARR_rm_doubles_in_list(vars);
+        for (let i=0; i < vars.length; i++) {final_msg += '• ' + vars[i] + '\n'}
         final_msg += '\n';
     }
     return final_msg;

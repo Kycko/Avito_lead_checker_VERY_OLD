@@ -69,16 +69,17 @@ function STR_format_website(site) {
 }
 function STR_trim_city(city) {
     const search = ['г. ', 'г ', 'г.', 'д. ', 'д ', 'д.', 'с. ', 'с ', 'с.', 'х. ', 'х ', 'х.', 'рп. ', 'рп ', 'рп.', 'дп. ', 'дп ', 'дп.', 'посёлок ', 'посёлок', 'поселок ', 'поселок', 'пос. ', 'пос ', 'пос.', 'пгт ', 'пгт', 'городской пос. ', 'городской пос ', 'городской пос.', 'город ', 'город', 'ст-ца ', 'ст-ца'];
-    for (i=0; i < search.length; i+=1) {
+    for (let i=0; i < search.length; i++) {
         if (STR_find_sub(city, search[i]) === 0) {
             // отрезаем по длине найденного
             return city.substring(search[i].length).trim(); // нужно сразу выйти из цикла
         }
     }
 
-    var list = city.split(' ');
+    let list = city.split(' ');
     if (ARR_search_in_list(search, ARR_last_item(list), 'bool')) {
-        return list.splice(list.length-1, 1).join(' ');
+        list.pop();
+        return list.join(' ');
     }
     return city.toString().trim();
 }

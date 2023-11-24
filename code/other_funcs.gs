@@ -72,7 +72,7 @@ function autocorr_UD(data, r, c, type) {
     if (ARR_search_in_list(autocorr_list, type, 'bool')) {
         if (type === 'регион/город') {
             data.cur[r][c] = STR_trim_city(data.cur[r][c]);
-            var       temp = data.cur[r][c].split(' ');
+            let       temp = data.cur[r][c].split(' ');
             if (ARR_search_in_list(['обл.', 'обл'], ARR_last_item(temp), 'bool')) {
                 temp[ARR_last_index(temp)] = 'область';
             }
@@ -89,9 +89,9 @@ function autocorr_UD(data, r, c, type) {
                 }
             }
         }
-        for (var i=0; i < data.autocorr[1].length; i+=1) {
-            var check1 = data.autocorr[0][i].toString().toLowerCase() == type;
-            var check2 = data.autocorr[1][i].toString().toLowerCase() == data.cur[r][c].toLowerCase();
+        for (let i=0; i < data.autocorr[1].length; i++) {
+            let check1 = data.autocorr[0][i].toString().toLowerCase() == type;
+            let check2 = data.autocorr[1][i].toString().toLowerCase() == data.cur[r][c].toLowerCase();
             if (check1 && check2) {
                 data.cur[r][c] = data.autocorr[2][i];
                 return data;
@@ -145,7 +145,7 @@ function validate_UD(data, r, c, type) {
     else if (type === 'доступен для всех') {var valid = data.cur[r][c].toString().toLowerCase() === 'да'}
     else if (type === 'только цифры')      {var valid = data.cur[r][c].length === data.cur[r][c].toString().replace(/\D+/g, '').length}
     else if (type === 'статус посещения мероприятия клиентом') {
-        var valid = ARR_search_in_list(['visited', 'not visited'], data.cur[r][c].toString().toLowerCase(), 'bool');
+        var valid = ARR_search_in_list(['','visited', 'not visited'], data.cur[r][c].toString().toLowerCase(), 'bool');
     }
     return valid;
 }

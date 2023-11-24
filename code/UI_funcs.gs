@@ -39,7 +39,7 @@ function UI_show_UD_error(init_value, data, r, c, type, ui, range) {
     else {var msg = ARR_recommend_correction(data.sugg, init_value, type)}
 
     // errors counter
-    const total   = range.h * range.w;
+    const   total = range.h * range.w;
     const current = (r-range.r)*range.w + (c-range.c+1);
     title        += ' (' + current.toString() + ' из ' + total.toString() + ')'
 
