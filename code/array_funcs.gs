@@ -623,15 +623,22 @@ function ARR_rm_RC(table, type, num, count=1) {
 }
 function ARR_add_RC(table, type, num, count=1, value='') {
     if (type === 'rows') {
-        for (var i=0; i < count; i++) {
+        for (let i=0; i < count; i++) {
             table.splice(num, 0, table[0]);
-            for (var c=0; c < table[num].length; c+=1) {table[num][c] = value}
+            for (let c=0; c < table[num].length; c++) {table[num][c] = value}
         }
     }
     else {
-        for (var r=0; r < table.length; r++) {
-            for (var i=0; i < count; i++) {table[r].splice(num, 0, value)}
+        for (let r=0; r < table.length; r++) {
+            for (let i=0; i < count; i++) {table[r].splice(num, 0, value)}
         }
+    }
+    return table;
+}
+function ARR_add_columns_with_titles(table, title_list, num) {
+    for (let title of title_list) {
+        table         = ARR_add_RC(table, 'columns', num);
+        table[0][num] = title;
     }
     return table;
 }

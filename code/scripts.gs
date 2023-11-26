@@ -184,29 +184,118 @@ function SCR_redash_TAM() {
     UI_show_msg('Спецслово', 'Не забудьте добавить спец. слово в названия лидов и проекта, если это необходимо.');
 }
 
-function SCR_Big_Data_Technology() {
+function SCR_back_to_Job() {
     // get the data
     const cur_sheet = SpreadsheetApp.getActiveSheet();
     var       table = SH_get_values(cur_sheet.getName(), SH_get_all_sheets_list());
 
     // modify the data
-    var rm_lists = ARR_find_empty_RC(table, true);
-    if (rm_lists.rows) {
-        for (var i = rm_lists.rows.length-1; i >= 0; i-=1) {table = ARR_rm_RC(table, 'rows', rm_lists.rows[i])}
+    // --- rm empty rows to avoid some cells filling
+    let  empty = ARR_find_empty_RC    (table,      true);
+    empty.rows = ARR_sort_numeric_list(empty.rows, false);
+    for (let row of empty.rows) {table = ARR_rm_RC(table, 'rows', row)}
+
+    // --- add mandatory columns (AC = add columns)
+    let AC = {category     : 'Категория',
+              comment      : 'Комментарий',
+              lead_name    : 'Название лида',
+              project_name : 'Наименование проекта',
+              source       : 'Источник'}
+    table  = ARR_add_columns_with_titles(table, Object.values(AC), 0);
+
+    // --- search the columns & change the titles
+    let columns = {avito_id     : {search: 'id',                   index: null, title: 'Авито-аккаунт'},
+                   category     : {search: 'Категория',            index: null, title: null},
+                   comment      : {search: 'Комментарий',          index: null, title: null},
+                   company      : {search: 'Наименование клиента', index: null, title: 'Название компании'},
+                   lead_name    : {search: 'Название лида',        index: null, title: null},
+                   manager      : {search: 'ПМ',                   index: null, title: 'Ответственный менеджер в сделке'},
+                   project_name : {search: 'Наименование проекта', index: null, title: null},
+                   source       : {search: 'Источник',             index: null, title: null}}
+
+    let indexes_left = [];  // здесь сохраним список не найденных столбцов
+    for (let i=0; i < table[0].length; i++) {
+        if (table[0][i].length) {indexes_left.push(i)}
     }
 
-    table        = ARR_rm_RC        (table, 'columns', ARR_search_in_list(table[0], 'Время звонка'));
-    table        = ARR_rm_RC        (table, 'columns', ARR_search_in_list(table[0], 'Продолжительность звонка (sec)'));
-    table        = ARR_rm_RC        (table, 'columns', ARR_search_in_list(table[0], 'Регион (из базы)'), 1);
-    table        = ARR_rm_RC        (table, 'columns', ARR_search_in_list(table[0], 'Категория'),        1);
-    table        = ARR_add_RC       (table, 'columns', 0, 5);
+    for (let key of Object.keys(columns)) {
+        let index  = ARR_search_in_list(table[0], columns[key].search, 'index', false);
+        if (index >= 0) {
+            indexes_left       = ARR_rm_list_items_by_text(indexes_left, index);
+            columns[key].index = index;
+            if (columns[key].title) {table[0][columns[key].index] = columns[key].title}
+        }
+        else {columns[key].index = undefined}
+    }
+    for (let i=0; i < indexes_left.length; i++) {indexes_left[i] = Number(indexes_left[i])}
+
+    // fill AC columns
+    for (let key of Object.keys(AC)) {
+        if (key === 'comment') {
+            if (indexes_left.length === 2) {
+                let title1 = table[0][indexes_left[0]];
+                let title2 = table[0][indexes_left[1]];
+                for (let r=1; r < table.length; r++) {
+                    let val1 = table[r][indexes_left[0]];
+                    let val2 = table[r][indexes_left[1]];
+                    table[r][columns.comment.index] = title1 + ': ' + val1 + ' | ' + title2 + ': ' + val2;
+                }
+            }
+            else {
+                UI_show_msg('Скрипт не выполнен', 'В таблице должны быть столбцы с тратами и количеством вакансий.');
+                return;
+            }
+            indexes_left = ARR_sort_numeric_list(indexes_left, false);
+            for (let ind of indexes_left) {table = ARR_rm_RC(table, 'columns', ind)}
+        }
+        else {
+            if      (key === 'category')     {var txt = 'Вакансии'}
+            else if (key === 'lead_name')    {var txt = 'Job U BTJ (back to job) ' + get_today()}
+            else if (key === 'project_name') {var txt = 'Job | U | BTJ (back to job)'}
+            else if (key === 'source')       {var txt = 'Активник'}
+            let range = {r : 1,
+                         c : columns[key].index,
+                         h : table.length-1,
+                         w : 1}
+            table = ARR_fill_cells(table, range, txt)
+        }
+    }
+
+    // swap names & surnames for managers
+    for (let r=1; r < table.length; r++) {
+        let temp = table[r][columns.manager.index].toString().split(' ');
+        if (temp.length === 2) {table[r][columns.manager.index] = temp[1] + ' ' + temp[0]}
+    }
+
+    // write the final data
+    SH_set_values(table, cur_sheet);
+
+    // launch the basic checker
+    MM_launch_all(false, false);
+}
+function SCR_Big_Data_Technology() {
+    // get the data
+    const cur_sheet = SpreadsheetApp.getActiveSheet();
+    let       table = SH_get_values(cur_sheet.getName(), SH_get_all_sheets_list());
+
+    // modify the data
+    let rm_lists = ARR_find_empty_RC(table, true);
+    if (rm_lists.rows) {
+        for (let i = rm_lists.rows.length-1; i >= 0; i--) {table = ARR_rm_RC(table, 'rows', rm_lists.rows[i])}
+    }
+
+    table        = ARR_rm_RC (table, 'columns', ARR_search_in_list(table[0], 'Время звонка'));
+    table        = ARR_rm_RC (table, 'columns', ARR_search_in_list(table[0], 'Продолжительность звонка (sec)'));
+    table        = ARR_rm_RC (table, 'columns', ARR_search_in_list(table[0], 'Регион (из базы)'), 1);
+    table        = ARR_rm_RC (table, 'columns', ARR_search_in_list(table[0], 'Категория'),        1);
+    table        = ARR_add_RC(table, 'columns', 0, 5);
     table[0][0]  = 'Вертикаль';
     table[0][1]  = 'Источник';
     table[0][2]  = 'Название лида';
     table[0][3]  = 'Наименование проекта';
     table[0][4]  = 'Отчество';
 
-    var columns = {comm : ARR_search_in_list(table[0], 'Комментарий'),
+    let columns = {comm : ARR_search_in_list(table[0], 'Комментарий'),
                    1    : ARR_search_in_list(table[0], 'ФИО (из базы)'),
                    2    : ARR_search_in_list(table[0], 'Категория (из базы)'),
                    3    : ARR_search_in_list(table[0], 'Количество в ассортименте (из базы)'),
@@ -220,30 +309,30 @@ function SCR_Big_Data_Technology() {
                    cat  : ARR_search_in_list(table[0], 'Подкатегория ')}
     table[0][columns.name] = 'Имя';
     table[0][columns.cat ] = 'Категория';
-    for (var r=1; r < table.length; r+=1) {
+    for (let r=1; r < table.length; r++) {
         table[r][0] = table[r][columns.comm];
         table[r][1] = 'Big Data Technolodgy';
         table[r][2] = 'КЦ Big Data Technolodgy';
         table[r][3] = 'КЦ Big Data Technolodgy';
 
-        var    temp = table[r][columns.name].split(' ');
+        let    temp = table[r][columns.name].split(' ');
         if (temp.length) {
             table[r][columns.name] = temp[0];
             temp.splice(0, 1);
             if (temp.length) {table[r][4] = temp.join(' ')}
         }
 
-        for (var i=1; i<10; i+=1) {
+        for (let i=1; i<10; i++) {
             var title = table[0][columns[i.toString()]];
             var   txt = table[r][columns[i.toString()]];
             if (txt.length) {table[r][columns.comm] += ' | ' + title + ': ' + txt}
         }
     }
 
-    var rm_list = [];
-    for (var i=1; i<10; i+=1) {rm_list.push(columns[i.toString()])}
+    let rm_list = [];
+    for (let i=1; i<10; i++) {rm_list.push(columns[i.toString()])}
     rm_list.sort(function(a, b){return b-a});   // сортировка чисел по убыванию
-    for (var i=0; i < rm_list.length; i+=1) {table = ARR_rm_RC(table, 'columns', rm_list[i])}
+    for (let i=0; i < rm_list.length; i++) {table = ARR_rm_RC(table, 'columns', rm_list[i])}
 
     const from = ['Контактный телефон (из базы)',
                   'Город (из базы)',

@@ -244,3 +244,5 @@ function change_and_notify_vert_or_man(data, r, c, init_str, new_str, new_color,
     else if (new_str.length) {data.bg_colors[r][c] = new_color}
     return data;
 }
+
+function get_today() {return new Date().toLocaleDateString('ru-RU')}
