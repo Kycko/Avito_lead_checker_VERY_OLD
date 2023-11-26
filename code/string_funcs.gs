@@ -17,6 +17,13 @@ function STR_replace_all_subs(string, from, to) {
     return string;
 }
 
+function STR_latin_to_cyrillic(string) {
+    for (let item of Glat_to_cyr()) {
+        while (string.indexOf(item[0]) >= 0) {string = string.replace(item[0], item[1])}
+    }
+    return string;
+}
+
 function STR_check_email(string) {
     if      (string == '')                                     {return true}
     else if ((string.match(/@/g)||[]).length != 1)             {return false}

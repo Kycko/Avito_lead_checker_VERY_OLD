@@ -71,8 +71,19 @@ function autocorr_UD(data, r, c, type) {
     else if (STR_find_sub(type, 'телефон', 'bool')) {data.cur[r][c] = STR_format_phone  (data.cur[r][c], type === 'основной телефон')}
     if (ARR_search_in_list(autocorr_list, type, 'bool')) {
         if (type === 'регион/город') {
+            // обрезаем всякие г. и т. п.
             data.cur[r][c] = STR_trim_city(data.cur[r][c]);
-            let       temp = data.cur[r][c].split(' ');
+ 
+            // до парсинга autocorr'а переводим в кириллицу только если это даст нужное значение(!), а иначе даём в autocorr латиницу
+            let temp_city = STR_latin_to_cyrillic(data.cur[r][c]);
+            let city_ind  = ARR_search_in_list   (data.autocorr[1], temp_city); // потому что autocorr перевёрнут
+            // Logger.log(temp_city + ': ' + city_ind); // для проверки (номер строки, если найдено в autocorr'е)
+            if (city_ind >= 0 && data.autocorr[0][city_ind].toString().toLowerCase() == type) {
+                data.cur[r][c] = temp_city;
+            }
+
+            // исправляем обл.
+            let temp = data.cur[r][c].split(' ');
             if (ARR_search_in_list(['обл.', 'обл'], ARR_last_item(temp), 'bool')) {
                 temp[ARR_last_index(temp)] = 'область';
             }
@@ -97,6 +108,9 @@ function autocorr_UD(data, r, c, type) {
                 return data;
             }
         }
+
+        // после проерки autocorr'а латиницей пробуем перевести в кириллицу
+        if (type === 'регион/город') {data.cur[r][c] = STR_latin_to_cyrillic(data.cur[r][c])}
     }
     return data;
 }
