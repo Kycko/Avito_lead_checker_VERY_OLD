@@ -570,9 +570,9 @@ function ARR_check_for_empty_cells(table, range, max_allowed=0) {
     // функция возвращает false, если количество пустых ячеек > max_allowed
     // т. е. при max_allowed=0 возвращается false как только будет найдена хоть одна пустая ячейка
     // range = {r, c, h, w} (first row, first col, height, width)
-    var empty_counter = 0;
-    for (var r=range.r; r < range.r+range.h; r++) {
-        for (var c=range.c; c < range.c+range.w; c++) {
+    let empty_counter = 0;
+    for (let r=range.r; r < range.r+range.h; r++) {
+        for (let c=range.c; c < range.c+range.w; c++) {
             if (!table[r][c].length) {
                 empty_counter++;
                 if (empty_counter > max_allowed) {return true}
@@ -716,4 +716,19 @@ function ARR_rm_list_items_by_text(list, txt, full_text=true) {
     indexes     = ARR_sort_numeric_list     (indexes, false);
     for (let num of indexes) {list.splice(num, 1)}
     return list;
+}
+
+// проходит по всем ячейкам range ({r, c, h, w}) и в каждой заменяет указанный символ
+function ARR_replace_all_symbols_in_range(table, from, to='', range=null) {
+    // from и to могут быть строками из нескольких символов
+    // если range=null, применяется ко всей таблице
+    if (range === null) {
+        range = {r: 0, c: 0, h: table.length, w: table[0].length}
+    }
+    for (let r=range.r; r < range.r+range.h; r++) {
+        for (let c=range.c; c < range.c+range.w; c++) {
+            table[r][c] = STR_replace_all_subs(table[r][c].toString(), from, to);
+        }
+    }
+    return table;
 }

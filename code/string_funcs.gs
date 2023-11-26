@@ -12,6 +12,11 @@ function STR_find_sub(string, sub, type='index') {
         else                  {return true}
     }
 }
+function STR_replace_all_subs(string, from, to) {
+    while (STR_find_sub(string, from, 'bool')) {string = string.replace(from, to)}
+    return string;
+}
+
 function STR_check_email(string) {
     if      (string == '')                                     {return true}
     else if ((string.match(/@/g)||[]).length != 1)             {return false}

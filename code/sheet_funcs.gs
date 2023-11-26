@@ -31,6 +31,7 @@ function SH_get_values(name, all_sheets_list, rotate=false) {
         range.breakApart();
         range.setNumberFormat('@STRING@');
         var data = range.getValues();
+        data     = ARR_replace_all_symbols_in_range(data, '​', '');
         if (rotate) {data = ARR_rotate(data)}
         return data;
     }

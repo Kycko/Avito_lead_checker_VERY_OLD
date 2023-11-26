@@ -48,18 +48,18 @@ function autocorr_UD(data, r, c, type) {
         var RPL = {from : ['​', '–', '—', '|', ';', '; ', ', ', ',,'],   // первое – это мягкий пробел (u200b)
                    to   : ['', '-', '-', ',', ',', ',' , ',',  ',']}
         while (STR_find_sub_list(data.cur[r][c], RPL.from, 'bool')) {
-            for (i=0; i < RPL.from.length; i+=1) {
+            for (i=0; i < RPL.from.length; i++) {
                 data.cur[r][c] = data.cur[r][c].replace(RPL.from[i], RPL.to[i]);
             }
         }
 
         var list = data.cur[r][c].split(',');
         if (list.length) {
-            for (i=0; i < list.length; i+=1) {
-                var dog_counter = (list[i].match(/@/g)||[]).length;
+            for (i=0; i < list.length; i++) {
+                let dog_counter = (list[i].match(/@/g)||[]).length;
                 list[i]         =  list[i].split('@');
-                var         num = ARR_last_index(list[i]);
-                var       gmail = STR_find_sub(list[i][num], 'gmail', 'bool');
+                let         num = ARR_last_index(list[i]);
+                let       gmail = STR_find_sub(list[i][num], 'gmail', 'bool');
                 if (dog_counter === 1 && gmail) {list[i][num] = 'gmail.com'}
                 list[i] = list[i].join('@');
             }
