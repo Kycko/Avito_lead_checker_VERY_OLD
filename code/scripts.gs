@@ -29,6 +29,14 @@ function SCR_evening_СС(type='common') {
     }
     // -----------------------------
 
+    let indx_phone   = ARR_search_in_list(table[0], 'Телефон');
+    let indx_comment = ARR_search_in_list(table[0], 'Комментарий');
+    for (let r=1; r < table.length; r++) {
+        let txt = 'Дозвонились по номеру ' + table[r][indx_phone];
+        if (table[r][indx_comment].length) {txt += ' | '  + table[r][indx_comment]}
+        table[r][indx_comment] = txt;
+    }
+
     var rm_list = ['TAM id',
                    'Статус звонка',
                    'Статус телефона',
