@@ -1,57 +1,60 @@
-function SCR_evening_СС(type='common') {
+function SCR_evening_СС() {
     // get the data
     const cur_sheet = SpreadsheetApp.getActiveSheet();
-    var       table = SH_get_values(cur_sheet.getName(), SH_get_all_sheets_list());
+    let       table = SH_get_values(cur_sheet.getName(), SH_get_all_sheets_list());
 
     // modify the data
+    // --- filter & rm bad cells text
     table = ARR_filter_rows_by_cell(table, ARR_search_in_list(table[0], 'Конечная категория'), 'Согласие');
+    for (let item of ['Ответ не сохранен', 'Поле ввода не заполнено']) {
+        table = ARR_rm_cells_by_full_text(table, item);
+    }
 
-    // only for goods, not for services
-    var indx_autosrv = ARR_search_in_list(table[0], 'Автосервис. Как я могу к вам обращаться?');
-    if (indx_autosrv >= 0) {
-        for (var r=0; r < table.length; r+=1) {
-            table[r][indx_autosrv] = table[r][indx_autosrv].toString();
-            if (table[r][indx_autosrv].length) {
-                table[r][indx_autosrv] = table[r][indx_autosrv].replace('Поле ввода не заполнено', '');
-                for (var i=indx_autosrv+1; i < table[r].length; i+=1) {
-                    var dont_add = ['Поле ввода не заполнено',
-                                    'Ответ не сохранен'];
-                    if (table[r][i].length && !ARR_search_in_list(dont_add, table[r][i], type='bool')) {
-                        if (table[r][indx_autosrv].length) {table[r][indx_autosrv] += ' | '}
-                        table[r][indx_autosrv] += table[r][i];
-                    }
+    // --- search the columns
+    // --- это заголовки для поиска, будут заменены на индексы столбцов
+    let columns = {phone    : 'Телефон',
+                   comment  : 'Комментарий',
+                   goods    : 'Товары',
+                   autosrv  : 'Автосервис. Как я могу к вам обращаться?'}
+    for (let key of Object.keys(columns)) {columns[key] = ARR_search_in_list(table[0], columns[key])}
+
+    // --- modifying
+    for (let r=1; r < table.length; r++) {
+        // собираем автосервисы
+        if (columns.autosrv >= 0) {
+            table[r][columns.autosrv] = table[r][columns.autosrv].toString();
+            for (let i=columns.autosrv+1; i < table[r].length; i++) {
+                if (table[r][columns.autosrv].length && table[r][i].length) {
+                    table[r][columns.autosrv] += ' | ';
                 }
+                table[r][columns.autosrv] += table[r][i];
             }
         }
-        var indx_srv         = ARR_search_in_list(table[0], 'Услуги');
-        table                = ARR_move_RC       (table,    'columns', indx_autosrv, indx_srv+1);
-        table[0][indx_srv+1] = 'Автосервис';
-    }
-    // -----------------------------
 
-    let indx_phone   = ARR_search_in_list(table[0], 'Телефон');
-    let indx_comment = ARR_search_in_list(table[0], 'Комментарий');
-    for (let r=1; r < table.length; r++) {
-        let txt = 'Дозвонились по номеру ' + table[r][indx_phone];
-        if (table[r][indx_comment].length) {txt += ' | '  + table[r][indx_comment]}
-        table[r][indx_comment] = txt;
+        // собираем комментарий
+        let parts = ['comment', 'goods', 'autosrv']
+        let final = 'Дозвонились по номеру ' + table[r][columns.phone];
+        for (let key of parts) {
+            let item = table[r][columns[key]];
+            if (item.length) {final += ' | ' + item}
+        }
+        table[r][columns.comment] = final;
     }
 
-    var rm_list = ['TAM id',
+    let rm_list = ['TAM id',
                    'Статус звонка',
                    'Статус телефона',
                    'Сколько позиций в ассортименте',
+                   'Товары',
+                   'Услуги',
                    'Конечная категория',
                    'ЗФ',
                    'Проект',
                    'Предполагаемая часовая зона'];
     table = ARR_rm_table_columns_by_titles(table, rm_list);
-
-    table = ARR_crop                 (table, 0, 0, table.length, 13); // сколько столбцов останется, столько и указываем
-    table = ARR_move_RC              (table, 'columns',  3,  5);
-    table = ARR_move_RC              (table, 'columns',  7,  5);
-    table = ARR_move_RC              (table, 'columns',  8,  9);
-    table = ARR_rm_cells_by_full_text(table, 'Ответ не сохранен');
+    table = ARR_crop                      (table, 0, 0, table.length, 10);
+    table = ARR_move_RC                   (table, 'columns', 7, 9);
+    table = ARR_move_RC                   (table, 'columns', 2, 8);
 
     // write the final data
     SH_set_values(table, cur_sheet);
@@ -212,12 +215,15 @@ function SCR_back_to_Job() {
     table  = ARR_add_columns_with_titles(table, Object.values(AC), 0);
 
     // --- search the columns & change the titles
+    let temp_man = ARR_search_in_list(table[0], 'ПМ', 'bool', true);
+    temp_man = ['менеджер', 'ПМ'][Number(temp_man >= 0)]
+
     let columns = {avito_id     : {search: 'id',                   index: null, title: 'Авито-аккаунт'},
                    category     : {search: 'Категория',            index: null, title: null},
                    comment      : {search: 'Комментарий',          index: null, title: null},
                    company      : {search: 'Наименование клиента', index: null, title: 'Название компании'},
                    lead_name    : {search: 'Название лида',        index: null, title: null},
-                   manager      : {search: 'ПМ',                   index: null, title: 'Ответственный менеджер в сделке'},
+                   manager      : {search: temp_man,                   index: null, title: 'Ответственный менеджер в сделке'},
                    project_name : {search: 'Наименование проекта', index: null, title: null},
                    source       : {search: 'Источник',             index: null, title: null}}
 

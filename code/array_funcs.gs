@@ -584,10 +584,11 @@ function ARR_check_for_empty_cells(table, range, max_allowed=0) {
 
 function ARR_crop(old_data, FC_row, FC_col, rows_count, cols_count) {
     // FC = first cell, must be array indexes (not sheet indexes)
-    var new_data = [];
-    for (r=FC_row; r < FC_row+rows_count; r+=1) {
+    // rows/cols count: сколько должно остаться, такую цифру и указываем
+    let new_data = [];
+    for (let r=FC_row; r < FC_row+rows_count; r++) {
         new_data.push([]);
-        for (c=FC_col; c < FC_col+cols_count; c+=1) {
+        for (let c=FC_col; c < FC_col+cols_count; c++) {
             new_data[ARR_last_index(new_data)].push(old_data[r][c]);
         }
     }
