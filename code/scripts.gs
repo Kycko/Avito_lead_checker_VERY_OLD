@@ -15,6 +15,7 @@ function SCR_evening_СС() {
     let columns = {phone    : 'Телефон',
                    comment  : 'Комментарий',
                    goods    : 'Товары',
+                   services : 'Услуги',
                    autosrv  : 'Автосервис. Как я могу к вам обращаться?'}
     for (let key of Object.keys(columns)) {columns[key] = ARR_search_in_list(table[0], columns[key])}
 
@@ -32,7 +33,7 @@ function SCR_evening_СС() {
         }
 
         // собираем комментарий
-        let parts = ['comment', 'goods', 'autosrv']
+        let parts = ['comment', 'goods', 'services', 'autosrv'];
         let final = 'Дозвонились по номеру ' + table[r][columns.phone];
         for (let key of parts) {
             let item = table[r][columns[key]];
