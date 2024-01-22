@@ -49,13 +49,14 @@ function SCR_evening_СС() {
                    'Товары',
                    'Услуги',
                    'Конечная категория',
+                   'Категория клиента от КЦ (услуги)',
                    'ЗФ',
                    'Проект',
                    'Предполагаемая часовая зона'];
     table = ARR_rm_table_columns_by_titles(table, rm_list);
-    table = ARR_crop                      (table, 0, 0, table.length, 10);
-    table = ARR_move_RC                   (table, 'columns', 7, 9);
-    table = ARR_move_RC                   (table, 'columns', 2, 8);
+    table = ARR_crop                      (table, 0, 0, table.length, 9);
+    table = ARR_move_RC                   (table, 'columns', 6, 8);
+    table = ARR_move_RC                   (table, 'columns', 2, 7);
 
     // write the final data
     SH_set_values(table, cur_sheet);
@@ -147,15 +148,21 @@ function SCR_redash_TAM() {
     // --- fill source + project & lead names (we should know here some column index)
     let    title = 'Это выгрузка Call Center?';
     let      msg = 'Нажмите "Да", чтобы указать "Call Center" в названии проекта.\nИначе будет указано "Hunter".';
-    if (UI_show_msg(title, msg, true)) {var CC_or_hunter = 'Call Center'}
-    else                               {var CC_or_hunter = 'Hunter'}
+    if (UI_show_msg(title, msg, true)) {
+        var  CC_or_hunter = 'Call Center';
+        var source_filler = 'TAM с подогревом';
+    }
+    else {
+        var  CC_or_hunter = 'Hunter';
+        var source_filler = 'TAM';
+    }
 
     for (let key of Object.keys(AC)) {
         let range = {r : 1,
                      c : columns[key].index,
                      h : table.length-1,
                      w : 1}
-        if (key === 'source') {table = ARR_fill_cells(table, range, 'ТАМ с подогревом')}
+        if (key === 'source') {table = ARR_fill_cells(table, range, source_filler)}
         else if (ARR_search_in_list(['lead_name', 'project_name'], key, 'bool')) {
             let big_city = '';
             let     date = ' ' + new Date().toLocaleDateString('ru-RU');
