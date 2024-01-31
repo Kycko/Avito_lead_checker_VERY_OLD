@@ -105,7 +105,7 @@ function Gru_symbols() {
 
 // the list to convert latin symbols to cyrillic
 function Glat_to_cyr() {
-    // кавычка ` почему-то не работает с двойными кавычками
+    // особая кавычка почему-то не работает с двойными кавычками
     return [
         ['Ch',  'Ч' ], ['ch',  'ч' ],
         ["Kh'", 'Хь'], ["kh'", 'хь'],

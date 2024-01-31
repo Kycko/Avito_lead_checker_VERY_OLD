@@ -88,6 +88,10 @@ function autocorr_UD(data, r, c, type) {
                 temp[ARR_last_index(temp)] = 'область';
             }
             data.cur[r][c] = temp.join(' ');
+
+            // capitalization
+            let indx = ARR_search_in_list(data.cities[0], data.cur[r][c]);
+            if (indx !== null && indx >= 0) {data.cur[r][c] = data.cities[0][indx]}
         }
         else if (type === 'должность') {
             data.cur[r][c] = data.cur[r][c].toLowerCase();
@@ -150,7 +154,9 @@ function validate_UD(data, r, c, type) {
         var valid = ARR_search_in_list(data.cat[0], data.cur[r][c], 'bool');
     }
     else if (type === 'источник') {
-        var valid = ARR_search_in_list(data.sources[0], data.cur[r][c], 'bool');
+        let  indx = ARR_search_in_list(data.sources[0], data.cur[r][c]);
+        var valid = indx !== null && indx >= 0;
+        if (valid) {data.cur[r][c] = data.sources[0][indx]}
     }
     else if (ARR_search_in_list(['фамилия', 'отчество', 'должность'], type, 'bool')) {var valid = true}
     else if (type === 'дата')              {var valid = validate_date(data.cur[r][c].toString().split('.'))}
