@@ -428,9 +428,19 @@ function SCR_retention_ASD() {
     MM_launch_all(false, true);
 }
 
-function SCR_CRMmrkg_grey()  {SCR_CRMmrkg_WG('B2C Grey')}
-function SCR_CRMmrkg_white() {SCR_CRMmrkg_WG('NWL')}
-function SCR_CRMmrkg_WG(type) {
+function SCR_CRMmrkg() {
+    // узнаём тип выгрузки
+    const       ui = SpreadsheetApp.getUi();
+    const    types = {white: 'NWL', grey: 'B2C Grey', 'white/grey': 'особый вариант'};
+    const typeKeys = Object.keys(types);
+    let   curInput = '';
+    while (!(ARR_search_in_list(typeKeys, curInput) >= 0)) {
+        const resp = ui.prompt('Выберите проект', Gtext().ask_CRMmrkg_type, ui.ButtonSet.OK_CANCEL);
+        if (resp.getSelectedButton() === ui.Button.OK) {curInput = resp.getResponseText()}
+        else                                           {return}
+    }
+    let type = curInput.toLowerCase();
+
     // get the data
     const all_sheets_list = SH_get_all_sheets_list();
     var data              = {}
@@ -439,42 +449,42 @@ function SCR_CRMmrkg_WG(type) {
     data.log_cat          = SH_get_values(Greq_sheets().log_cat,    all_sheets_list, true);
     data.autocorr         = SH_get_values(Greq_sheets().autocorr,   all_sheets_list, true);
 
-    // modify the data
-    // old code to delete e-mail & phone hashes
-    // var index  = ARR_search_in_list(data.cur[0], 'email');
-    // if (index >= 0) {data.cur = ARR_rm_RC(data.cur, 'columns', index)}
-    // index      = ARR_search_in_list(data.cur[0], 'phone');
-    // if (index >= 0) {data.cur = ARR_rm_RC(data.cur, 'columns', index)}
-
     const ind = {avito_ID : ARR_search_in_list(data.cur[0], 'external_user_id'),
-                 cat      : ARR_search_in_list(data.cur[0], 'logical_category'),
+                 avitoID2 : ARR_search_in_list(data.cur[0], 'external_id'),
+                 cat      : ARR_search_in_list(data.cur[0], 'category', 'index', false),
                  email    : ARR_search_in_list(data.cur[0], 'email'),
                  company  : ARR_search_in_list(data.cur[0], 'name'),
                  phone    : ARR_search_in_list(data.cur[0], 'phone'),
-                 region   : ARR_search_in_list(data.cur[0], 'region')}
+                 region   : ARR_search_in_list(data.cur[0], 'region'),
+                 region2  : ARR_search_in_list(data.cur[0], 'city')}
 
     if (ind.avito_ID >= 0) {data.cur[0][ind.avito_ID] = 'Авито-аккаунт'}
+    if (ind.avitoID2 >= 0) {data.cur[0][ind.avitoID2] = 'Авито-аккаунт'}
     if (ind.email    >= 0) {data.cur[0][ind.email]    = 'Рабочий e-mail'}
     if (ind.company  >= 0) {data.cur[0][ind.company]  = 'Название компании'}
     if (ind.phone    >= 0) {data.cur[0][ind.phone]    = 'Основной телефон'}
     if (ind.region   >= 0) {data.cur[0][ind.region]   = 'Регион и город'}
+    if (ind.region2  >= 0) {data.cur[0][ind.region2]  = 'Регион и город'}
     if (ind.cat      >= 0 && CRS('check_log_cat', data)) {
         data.cur[0][ind.cat] = 'Категория';
-        for (var r=1; r < data.cur.length; r+=1) {
-            index = ARR_search_in_list(data.log_cat[0], data.cur[r][ind.cat]);
+        for (let r=1; r < data.cur.length; r++) {
+            let index = ARR_search_in_list(data.log_cat[0], data.cur[r][ind.cat]);
             if (index >= 0) {data.cur[r][ind.cat] = data.log_cat[1][index]}
         }
     }
 
     data.cur       = ARR_add_RC(data.cur, 'columns', 0);
     data.cur[0][0] = 'Комментарий';
-    var exclude = [ARR_search_in_list(data.cur[0], 'Авито-аккаунт'),
-                   ARR_search_in_list(data.cur[0], 'Категория'),
-                   ARR_search_in_list(data.cur[0], 'Комментарий'),  // чтобы потом этот столбец не удалялся
-                   ARR_search_in_list(data.cur[0], 'Название компании'),
-                   ARR_search_in_list(data.cur[0], 'Основной телефон'),
-                   ARR_search_in_list(data.cur[0], 'Рабочий e-mail'),
-                   ARR_search_in_list(data.cur[0], 'Регион и город')]
+    let exclude = [ // чтобы потом эти столбцы не удалялись
+        ARR_search_in_list(data.cur[0], 'Авито-аккаунт'),
+        ARR_search_in_list(data.cur[0], 'Категория'),
+        ARR_search_in_list(data.cur[0], 'Комментарий'),
+        ARR_search_in_list(data.cur[0], 'Название компании'),
+        ARR_search_in_list(data.cur[0], 'Основной телефон'),
+        ARR_search_in_list(data.cur[0], 'Рабочий e-mail'),
+        ARR_search_in_list(data.cur[0], 'Регион и город'),
+        ARR_search_in_list(data.cur[0], 'priority')
+    ]
     for (var i = exclude.length-1; i>=0; i--) {
         if (exclude[i] >= 0) {Logger.log('exclude OK')}
         else                 {exclude.splice(i, 1)}
@@ -491,7 +501,10 @@ function SCR_CRMmrkg_WG(type) {
 
             if (data.cur[r][c].toString().length && !ARR_search_in_list(exclude, c, 'bool')) {
                 if (data.cur[r][0].length) {data.cur[r][0] += ', '}
-                data.cur[r][0] += data.cur[0][c] + ' ' + data.cur[r][c].toString();
+                if (data.cur[0][c] === 'transactions_30d') {
+                    data.cur[r][c] = data.cur[r][c].toString().replace('.00000', '');
+                }
+                data.cur[r][0] += data.cur[0][c] + ': ' + data.cur[r][c].toString();
             }
         }
         if (data.cur[r][0].length) {data.cur[r][0] += '.'}
@@ -501,17 +514,40 @@ function SCR_CRMmrkg_WG(type) {
         if (!ARR_search_in_list(exclude, c, 'bool')) {data.cur = ARR_rm_RC(data.cur, 'columns', c)}
     }
 
-    data.cur       = ARR_add_RC(data.cur, 'columns', 0, 3);
+    data.cur       = ARR_add_RC(data.cur, 'columns', 0, 4);
     data.cur[0][0] = 'Источник';
     data.cur[0][1] = 'Название лида';
     data.cur[0][2] = 'Наименование проекта';
-    for (var r=1; r < data.cur.length; r+=1) {
-        if (data.cur[r][3] !== '') {
+    data.cur[0][3] = 'Направление клиента';
+
+    let      Pindx = ARR_search_in_list(data.cur[0], 'priority');
+    let     rmRows = [];
+    for (let r=1; r < data.cur.length; r++) {
+        let projLabel = types[type];
+        if (type === 'white/grey') {
+            if (Pindx >= 0) {
+                if (data.cur[r][Pindx] > 0 && data.cur[r][Pindx] < 4) {
+                    projLabel = 'White ' + data.cur[r][Pindx];
+                }
+                else if (data.cur[r][Pindx] === '4') {projLabel = 'Grey 4'}
+                else                               {rmRows.push(r)}
+            }
+            else {
+                UI_show_msg('Выполнение скрипта отменено', 'В таблице отсутствует столбец "priority".');
+                return;
+            }
+        }
+
+        if (data.cur[r][4] !== '') {
             data.cur[r][0] = 'CRM маркетинг';
-            data.cur[r][1] = 'GE CRMmrkg '     + type + ' Hunter ' + Utilities.formatDate(new Date(), 'GMT+3', 'dd.MM.yyyy');
-            data.cur[r][2] = 'GE | CRMmrkg | ' + type + ' | Hunter';
+            data.cur[r][1] = 'GE CRMmrkg '     + projLabel + ' Hunter ' + Utilities.formatDate(new Date(), 'GMT+3', 'dd.MM.yyyy');
+            data.cur[r][2] = 'GE | CRMmrkg | ' + projLabel + ' | Hunter';
+            data.cur[r][3] = 'Core';
         }
     }
+
+    for (let i = rmRows.length-1; i >= 0; i--) {data.cur = ARR_rm_RC(data.cur, 'rows', rmRows[i])}
+    if  (Pindx >= 0)                           {data.cur = ARR_rm_RC(data.cur, 'columns',  Pindx)}
 
     // write the final data
     SH_set_values(data.cur, data.cur_sheet);
