@@ -24,20 +24,17 @@ function SH_get_all_sheets_data() {
 }
 
 // rotate = the first column will be the first row and vice versa
-function SH_get_values(name, all_sheets_list, rotate=false) {
-    if (ARR_search_in_list(all_sheets_list, name, 'bool')) {
+function SH_get_values(name, allSheets_list, rotate=false) {
+    if (ARR_search_in_list(allSheets_list, name, 'bool')) {
         const sheet = SpreadsheetApp.getActive().getSheetByName(name);
         const range = sheet.getRange(1, 1, sheet.getMaxRows(), sheet.getMaxColumns());
         range.breakApart();
         range.setNumberFormat('@STRING@');
-        var data = range.getValues();
-        data     = ARR_replace_all_symbols_in_range(data, '​', '');
+        let data = ARR_replace_all_symbols_in_range(range.getValues(), '​', '');
         if (rotate) {data = ARR_rotate(data)}
         return data;
     }
-    else {
-        return null;
-    }
+    else {return null}
 }
 function SH_set_values(data, sheet) {
     var size = {

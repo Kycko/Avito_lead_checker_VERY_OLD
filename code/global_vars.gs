@@ -90,6 +90,7 @@ function Gtext() {
         ['Back to Job [обновлено 11.01.2024]',                                'SCR_back_to_Job'],
         ['Big Data Technology [обновлено 16.10.2023]',                'SCR_Big_Data_Technology'],
         ['Retention ASD (товары и услуги) [обновлено 21.08.2023]',          'SCR_retention_ASD'],
+        ['Мой бизнес [обновлено 06.02.2024]',                                  'SCR_myBusiness'],
         ['separator'],  // разделительная линия
         ['CRMmrkg white/grey (все виды) [обновлено 05.02.2024]',                  'SCR_CRMmrkg'],
         ['separator'],  // разделительная линия

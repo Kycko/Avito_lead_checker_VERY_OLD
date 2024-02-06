@@ -448,13 +448,13 @@ function ARR_recommend_correction(sugg, cur, type) {
     return final_msg;
 }
 
-function ARR_rm_RC_list(data, rm_list, type) {
+function ARR_rm_RC_list(data, rmList, type) {
     // type = 'rows' or 'columns'
-    if (rm_list) {
-        for (var i = rm_list.length-1; i >= 0; i-=1) {
-            data.cur       = ARR_rm_RC(data.cur,       type, rm_list[i]);
-            data.bg_colors = ARR_rm_RC(data.bg_colors, type, rm_list[i]);
-            data.notes     = ARR_rm_RC(data.notes,     type, rm_list[i]);
+    if (rmList) {
+        for (let i = rmList.length-1; i >= 0; i--) {
+            data.cur       = ARR_rm_RC(data.cur,       type, rmList[i]);
+            data.bg_colors = ARR_rm_RC(data.bg_colors, type, rmList[i]);
+            data.notes     = ARR_rm_RC(data.notes,     type, rmList[i]);
         }
     }
     return data;
@@ -566,20 +566,27 @@ function ARR_rotate(old) {
     return rotated;
 }
 
-function ARR_check_for_empty_cells(table, range, max_allowed=0) {
-    // функция возвращает false, если количество пустых ячеек > max_allowed
-    // т. е. при max_allowed=0 возвращается false как только будет найдена хоть одна пустая ячейка
+function ARR_check_for_empty_cells(table, range, maxAllowed=0) {
+    // функция возвращает false, если количество пустых ячеек > maxAllowed
+    // т. е. при maxAllowed=0 возвращается false как только будет найдена хоть одна пустая ячейка
     // range = {r, c, h, w} (first row, first col, height, width)
-    let empty_counter = 0;
+    let emptyCounter = 0;
     for (let r=range.r; r < range.r+range.h; r++) {
         for (let c=range.c; c < range.c+range.w; c++) {
             if (!table[r][c].length) {
-                empty_counter++;
-                if (empty_counter > max_allowed) {return true}
+                emptyCounter++;
+                if (emptyCounter > maxAllowed) {return true}
             }
         }
     }
     return false;
+}
+function ARR_check_allList_empty(list) {
+    // возвращает true только если все ячейки списка[] пустые
+    for (let item of list) {
+        if (item.length) {return false}
+    }
+    return true;
 }
 
 function ARR_crop(old_data, FC_row, FC_col, rows_count, cols_count) {

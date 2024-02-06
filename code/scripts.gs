@@ -427,6 +427,64 @@ function SCR_retention_ASD() {
     // launch the basic checker
     MM_launch_all(false, true);
 }
+function SCR_myBusiness() {
+    // get the data
+    const curSheet = SpreadsheetApp.getActiveSheet();
+    let      table = SH_get_values(curSheet.getName(), SH_get_all_sheets_list());
+
+    // modify the data
+    // --- удаление лишних столбцов и строк
+    for (let c = table[0].length-1; c >= 0; c--) {
+        if (!table[0][c].length) {table = ARR_rm_RC(table, 'columns', c)}
+    }
+    for (let r = table.length-1; r >= 0; r--) {
+        if (ARR_check_allList_empty(table[r])) {table = ARR_rm_RC(table, 'rows', r)}
+    }
+
+    // --- переименовываем нужные столбцы и запоминаем, что пойдёт в комменты
+    let   forComment = [];  // номера столбцов для коммента
+    let renameTitles = {user_ext_id : 'Авито-аккаунт',
+                        phone       : 'Основной телефон',
+                        Region      : 'Регион и город'}
+    for (let c=0; c < table[0].length; c++) {
+        if (Object.keys(renameTitles).includes(table[0][c])) {table[0][c] = renameTitles[table[0][c]]}
+        else                                                 {forComment.push(c)}
+    }
+
+    // --- добавляем столбец комментов, затем удаляем столбцы с этой инфой
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'];
+    let   LPname = 'Services | A | ASD | GR MB 2.1 | '; // lead & project name
+    LPname      += get_curYear().toString() + '-' + months[get_curMonth()];
+
+    let CCI = table[0].length;  // CI = comment column index
+    table[0].push('Комментарий');
+    table[0].push('Категория');
+    table[0].push('Вертикаль');
+    table[0].push('Источник');
+    table[0].push('Название лида');
+    table[0].push('Наименование проекта');
+    table[0].push('Ответственный менеджер в сделке');
+    for (let r=1; r < table.length; r++) {
+        table[r].push('');
+        table[r].push('Предложение услуг');
+        table[r].push('Услуги');
+        table[r].push('Мой Бизнес');
+        table[r].push(LPname);
+        table[r].push(LPname);
+        table[r].push('Виртуальный менеджер Services Government');
+        for (let c of forComment) {
+            if (table[r][CCI].length) {table[r][CCI] += ' | '}
+            table[r][CCI] += table[0][c] + ': ';
+            if (table[r][c].length) {table[r][CCI] += table[r][c]}
+            else                    {table[r][CCI] += 'не указано'}
+        }
+    }
+    for (let i = forComment.length-1; i >= 0; i--) {table = ARR_rm_RC(table, 'columns', forComment[i])}
+
+    // final stage
+    SH_set_values(table, curSheet); // write the final data
+    MM_launch_all(false, false);    // launch the basic checker
+}
 
 function SCR_CRMmrkg() {
     // узнаём тип выгрузки

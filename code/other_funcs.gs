@@ -265,4 +265,6 @@ function change_and_notify_vert_or_man(data, r, c, init_str, new_str, new_color,
     return data;
 }
 
-function get_today() {return new Date().toLocaleDateString('ru-RU')}
+function get_today   () {return new Date().toLocaleDateString('ru-RU')}
+function get_curYear () {return new Date().getFullYear()}
+function get_curMonth() {return new Date().getMonth()}  // возвращает 0-11
