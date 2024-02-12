@@ -72,9 +72,6 @@ function ARR_check_user_data(data, fix_man, SD, only_verify=false) {
         else if (data.cur[i][tit] == 'Вертикаль' && CRS('check_categories', data, show_msg=false)) {
             data = ARR_fix_vert_and_man(data, range, 'вертикаль', false, only_verify);
         }
-        else if (fix_man && data.cur[i][tit] == 'Ответственный менеджер в сделке' && CRS('check_managers', data, show_msg=false)) {
-            data = ARR_fix_vert_and_man(data, range, 'менеджер', false, only_verify);
-        }
         else if (data.cur[i][tit] == 'Источник' && CRS('check_sources', data, show_msg=false)) {
             data = ARR_check_UD_range(data, range, 'источник', SD, only_verify);
         }
