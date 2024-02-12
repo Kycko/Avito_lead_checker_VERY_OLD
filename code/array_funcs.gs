@@ -700,13 +700,33 @@ function ARR_join_two_columns(table, c_from, c_to, r_first=0, r_last=null, separ
 }
 
 // this filters remove all the other rows from table
-function ARR_filter_rows_by_cell(table, column, filter_txt, save_title=true) {
-    var new_table = [];
-    if (save_title) {new_table.push(table[0])}
-    for (var r=1; r < table.length; r+=1) {
-        if (table[r][column] === filter_txt) {new_table.push(table[r])}
+function ARR_filter_rows_by_cell(table, column, filterTxt, saveTitle=true) {
+    let final = [];
+    if (saveTitle) {final.push(table[0])}
+    for (let r=1; r < table.length; r++) {
+        if (table[r][column] === filterTxt) {final.push(table[r])}
     }
-    return new_table;
+    return final;
+}
+function ARR_rmRows_by_columnText(table, column, txt, saveTitle=true) {
+    // удаляет все строки с совпадениями
+    let final = [];
+    if (saveTitle) {final.push(table[0])}
+    for (let r=1; r < table.length; r++) {
+        if (!STR_find_sub(table[r][column], txt, 'bool')) {final.push(table[r])}
+    }
+    return final;
+}
+function ARR_rm_doubledAccounts(table, column) {
+    let   final = [table[0]];
+    let accList = [];
+    for (let r=1; r < table.length; r++) {
+        if (!accList.includes(table[r][column])) {
+            accList.push(table[r][column]);
+            final  .push(table[r]);
+        }
+    }
+    return final;
 }
 function ARR_rm_cells_by_full_text(table, txt) {
     for (let r=0; r < table.length; r++) {

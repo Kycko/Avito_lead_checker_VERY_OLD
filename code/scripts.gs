@@ -516,6 +516,20 @@ function SCR_CRMmrkg() {
                  region   : ARR_search_in_list(data.cur[0], 'region'),
                  region2  : ARR_search_in_list(data.cur[0], 'city')}
 
+    // удаляем ненужные категории
+    if (type === 'white/grey') {
+        data.cur = ARR_rmRows_by_columnText(data.cur, ind.cat, 'Transport.');
+        data.cur = ARR_rmRows_by_columnText(data.cur, ind.cat, 'Jobs.');
+        data.cur = ARR_rmRows_by_columnText(data.cur, ind.cat, 'Vacancies.');
+        data.cur = ARR_rmRows_by_columnText(data.cur, ind.cat, 'Realty.');
+        data.cur = ARR_rmRows_by_columnText(data.cur, ind.cat, 'Services.');
+    }
+
+    // удаляем дубли аккаунтов
+    let AID = ind.avito_ID;
+    if (ind.avitoID2 >= 0) {AID = ind.avitoID2}
+    data.cur = ARR_rm_doubledAccounts(data.cur, AID);
+
     if (ind.avito_ID >= 0) {data.cur[0][ind.avito_ID] = 'Авито-аккаунт'}
     if (ind.avitoID2 >= 0) {data.cur[0][ind.avitoID2] = 'Авито-аккаунт'}
     if (ind.email    >= 0) {data.cur[0][ind.email]    = 'Рабочий e-mail'}
@@ -611,5 +625,7 @@ function SCR_CRMmrkg() {
     SH_set_values(data.cur, data.cur_sheet);
 
     // launch the basic checker
-    MM_launch_all(false, true);
+    MM_launch_all(false, false);
+
+    UI_show_msg('true new', 'Не забудьте проверить true new для всех Авито-аккаунтов.')
 }

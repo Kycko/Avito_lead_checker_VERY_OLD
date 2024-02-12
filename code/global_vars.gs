@@ -92,9 +92,9 @@ function Gtext() {
         ['Retention ASD (товары и услуги) [обновлено 21.08.2023]',          'SCR_retention_ASD'],
         ['Мой бизнес [обновлено 06.02.2024]',                                  'SCR_myBusiness'],
         ['separator'],  // разделительная линия
-        ['CRMmrkg white/grey (все виды) [обновлено 05.02.2024]',                  'SCR_CRMmrkg'],
+        ['CRMmrkg white/grey (все виды) [обновлено 12.02.2024]',                  'SCR_CRMmrkg'],
         ['separator'],  // разделительная линия
-        ['Выгрузки TAM из Redash (любой отчёт) [обновлено 19.01.2023]',        'SCR_redash_TAM'],
+        ['Выгрузки TAM из Redash (любой отчёт) [обновлено 19.01.2024]',        'SCR_redash_TAM'],
         ['Вечерние базы КЦ [обновлено 22.01.2024]',                            'SCR_evening_СС']
     ]
 
