@@ -33,8 +33,9 @@ function STR_check_email(string) {
         const domain   = ARR_last_item(splitted);
         if      (!STR_find_sub(domain, '.',  'bool')) {return false}
         else if ( STR_find_sub(domain, '..', 'bool')) {return false}
+        else if (domain.endsWith('.r'))               {return false}
         else if (splitted[0] === '-')                 {return false}
-        else if (STR_find_sub_list(string, [':', '|', '’', ' ', '<', '>', '[', ']', '.@', '@.', '@-.'], 'bool')) {return false}
+        else if (STR_find_sub_list(string, [':', '|', '/', '’', ' ', '<', '>', '[', ']', '.@', '@.', '@-.'], 'bool')) {return false}
     }
     return true;
 }
