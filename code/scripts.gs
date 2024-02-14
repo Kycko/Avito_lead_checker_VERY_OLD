@@ -485,6 +485,91 @@ function SCR_myBusiness() {
     SH_set_values(table, curSheet); // write the final data
     MM_launch_all(false, false);    // launch the basic checker
 }
+function SCR_MSP() {
+    // get the data
+    const curSheet = SpreadsheetApp.getActiveSheet();
+    let      table = SH_get_values(curSheet.getName(), SH_get_all_sheets_list());
+
+    // удаление лишних строк
+    for (let r = table.length-1; r >= 0; r--) {
+        if (ARR_check_allList_empty(table[r])) {table = ARR_rm_RC(table, 'rows', r)}
+    }
+
+    // находим нужные столбцы, переименовываем их, добавляем отсутствующие
+    let columns = {
+        city           : {search: 'Регион компании',               index: null, final: true,  title: null},
+        comment        : {search: 'Вид предоставленной поддержки', index: null, final: true,  title: 'Комментарий'},
+        company        : {search: 'Наименование компании',         index: null, final: true,  title: null},
+        contact_phone  : {search: null,                            index: null, final: true,  title: 'Основной телефон'},
+        email          : {search: null,                            index: null, final: true,  title: 'Рабочий e-mail'},
+        goods_category : {search: null,                            index: null, final: true,  title: 'Категория'},
+        INN            : {search: 'ИНН',                           index: null, final: true,  title: null},
+        last_name      : {search: null,                            index: null, final: true,  title: 'Фамилия'},
+        name           : {search: null,                            index: null, final: true,  title: 'Имя'},
+        second_name    : {search: null,                            index: null, final: true,  title: 'Отчество'},
+        man            : {search: null,                            index: null, final: true,  title: 'Ответственный менеджер в сделке'},
+        raw            : {search: 'Данные заявки',                 index: null, final: false, title: null},
+        source         : {search: null,                            index: null, final: true,  title: 'Источник'},
+        leadName       : {search: null,                            index: null, final: true,  title: 'Название лида'},
+        projectName    : {search: null,                            index: null, final: true,  title: 'Наименование проекта'}
+    }
+    for (let val of Object.values(columns)) {
+        if (val.search === null) {
+            val.index = table[0].length;
+            table     = ARR_add_RC(table, 'columns', val.index);
+        }
+        else {val.index = ARR_search_in_list(table[0], val.search)}
+
+        if (val.title  !== null) {table[0][val.index] = val.title}
+    }
+
+    // разбираем raw ('данные заявки') + добавляем обязательные данные
+    let      colKeys = Object.keys(columns);
+    let   catNumbers = Object.keys(Gcat_byNumber());
+    let no_catNumber = false;   // для вывода toast'а
+    for (let r=1; r < table.length; r++) {
+        // --- добавляем обязательные данные
+        table[r][columns.source     .index] = 'МСП.РФ';
+        table[r][columns.man        .index] = 'Сергей Пасечнюк';
+        table[r][columns.leadName   .index] = 'GE МСП.РФ ' + get_today();
+        table[r][columns.projectName.index] = 'GE | МСП.РФ';
+
+        // --- парсим raw
+        let params = {};
+        let   list = table[r][columns.raw.index].slice(1, -1).split(',');   // обрезаем { и }, делим по запятой
+        for (let i=0; i < list.length; i++) {
+                   list[i]     = list[i].split('"');
+            params[list[i][1]] = list[i][3];
+        }
+
+        // --- запись raw в нужные столбцы
+        for (let key of Object.keys(params)) {
+            if (colKeys.includes(key)) {
+                let value = params[key];
+                if (key === 'goods_category') {
+                    if (catNumbers.includes(value)) {value = Gcat_byNumber()[value]}
+                    else                            {no_catNumber = true}
+                }
+
+                table[r][columns[key].index] = value;
+            }
+        }
+    }
+
+    // удаляем лишние столбцы
+    let needed = [];
+    for (let val of Object.values(columns)) {
+        if (val.final) {needed.push(val.index)}
+    }
+    for (let c = table[0].length-1; c >= 0; c--) {
+        if (!needed.includes(c)) {table = ARR_rm_RC(table, 'columns', c)}
+    }
+
+    // final stage
+    SH_set_values(table, curSheet); // write the final data
+    if (no_catNumber) {UI_show_toast('Неизвестная категория', 'Неизвестный номер категории.', 12)}
+    MM_launch_all(false, false);    // launch the basic checker
+}
 
 function SCR_CRMmrkg() {
     // узнаём тип выгрузки

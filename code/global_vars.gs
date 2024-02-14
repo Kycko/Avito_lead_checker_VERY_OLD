@@ -91,6 +91,7 @@ function Gtext() {
         ['Big Data Technology [обновлено 16.10.2023]',                'SCR_Big_Data_Technology'],
         ['Retention ASD (товары и услуги) [обновлено 21.08.2023]',          'SCR_retention_ASD'],
         ['Мой бизнес [обновлено 06.02.2024]',                                  'SCR_myBusiness'],
+        ['МСП.РФ [обновлено 14.02.2024]',                                             'SCR_MSP'],
         ['separator'],  // разделительная линия
         ['CRMmrkg white/grey (все виды) [обновлено 12.02.2024]',                  'SCR_CRMmrkg'],
         ['separator'],  // разделительная линия
@@ -106,6 +107,13 @@ function Gtext() {
 }
 function Gru_symbols() {
     return ['а', 'б', 'в', 'г', 'д', 'е', 'ё', 'ж', 'з', 'и', 'й', 'к', 'л', 'м', 'н', 'о', 'п', 'р', 'с', 'т', 'у', 'ф', 'х', 'ц', 'ч', 'ш', 'щ', 'ъ', 'ы', 'ь', 'э', 'ю', 'я'];
+}
+function Gcat_byNumber() {
+    return {
+        25 : 'Ремонт и строительство',
+        28 : 'Кошки',
+        29 : 'Птицы'
+    }
 }
 
 // the list to convert latin symbols to cyrillic
